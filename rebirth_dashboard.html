@@ -655,36 +655,6 @@ function render(rows) {
     moEl.innerHTML += '<div class="mo-card"><div class="mo-month">' + m.label + '</div><div class="mo-loss">-' + m.loss + 'kg</div><div class="mo-meta">' + m.days + '일 기록 · ' + m.start + '→' + m.end + 'kg</div></div>';
   });
 
-    var ydayBox  = document.getElementById('yesterday-box');
-  var ydayDate = document.getElementById('yday-date');
-  var ydayGrid = document.getElementById('yday-grid');
-
-  ydayDate.textContent = (yesterday.getMonth()+1) + '월 ' + yesterday.getDate() + '일';
-
-  function val(v) {
-    return v ? v : null;
-  }
-  function item(label, value, full) {
-    var v = val(value);
-    return '<div class="yday-item' + (full ? ' yday-full' : '') + '">'
-      + '<div class="yday-label">' + label + '</div>'
-      + '<div class="yday-val' + (v ? '' : ' empty') + '">' + (v || '기록 없음') + '</div>'
-      + '</div>';
-  }
-
-  if (ydayData) {
-    ydayGrid.innerHTML =
-      item('⚖️ 몸무게', ydayData.weight ? ydayData.weight + 'kg' : '') +
-      item('🌅 아침', ydayData.breakfast || '', true) +
-      item('☀️ 점심', ydayData.lunch || '', true) +
-      item('🌙 저녁', ydayData.dinner || '', true) +
-      item('🏃 운동', ydayData.exercise || '', true) +
-      item('📝 한마디', ydayData.memo || '', true);
-    ydayBox.style.display = 'block';
-  } else {
-    ydayGrid.innerHTML = '<div style="font-size:13px;color:var(--text-3);grid-column:1/-1;text-align:center;padding:8px 0;">어제 기록이 없어요</div>';
-    ydayBox.style.display = 'block';
-  }
 }
 
 function closePopup() {
