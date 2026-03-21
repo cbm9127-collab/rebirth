@@ -254,10 +254,7 @@
         <span class="memo-btn-icon">🥗</span>
         식단 레시피 보기
       </button>
-      <button class="memo-btn" onclick="window.location.href='rebirth_gout.html'">
-        <span class="memo-btn-icon">⚠️</span>
-        통풍 위험 식품 체크
-      </button>
+
     </div>
 
     <!-- 목표 달성률 -->
@@ -273,17 +270,7 @@
       </div>
     </div>
 
-    <!-- 생활 패턴 트렌드 -->
-    <div class="section">
-      <div class="section-head">생활 패턴 트렌드 (최근 30일)</div>
-      <div class="chart-box">
-        <div class="chart-legend" style="margin-bottom:8px;">
-          <span><span class="legend-dot" style="background:#185FA5"></span>수면시간(h)</span>
-          <span><span class="legend-dot" style="background:#1D9E75"></span>물 섭취(L)</span>
-        </div>
-        <div class="chart-wrap" style="height:180px"><canvas id="habitChart"></canvas></div>
-      </div>
-    </div>
+
 
     <!-- 감량 마일스톤 -->
     <div class="section">
@@ -387,17 +374,7 @@
           <input class="field-input" type="number" step="0.1" id="f-weight" placeholder="예) 98.2">
         </div>
 
-        <div class="popup-divider">🌙 생활 패턴</div>
-        <div class="field-row">
-          <div class="field-group">
-            <div class="field-label">💤 수면시간</div>
-            <input class="field-input" type="text" id="f-sleep" placeholder="예) 7h">
-          </div>
-          <div class="field-group">
-            <div class="field-label">💧 물 마신 양</div>
-            <input class="field-input" type="text" id="f-water" placeholder="예) 4L">
-          </div>
-        </div>
+
 
         <div class="popup-divider">🍽️ 식단</div>
         <div class="field-group">
@@ -669,16 +646,7 @@ function render(rows) {
   }
 
   // ── BMI 트래커 ───────────────────────────────────────────
-  document.getElementById('bmi-val').textContent  = bmi;
-  document.getElementById('bmi-desc').textContent = bmiData.label;
-  document.getElementById('bmi-desc').style.color = bmiData.color;
-  document.getElementById('bmi-next').textContent = '다음 단계: ' + bmiData.next;
-
-  // BMI 마커 위치 (BMI 15~40 범위를 0~100%로 매핑)
-  var markerPct = Math.min(100, Math.max(0, ((bmi - 15) / 25) * 100));
-  setTimeout(function() {
-    document.getElementById('bmi-marker').style.left = markerPct + '%';
-  }, 200);
+  // BMI 트래커 제거됨
 
   // ── 월별 카드 ─────────────────────────────────────────
   var monthly = getMonthly(rows);
@@ -687,153 +655,7 @@ function render(rows) {
     moEl.innerHTML += '<div class="mo-card"><div class="mo-month">' + m.label + '</div><div class="mo-loss">-' + m.loss + 'kg</div><div class="mo-meta">' + m.days + '일 기록 · ' + m.start + '→' + m.end + 'kg</div></div>';
   });
 
-  // ── 생활 패턴 트렌드 차트 ──────────────────────────────────
-  var recentHabit = rows.slice(-30);
-  var habitLabels = recentHabit.map(function(r){ return (r.date.getMonth()+1)+'/'+r.date.getDate(); });
-  var sleepData = recentHabit.map(function(r){
-    var s = String(r.sleep || '').replace(/[^0-9.]/g,''); return s ? parseFloat(s) : null;
-  });
-  var waterData = recentHabit.map(function(r){
-    var w = String(r.water || '').replace(/[^0-9.]/g,''); return w ? parseFloat(w) : null;
-  });
-  var habitCtx = document.getElementById('habitChart');
-  if (habitCtx) {
-    new Chart(habitCtx, {
-      type: 'line',
-      data: {
-        labels: habitLabels,
-        datasets: [
-          { label: '수면(h)', data: sleepData, borderColor: '#185FA5', backgroundColor: 'rgba(24,95,165,0.07)', borderWidth: 2, pointRadius: 2, pointHoverRadius: 5, fill: true, tension: 0.3, spanGaps: true, yAxisID: 'y' },
-          { label: '물(L)',   data: waterData, borderColor: '#1D9E75', backgroundColor: 'rgba(29,158,117,0.07)', borderWidth: 2, pointRadius: 2, pointHoverRadius: 5, fill: true, tension: 0.3, spanGaps: true, yAxisID: 'y2' }
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx){ return ctx.dataset.label + ': ' + (ctx.parsed.y != null ? ctx.parsed.y.toFixed(1) : '—'); }}}},
-        scales: {
-          x:  { ticks: { maxTicksLimit: 10, font: { size: 10 }, color: '#9E9E9A' }, grid: { display: false } },
-          y:  { position: 'left',  min: 0, max: 12, ticks: { font: { size: 10 }, color: '#185FA5', callback: function(v){ return v+'h'; }}, grid: { color: 'rgba(0,0,0,0.03)' } },
-          y2: { position: 'right', min: 0, max: 6,  ticks: { font: { size: 10 }, color: '#1D9E75', callback: function(v){ return v+'L'; }}, grid: { display: false } }
-        }
-      }
-    });
-  }
-
-  // ── 감량 마일스톤 ────────────────────────────────────────
-  var tbody     = document.getElementById('milestone-body');
-  var startDate = rows[0].date;
-  MILESTONES.forEach(function(target) {
-    var achieved = null;
-    for (var i = 0; i < rows.length; i++) {
-      if (rows[i].weight <= target) { achieved = rows[i]; break; }
-    }
-    var statusCell, dateCell, daysCell;
-    if (achieved) {
-      var elapsed = Math.round((achieved.date - startDate) / 86400000) + 1;
-      statusCell = '<span style="background:var(--teal-light);color:var(--teal-dark);font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;border:1px solid #5DCAA5;">✓ 달성</span>';
-      dateCell   = (achieved.date.getMonth() + 1) + '/' + achieved.date.getDate();
-      daysCell   = elapsed + '일째';
-    } else {
-      var gap    = (today.weight - target).toFixed(1);
-      statusCell = '<span style="background:var(--surface);color:var(--text-3);font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;border:1px solid var(--border);">미달성</span>';
-      dateCell   = '-';
-      daysCell   = '-' + gap + 'kg 남음';
-    }
-    var isNext   = !achieved && (today.weight - target) <= 5;
-    var rowStyle = isNext ? ' style="background:#FFFBF0;"' : '';
-    tbody.innerHTML += '<tr' + rowStyle + '>'
-      + '<td>' + (target === 74 ? '🏆 최종 목표' : '▸ ' + (START_WEIGHT - target).toFixed(0) + 'kg 감량') + '</td>'
-      + '<td><strong>' + target + '</strong>kg</td>'
-      + '<td>' + statusCell + '</td>'
-      + '<td>' + dateCell + '</td>'
-      + '<td>' + daysCell + '</td>'
-      + '</tr>';
-  });
-
-}
-
-// ── 통풍 위험 식품 데이터 & 체크리스트 ──────────────────────
-var GOUT_FOODS = {
-  'very-high': ['맥주/술','내장류(간·콩팥)','멸치','고등어','정어리','명란젓','청어','육수(사골/곰탕)'],
-  'high':      ['닭가슴살(과량)','새우','게','조개류','참치','연어','쇠고기','돼지고기','버섯류'],
-  'caution':   ['과당(주스·탄산)','커피(과량)','시금치','아스파라거스','콩류','견과류(과량)']
-};
-var goutChecked = new Set();
-
-function buildGout() {
-  Object.keys(GOUT_FOODS).forEach(function(level) {
-    var el = document.getElementById('gout-' + level.replace('-','') + (level === 'very-high' ? '' : ''));
-    // id 재정의
-    var domId = level === 'very-high' ? 'gout-very-high' : level === 'high' ? 'gout-high' : 'gout-caution';
-    var container = document.getElementById(domId);
-    if (!container) return;
-    GOUT_FOODS[level].forEach(function(food) {
-      var chip = document.createElement('span');
-      chip.className   = 'gout-chip';
-      chip.textContent = food;
-      chip.onclick     = function() { toggleGout(food, chip); };
-      container.appendChild(chip);
-    });
-  });
-}
-
-function toggleGout(food, chip) {
-  if (goutChecked.has(food)) { goutChecked.delete(food); chip.classList.remove('checked'); }
-  else                        { goutChecked.add(food);    chip.classList.add('checked'); }
-  updateGoutStatus();
-}
-
-function updateGoutStatus() {
-  var cnt = goutChecked.size;
-  document.getElementById('gout-count').textContent = '체크된 항목: ' + cnt + '개';
-  var warn = document.getElementById('gout-warning');
-  if (cnt >= 3) { warn.classList.add('show'); document.getElementById('gout-cnt').textContent = cnt; }
-  else          { warn.classList.remove('show'); }
-}
-
-function resetGout() {
-  goutChecked.clear();
-  document.querySelectorAll('.gout-chip').forEach(function(c){ c.classList.remove('checked'); });
-  updateGoutStatus();
-}
-
-// ── 팝업 함수 ──────────────────────────────────────────────
-function openPopup() {
-  var today = new Date();
-  var dateStr = today.getFullYear() + '-'
-    + String(today.getMonth()+1).padStart(2,'0') + '-'
-    + String(today.getDate()).padStart(2,'0');
-  document.getElementById('popup-date').textContent =
-    today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
-  document.getElementById('popup-overlay').dataset.date = dateStr;
-  document.getElementById('popup-msg').textContent = '';
-  document.getElementById('popup-msg').className = 'popup-msg';
-  document.getElementById('popup-save-btn').disabled = false;
-  document.getElementById('popup-save-btn').textContent = '저장하기';
-  document.getElementById('popup-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-
-  // 어제 날짜 계산
-  var yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  var ydayStr = yesterday.getFullYear() + '-'
-    + String(yesterday.getMonth()+1).padStart(2,'0') + '-'
-    + String(yesterday.getDate()).padStart(2,'0');
-
-  // allRows에서 어제 데이터 찾기 (이미 불러온 데이터 활용)
-  var ydayData = null;
-  if (typeof allRows !== 'undefined') {
-    for (var i = 0; i < allRows.length; i++) {
-      var r = allRows[i];
-      // date가 Date 객체일 수도 있고 문자열일 수도 있어서 둘 다 처리
-      var rDateStr = (r.date instanceof Date)
-        ? r.date.toISOString().slice(0,10)
-        : String(r.date).slice(0,10);
-      if (rDateStr === ydayStr) { ydayData = r; break; }
-    }
-  }
-
-  var ydayBox  = document.getElementById('yesterday-box');
+    var ydayBox  = document.getElementById('yesterday-box');
   var ydayDate = document.getElementById('yday-date');
   var ydayGrid = document.getElementById('yday-grid');
 
@@ -853,8 +675,6 @@ function openPopup() {
   if (ydayData) {
     ydayGrid.innerHTML =
       item('⚖️ 몸무게', ydayData.weight ? ydayData.weight + 'kg' : '') +
-      item('💤 수면', ydayData.sleep || '') +
-      item('💧 물', ydayData.water || '') +
       item('🌅 아침', ydayData.breakfast || '', true) +
       item('☀️ 점심', ydayData.lunch || '', true) +
       item('🌙 저녁', ydayData.dinner || '', true) +
@@ -894,8 +714,6 @@ async function saveRecord() {
   var payload = {
     date:      document.getElementById('popup-overlay').dataset.date,
     weight:    weight,
-    sleep:     document.getElementById('f-sleep').value,
-    water:     document.getElementById('f-water').value,
     breakfast: document.getElementById('f-breakfast').value,
     lunch:     document.getElementById('f-lunch').value,
     dinner:    document.getElementById('f-dinner').value,
@@ -914,7 +732,7 @@ async function saveRecord() {
       msg.textContent = cheers[Math.floor(Math.random() * cheers.length)];
       msg.className = 'popup-msg success';
       btn.textContent = '저장됨 ✓';
-      ['f-weight','f-sleep','f-water','f-breakfast','f-lunch','f-dinner','f-exercise','f-memo']
+      ['f-weight','f-breakfast','f-lunch','f-dinner','f-exercise','f-memo']
         .forEach(function(id){ document.getElementById(id).value = ''; });
       setTimeout(function(){ closePopup(); location.reload(); }, 2000);
     } else {
