@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🥗 Re-birth 식단 레시피</title>
+<style>
+  :root {
+    --teal: #1D9E75; --teal-dark: #0F6E56; --teal-light: #E1F5EE;
+    --amber: #BA7517; --amber-light: #FAEEDA;
+    --bg: #FAFAF8; --surface: #F3F2EE; --white: #ffffff;
+    --border: rgba(0,0,0,0.08); --text: #1C1C1A; --text-2: #6B6B67; --text-3: #9E9E9A;
+    --radius: 12px; --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo','Noto Sans KR',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .wrapper { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+  /* 헤더 */
+  .header { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; flex-wrap: wrap; }
+  .back-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text-2); background: var(--surface); border: 0.5px solid var(--border); padding: 7px 14px; border-radius: var(--radius-sm); cursor: pointer; text-decoration: none; transition: background 0.15s; }
+  .back-btn:hover { background: var(--teal-light); color: var(--teal-dark); }
+  .header-title { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
+  .header-sub { font-size: 12px; color: var(--text-3); margin-top: 3px; }
+
+  /* 탭 */
+  .tabs { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab { font-size: 12px; font-weight: 500; padding: 7px 16px; border-radius: 20px; border: 0.5px solid var(--border); background: var(--surface); color: var(--text-2); cursor: pointer; transition: all 0.15s; }
+  .tab.active { background: var(--teal-dark); color: white; border-color: var(--teal-dark); }
+
+  /* 섹션 타이틀 */
+  .section-title { font-size: 11px; font-weight: 600; color: var(--text-2); letter-spacing: 0.8px; text-transform: uppercase; margin: 1.5rem 0 10px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border); }
+
+  /* 레시피 카드 */
+  .recipe-card { background: var(--white); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; }
+  .recipe-card.prep  { border-left: 3px solid var(--amber); }
+  .recipe-card.morning { border-left: 3px solid #F97316; }
+  .recipe-card.lunch { border-left: 3px solid var(--teal); }
+  .recipe-card.dinner { border-left: 3px solid #185FA5; }
+
+  /* 카드 헤더 (접기/펼치기) */
+  .card-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; cursor: pointer; user-select: none; }
+  .card-header:hover { background: var(--surface); }
+  .card-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .card-cond { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+  .card-arrow { font-size: 12px; color: var(--text-3); transition: transform 0.2s; }
+  .card-arrow.open { transform: rotate(180deg); }
+
+  /* 카드 바디 */
+  .card-body { display: none; padding: 0 18px 16px; border-top: 0.5px solid var(--border); }
+  .card-body.open { display: block; }
+  .block { margin-top: 12px; }
+  .block-label { font-size: 10px; font-weight: 700; color: var(--text-3); letter-spacing: 0.7px; text-transform: uppercase; margin-bottom: 6px; }
+  .block-content { font-size: 13px; color: var(--text); line-height: 1.8; background: var(--surface); border-radius: 6px; padding: 10px 12px; white-space: pre-wrap; }
+  .block-content.steps { border-left: 2px solid var(--teal-light); background: transparent; padding-left: 12px; }
+
+  /* 뱃지 */
+  .badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-right: 4px; }
+  .badge-prep   { background: var(--amber-light); color: var(--amber); }
+  .badge-morning{ background: #FFF7ED; color: #C2410C; }
+  .badge-lunch  { background: var(--teal-light); color: var(--teal-dark); }
+  .badge-dinner { background: #EFF6FF; color: #1D4ED8; }
+
+  @media (max-width: 540px) {
+    .wrapper { padding: 1.25rem 0.875rem 3rem; }
+    .header { margin-bottom: 1.25rem; }
+    .header-title { font-size: 17px; }
+    .back-btn { font-size: 12px; padding: 6px 11px; }
+    .filter-btn, .tab { font-size: 11px; padding: 5px 11px; }
+    .record-card, .recipe-card { padding: 13px 14px; }
+    .card-name, .prog-name { font-size: 13px; }
+    .filter-row, .tabs { gap: 5px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <a class="back-btn" href="rebirth_dashboard.html">← 대시보드로</a>
+    <div>
+      <div class="header-title">🥗 식단 레시피</div>
+      <div class="header-sub">Re-birth 프로젝트 전용 레시피 모음</div>
+    </div>
+  </div>
+
+  <!-- 탭 필터 -->
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('all',this)">전체</button>
+    <button class="tab" onclick="setTab('prep',this)">사전준비</button>
+    <button class="tab" onclick="setTab('morning',this)">아침</button>
+    <button class="tab" onclick="setTab('lunch',this)">점심</button>
+    <button class="tab" onclick="setTab('dinner',this)">저녁</button>
+  </div>
+
+  <div id="recipe-list"></div>
+
+</div>
+<script>
+// ── 레시피 데이터 (한글 파일에서 추출) ─────────────────────
+var RECIPES = [
+  {
+    cat: 'prep',
+    name: '당근라페',
+    cond: '400g 대량 생산 · 사전 준비',
+    ingredients:
+`주재료: 당근채 400g
+소스: 올리브유 20cc, 레몬즙 40cc, 홀그레인 머스타드 10cc, 알룰로스 5cc, 후추 1cc`,
+    steps:
+`1. 채 썬 당근을 볼에 담습니다.
+2. 홀그레인 머스타드 10cc, 식초 30cc, 올리브유 20cc, 올리고당(또는 액상 알룰로스) 5cc, 후추 1cc를 넣고 2~3분 버무립니다.
+3. 밀폐용기에 담아 냉장 보관합니다.
+   ※ 최소 3시간 숙성 후 섭취`
+  },
+  {
+    cat: 'morning',
+    name: '아침 식단 (유산소 O)',
+    cond: '유산소 진행한 날',
+    ingredients:
+`사과 1/2개 (or 키위 1개)
+단백질 음료 1병
+그릭요거트 1개
+유산균 1포`,
+    steps: `조리 없이 그대로 섭취합니다.`
+  },
+  {
+    cat: 'morning',
+    name: '아침 식단 (유산소 X)',
+    cond: '유산소 쉬는 날',
+    ingredients:
+`사과 1/2개 (or 키위 1개)
+단백질 음료 1병
+유산균 1포`,
+    steps: `조리 없이 그대로 섭취합니다.`
+  },
+  {
+    cat: 'lunch',
+    name: '워터-워싱 참치 에그 또띠야 랩',
+    cond: '화요일',
+    ingredients:
+`베이스: 통밀 또띠야 1장
+단백질: 참치 100g, 계란 2개, 저염 치즈 1장
+야채: 청상추 2~3장, 생양배추 50g, 당근 라페 30g
+소스: 저당 마요네즈 10cc, 스리라차 5cc`,
+    steps:
+`전처리: 참치 캔에 뜨거운 물을 부어 기름·나트륨·퓨린을 30% 이상 씻어낸(워터-워싱) 후, 수분을 100% 압착합니다.
+소스 배합: 수분을 제거한 참치에 저당 마요네즈 10cc, 스리라차 5cc를 버무립니다.
+조리: 약불로 달군 팬에 올리브오일 5cc를 두르고 계란 2개를 80%만 익혀 부드러운 스크램블 에그를 만듭니다.
+조립: 통밀 또띠야 → 청상추(방수막) → 저염 치즈 1장 → 생양배추+당근 라페 → 참치 마요 베이스 → 스크램블 에그 순으로 쌓아 올립니다.`
+  },
+  {
+    cat: 'lunch',
+    name: '닭가슴살 소시지 키토김밥',
+    cond: '수요일, 금요일',
+    ingredients:
+`주재료: 김밥용 김 2장, 굳닭 닭가슴살 소시지 1팩(2개), 계란 2개, 생양배추 100g, 저염 슬라이스 치즈 1장
+소스: 저당 마요네즈 5cc, 스리라차 2.5cc, 올리브오일 10cc, 참기름 5cc`,
+    steps:
+`전처리(통풍 방어): 소시지에 칼집을 낸 후 끓는 물에 2~3분 완전히 데쳐 첨가물·퓨린을 제거합니다. 물기를 닦고 껍질도 제거합니다.
+지단 베이스: 양배추 100g과 계란 2개를 섞어 올리브오일 두른 팬에 중약불로 도톰하게 부쳐냅니다. (위장 보호를 위해 속까지 완전히 익힙니다.)
+조립: 김 2장 겹쳐 깔기 → 양배추 지단 → 치즈 1장 → 데친 소시지 2개 순으로 올립니다.
+마무리: 공기가 들어가지 않게 단단히 말고, 겉면에 참기름 5cc를 발라 수분 증발을 막습니다. 물 묻힌 칼로 썰어냅니다.`
+  },
+  {
+    cat: 'lunch',
+    name: '두부 듬뿍 라페 유부초밥',
+    cond: '목요일, 토요일',
+    ingredients:
+`주재료: 유부초밥 키트 중 1인분 유부피, 두부 1모(약 300g), 계란 2개, 당근 라페 50g
+조미: 유부 조미액 ½팩만 사용 (나머지 전량 폐기)
+기타: 김 2장`,
+    steps:
+`수분 제거(핵심): 두부를 키친타올로 닦은 뒤, 기름 없는 마른 팬에 약불로 볶아 수분을 100% 날려 소보로(모래알) 상태로 만듭니다.
+스크램블: 계란 2개를 스크램블하여 준비합니다.
+배합: 볶은 두부 + 스크램블 에그 + 당근 라페를 볼에 넣고, 조미액 1팩 중 정확히 절반(50%)만 뿌려 섞습니다. (나머지는 위산 과다·당류 섭취 방지를 위해 전량 폐기)
+충전: 유부피의 물기를 약 20%만 남기고 짜낸 뒤, 속재료를 단단하게 채워 넣습니다.`
+  },
+  {
+    cat: 'lunch',
+    name: '양배추 치즈 햄 계란말이',
+    cond: '일요일',
+    ingredients:
+`계란 150g (약 3개), 닭가슴살 햄(슬라이스) 3장, 양배추(가늘게 채썰기) 100g, 저염 슬라이스 치즈 1장
+소스: 올리브오일 7cc, 후추 한 꼬집
+※ 소금 간 절대 금지 — 치즈 나트륨으로 충분합니다.`,
+    steps:
+`전처리(통풍 필수): 닭가슴살 햄 3장을 끓는 물에 1분간 데쳐 나트륨·퓨린 제거 후, 키친타올로 물기를 완전히 닦고 잘게 다집니다.
+양배추 수분 제거(핵심): 채 썬 양배추 100g을 마른 팬에 약불로 1~2분 볶아 수분을 완전히 날립니다. 수분이 남으면 계란말이가 풀어집니다. 불 끄고 한 김 식힙니다.
+계란물 배합: 계란 3개에 후추 한 꼬집을 넣어 풀고, 식힌 양배추와 다진 햄을 넣어 골고루 배합합니다.
+1차 부침: 팬에 올리브오일 7cc를 두르고 중약불로 예열합니다. 계란물을 전량 붓고, 가장자리가 익기 시작하면 저염 치즈를 중앙에 올립니다.
+말기: 치즈가 살짝 녹기 시작하면 한쪽에서부터 돌돌 말아줍니다. 이음매가 아래로 가게 놓고 약불에서 30초 더 눌러줍니다. 반으로 잘라 플레이팅합니다.`
+  },
+  {
+    cat: 'lunch',
+    name: '두부면 까르보나라',
+    cond: '월요일',
+    ingredients:
+`두부면 200g, 닭가슴살 햄 4장, 계란 2개, 파마산 치즈 20g (소스용 10g + 피니시용 10g)
+소스: 올리브유 5cc, 마늘 2개(편 썰기) 10g, 후추 한 꼬집`,
+    steps:
+`사전 준비 1: 볼에 계란 2개를 풀고, 파마산 치즈 10g과 후추를 넣어 미리 섞어둡니다.
+사전 준비 2: 닭가슴살 햄 4장을 끓는 물에 1분간 데쳐 나트륨·퓨린 제거 후, 물기를 닦고 한 입 크기로 잘라둡니다.
+두부면 물기 제거: 체망에 넣고 찬물로 헹군 뒤 손으로 꽉 짜거나 키친타올로 감싸 수분을 최대한 제거합니다. (물기가 남으면 소스가 묽어집니다.)
+마늘 기름 & 햄 볶기: 팬에 올리브유 5cc와 편 썬 마늘을 넣고 약불로 노릇해질 때까지 천천히 볶습니다. 이후 데친 햄을 넣고 중불에서 30초 볶아 향을 냅니다.
+두부면 투입 & 불 끄기(가장 중요): 두부면을 넣고 중불에서 30초 볶아 기름을 코팅합니다. 반드시 불을 끄고 팬 온도를 10~15초 식힙니다.
+소스 코팅: 불 꺼진 상태에서 계란+치즈 소스를 붓고 팬을 흔들면서 빠르게 버무립니다. 잔열로 소스가 크리미하게 코팅되면 완성입니다. 파마산 치즈 10g과 후추를 뿌려 마무리합니다.`
+  },
+  {
+    cat: 'dinner',
+    name: '두부 부침 정식',
+    cond: '매일 저녁 (수·금은 계란 3알로 변경)',
+    ingredients:
+`밥: 미트리 볶음밥 1/2팩 (100g) — 나머지 반은 밀봉 냉동
+두부: 두부 1/2모 (150g)
+단백질: 계란 2알, 닭가슴살 소시지 1/2팩
+오일: 올리브유 15cc
+※ 소금 간 절대 금지`,
+    steps:
+`닭가슴살 데치기: 소시지 1/2팩을 뜨거운 물에 담갔다 꺼내어 껍질을 벗겨줍니다.
+두부 굽기[중불]: 팬에 올리브오일을 두르고 두부 반 모를 도톰하게 썰어 올립니다. 앞뒤로 노릇하고 단단해질 때까지 굽습니다.
+계란 후라이[중약불]: 두부 옆 공간에 계란 2개를 까서 반숙/완숙 취향대로 익힙니다.
+볶음밥 데우기[중불]: 볶음밥 반 팩을 2분간 볶습니다.
+플레이팅: 접시에 볶음밥 + 구운 두부 + 계란 + 데친 소시지를 정식처럼 분리하여 담아냅니다.`
+  }
+];
+
+// ── 카테고리 라벨/색상 매핑 ───────────────────────────────
+var CAT_INFO = {
+  prep:    { label: '사전준비', badge: 'badge-prep' },
+  morning: { label: '아침',    badge: 'badge-morning' },
+  lunch:   { label: '점심',    badge: 'badge-lunch' },
+  dinner:  { label: '저녁',    badge: 'badge-dinner' }
+};
+
+// ── 카드 HTML 생성 ────────────────────────────────────────
+function cardHTML(r, idx) {
+  var info = CAT_INFO[r.cat] || { label: r.cat, badge: '' };
+  return '<div class="recipe-card ' + r.cat + '" data-cat="' + r.cat + '">'
+    + '<div class="card-header" onclick="toggleCard(' + idx + ')" id="hdr-' + idx + '">'
+    +   '<div>'
+    +     '<span class="badge ' + info.badge + '">' + info.label + '</span>'
+    +     '<span class="card-name">' + r.name + '</span>'
+    +     (r.cond ? '<div class="card-cond">' + r.cond + '</div>' : '')
+    +   '</div>'
+    +   '<span class="card-arrow" id="arr-' + idx + '">▼</span>'
+    + '</div>'
+    + '<div class="card-body" id="body-' + idx + '">'
+    +   '<div class="block"><div class="block-label">🛒 재료</div><div class="block-content">' + r.ingredients + '</div></div>'
+    +   '<div class="block"><div class="block-label">👨‍🍳 조리법</div><div class="block-content steps">' + r.steps + '</div></div>'
+    + '</div>'
+    + '</div>';
+}
+
+// ── 카드 접기/펼치기 ─────────────────────────────────────
+function toggleCard(idx) {
+  var body = document.getElementById('body-' + idx);
+  var arr  = document.getElementById('arr-' + idx);
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arr.classList.toggle('open', !isOpen);
+}
+
+// ── 탭 필터 ──────────────────────────────────────────────
+function setTab(cat, btn) {
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+
+  var list = document.getElementById('recipe-list');
+  var filtered = cat === 'all' ? RECIPES : RECIPES.filter(function(r){ return r.cat === cat; });
+
+  // 카테고리별 섹션 타이틀 삽입
+  var html = '';
+  var lastCat = '';
+  filtered.forEach(function(r, i) {
+    var info = CAT_INFO[r.cat] || {};
+    if (r.cat !== lastCat) {
+      html += '<div class="section-title">' + (info.label || r.cat) + '</div>';
+      lastCat = r.cat;
+    }
+    // 전체 RECIPES 배열의 인덱스를 사용해야 toggleCard가 정확하게 작동
+    var globalIdx = RECIPES.indexOf(r);
+    html += cardHTML(r, globalIdx);
+  });
+  list.innerHTML = html;
+}
+
+// ── 초기 렌더 ────────────────────────────────────────────
+setTab('all', document.querySelector('.tab.active'));
+</script>
+</body>
+</html>
