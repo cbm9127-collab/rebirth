@@ -107,6 +107,44 @@
   #error-box { display: none; background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: var(--radius-sm); padding: 16px; color: #7F1D1D; font-size: 13px; line-height: 1.7; }
   #main { display: none; }
 
+  /* 오늘의 기록 팝업 */
+  .popup-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:1rem; }
+  .popup-overlay.open { display:flex; }
+  .popup-box { background:#fff; border-radius:20px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 8px 40px rgba(0,0,0,0.2); }
+  .popup-header { padding:20px 24px 0; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:#fff; z-index:1; border-radius:20px 20px 0 0; }
+  .popup-title { font-size:18px; font-weight:700; color:#1C1C1A; }
+  .popup-date  { font-size:12px; color:#9E9E9A; margin-top:2px; }
+  .popup-close { width:32px; height:32px; border-radius:50%; border:none; background:#F3F2EE; color:#6B6B67; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .popup-body  { padding:16px 24px 24px; }
+  .field-group { margin-bottom:14px; }
+  .field-label { font-size:12px; font-weight:600; color:#6B6B67; margin-bottom:6px; display:flex; align-items:center; gap:5px; }
+  .field-input { width:100%; padding:10px 12px; border:1.5px solid rgba(0,0,0,0.1); border-radius:10px; font-size:14px; font-family:inherit; color:#1C1C1A; background:#FAFAF8; transition:border 0.15s; outline:none; }
+  .field-input:focus { border-color:#1D9E75; background:#fff; }
+  textarea.field-input { resize:vertical; min-height:70px; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .popup-divider { font-size:11px; font-weight:700; color:#9E9E9A; letter-spacing:0.5px; margin:16px 0 10px; padding-bottom:6px; border-bottom:1px solid rgba(0,0,0,0.07); }
+  .popup-save { width:100%; padding:14px; background:#1D9E75; color:white; border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; margin-top:6px; transition:all 0.2s; }
+  .popup-save:hover { background:#0F6E56; }
+  .popup-save:disabled { background:#9E9E9A; cursor:not-allowed; }
+  .popup-msg { font-size:13px; text-align:center; margin-top:10px; min-height:20px; }
+  .popup-msg.success { color:#1D9E75; }
+  .popup-msg.error   { color:#D85A30; }
+
+  /* 어제 기록 뷰어 */
+  .yesterday-box { background:var(--surface); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
+  .yesterday-title { font-size:12px; font-weight:700; color:var(--text-2); margin-bottom:10px; display:flex; align-items:center; gap:5px; }
+  .yesterday-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .yday-item { background:white; border-radius:8px; padding:8px 10px; }
+  .yday-label { font-size:10px; font-weight:600; color:var(--text-3); margin-bottom:3px; }
+  .yday-val { font-size:13px; color:var(--text); font-weight:500; white-space:pre-wrap; line-height:1.5; }
+  .yday-val.empty { color:var(--text-3); font-style:italic; font-weight:400; }
+  .yday-full { grid-column:1/-1; }
+  .popup-divider-top { font-size:11px; font-weight:700; color:var(--text-3); letter-spacing:0.5px; margin:0 0 10px; padding-bottom:6px; border-bottom:1px solid rgba(0,0,0,0.07); }
+
+  /* 기록하기 버튼 (헤더) */
+  .record-btn { display:inline-flex; align-items:center; gap:6px; background:#1D9E75; color:white; border:none; border-radius:10px; padding:9px 16px; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+  .record-btn:hover { background:#0F6E56; transform:translateY(-1px); }
+
   /* D-day 카드 */
   .card.dday .card-num { color: #185FA5; }
 
@@ -171,7 +209,10 @@
         <p>최종 목표 74kg · 식단 &amp; 운동으로 건강해지기</p>
         <div class="badge-live">Google Sheets 실시간 연동</div>
       </div>
-      <div class="header-right" id="last-updated"></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div class="header-right" id="last-updated"></div>
+        <button class="record-btn" onclick="openPopup()">✏️ 오늘 기록하기</button>
+      </div>
     </div>
 
     <!-- 요약 카드 -->
@@ -336,9 +377,77 @@
 
 
   </div><!-- #main -->
+
+  <!-- 오늘의 기록 팝업 -->
+  <div class="popup-overlay" id="popup-overlay" onclick="closeOnOverlay(event)">
+    <div class="popup-box">
+      <div class="popup-header">
+        <div>
+          <div class="popup-title">✏️ 오늘의 기록</div>
+          <div class="popup-date" id="popup-date"></div>
+        </div>
+        <button class="popup-close" onclick="closePopup()">✕</button>
+      </div>
+      <div class="popup-body">
+        <!-- 어제 기록 -->
+        <div class="yesterday-box" id="yesterday-box" style="display:none">
+          <div class="yesterday-title">📅 어제 기록 <span id="yday-date" style="font-weight:400;color:var(--text-3)"></span></div>
+          <div class="yesterday-grid" id="yday-grid"></div>
+        </div>
+
+        <div class="popup-divider-top">📝 오늘 기록 입력</div>
+
+        <!-- 몸무게 -->
+        <div class="field-group">
+          <div class="field-label">⚖️ 오늘 몸무게</div>
+          <input class="field-input" type="number" step="0.1" id="f-weight" placeholder="예) 98.2">
+        </div>
+
+        <div class="popup-divider">🌙 생활 패턴</div>
+        <div class="field-row">
+          <div class="field-group">
+            <div class="field-label">💤 수면시간</div>
+            <input class="field-input" type="text" id="f-sleep" placeholder="예) 7h">
+          </div>
+          <div class="field-group">
+            <div class="field-label">💧 물 마신 양</div>
+            <input class="field-input" type="text" id="f-water" placeholder="예) 4L">
+          </div>
+        </div>
+
+        <div class="popup-divider">🍽️ 식단</div>
+        <div class="field-group">
+          <div class="field-label">🌅 아침</div>
+          <textarea class="field-input" id="f-breakfast" placeholder="아침 식단을 입력해주세요"></textarea>
+        </div>
+        <div class="field-group">
+          <div class="field-label">☀️ 점심</div>
+          <textarea class="field-input" id="f-lunch" placeholder="점심 식단을 입력해주세요"></textarea>
+        </div>
+        <div class="field-group">
+          <div class="field-label">🌙 저녁</div>
+          <textarea class="field-input" id="f-dinner" placeholder="저녁 식단을 입력해주세요"></textarea>
+        </div>
+
+        <div class="popup-divider">🏃 운동</div>
+        <div class="field-group">
+          <textarea class="field-input" id="f-exercise" placeholder="오늘 한 운동을 입력해주세요"></textarea>
+        </div>
+
+        <div class="popup-divider">📝 오늘의 한마디</div>
+        <div class="field-group">
+          <textarea class="field-input" id="f-memo" placeholder="오늘 하루를 한마디로 기록해보세요"></textarea>
+        </div>
+
+        <button class="popup-save" id="popup-save-btn" onclick="saveRecord()">저장하기</button>
+        <div class="popup-msg" id="popup-msg"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
+var allRows      = []; // 전역 데이터 저장 (팝업 참조용)
 var API_URL      = 'https://script.google.com/macros/s/AKfycbzBwSGnxFWM8UbgqFvpBgkoDTsYgUoQ2koVzBY6o0hu4JndbdwZAvKJk82S7jFNaXOMzQ/exec';
 var START_WEIGHT = 122.8;
 var GOAL_WEIGHT  = 74;
@@ -352,11 +461,16 @@ function parseCSV(text) {
   var rows = json.map(function(r) {
     var d = new Date(r.date);
     return {
-      date:     d,
-      weight:   parseFloat(r.weight),
-      change:   parseFloat(r.change) || 0,
-      exercise: r.exercise || '',
-      memo:     r.memo || ''
+      date:      d,
+      weight:    parseFloat(r.weight),
+      change:    parseFloat(r.change)    || 0,
+      sleep:     r.sleep     || '',
+      water:     r.water     || '',
+      breakfast: r.breakfast || '',
+      lunch:     r.lunch     || '',
+      dinner:    r.dinner    || '',
+      exercise:  r.exercise  || '',
+      memo:      r.memo      || ''
     };
   }).filter(function(r) { return !isNaN(r.weight); });
   return rows.sort(function(a, b) { return a.date - b.date; });
@@ -667,6 +781,137 @@ function resetGout() {
   updateGoutStatus();
 }
 
+// ── 팝업 함수 ──────────────────────────────────────────────
+function openPopup() {
+  var today = new Date();
+  var dateStr = today.getFullYear() + '-'
+    + String(today.getMonth()+1).padStart(2,'0') + '-'
+    + String(today.getDate()).padStart(2,'0');
+  document.getElementById('popup-date').textContent =
+    today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
+  document.getElementById('popup-overlay').dataset.date = dateStr;
+  document.getElementById('popup-msg').textContent = '';
+  document.getElementById('popup-msg').className = 'popup-msg';
+  document.getElementById('popup-save-btn').disabled = false;
+  document.getElementById('popup-save-btn').textContent = '저장하기';
+  document.getElementById('popup-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // 어제 날짜 계산
+  var yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  var ydayStr = yesterday.getFullYear() + '-'
+    + String(yesterday.getMonth()+1).padStart(2,'0') + '-'
+    + String(yesterday.getDate()).padStart(2,'0');
+
+  // allRows에서 어제 데이터 찾기 (이미 불러온 데이터 활용)
+  var ydayData = null;
+  if (typeof allRows !== 'undefined') {
+    for (var i = 0; i < allRows.length; i++) {
+      var r = allRows[i];
+      // date가 Date 객체일 수도 있고 문자열일 수도 있어서 둘 다 처리
+      var rDateStr = (r.date instanceof Date)
+        ? r.date.toISOString().slice(0,10)
+        : String(r.date).slice(0,10);
+      if (rDateStr === ydayStr) { ydayData = r; break; }
+    }
+  }
+
+  var ydayBox  = document.getElementById('yesterday-box');
+  var ydayDate = document.getElementById('yday-date');
+  var ydayGrid = document.getElementById('yday-grid');
+
+  ydayDate.textContent = (yesterday.getMonth()+1) + '월 ' + yesterday.getDate() + '일';
+
+  function val(v) {
+    return v ? v : null;
+  }
+  function item(label, value, full) {
+    var v = val(value);
+    return '<div class="yday-item' + (full ? ' yday-full' : '') + '">'
+      + '<div class="yday-label">' + label + '</div>'
+      + '<div class="yday-val' + (v ? '' : ' empty') + '">' + (v || '기록 없음') + '</div>'
+      + '</div>';
+  }
+
+  if (ydayData) {
+    ydayGrid.innerHTML =
+      item('⚖️ 몸무게', ydayData.weight ? ydayData.weight + 'kg' : '') +
+      item('💤 수면', ydayData.sleep || '') +
+      item('💧 물', ydayData.water || '') +
+      item('🌅 아침', ydayData.breakfast || '', true) +
+      item('☀️ 점심', ydayData.lunch || '', true) +
+      item('🌙 저녁', ydayData.dinner || '', true) +
+      item('🏃 운동', ydayData.exercise || '', true) +
+      item('📝 한마디', ydayData.memo || '', true);
+    ydayBox.style.display = 'block';
+  } else {
+    ydayGrid.innerHTML = '<div style="font-size:13px;color:var(--text-3);grid-column:1/-1;text-align:center;padding:8px 0;">어제 기록이 없어요</div>';
+    ydayBox.style.display = 'block';
+  }
+}
+
+function closePopup() {
+  document.getElementById('popup-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeOnOverlay(e) {
+  if (e.target === document.getElementById('popup-overlay')) closePopup();
+}
+
+async function saveRecord() {
+  var btn = document.getElementById('popup-save-btn');
+  var msg = document.getElementById('popup-msg');
+  var weight = document.getElementById('f-weight').value;
+
+  if (!weight) {
+    msg.textContent = '⚠️ 몸무게는 필수로 입력해주세요!';
+    msg.className = 'popup-msg error';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '저장 중...';
+  msg.textContent = '';
+
+  var payload = {
+    date:      document.getElementById('popup-overlay').dataset.date,
+    weight:    weight,
+    sleep:     document.getElementById('f-sleep').value,
+    water:     document.getElementById('f-water').value,
+    breakfast: document.getElementById('f-breakfast').value,
+    lunch:     document.getElementById('f-lunch').value,
+    dinner:    document.getElementById('f-dinner').value,
+    exercise:  document.getElementById('f-exercise').value,
+    memo:      document.getElementById('f-memo').value
+  };
+
+  try {
+    var res = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    var data = await res.json();
+    if (data.success) {
+      msg.textContent = '✅ 저장 완료! 새로고침하면 반영돼요.';
+      msg.className = 'popup-msg success';
+      btn.textContent = '저장됨 ✓';
+      // 입력창 초기화
+      ['f-weight','f-sleep','f-water','f-breakfast','f-lunch','f-dinner','f-exercise','f-memo']
+        .forEach(function(id){ document.getElementById(id).value = ''; });
+      setTimeout(function(){ closePopup(); location.reload(); }, 1500);
+    } else {
+      throw new Error(data.error || '저장 실패');
+    }
+  } catch(err) {
+    msg.textContent = '❌ 저장 실패: ' + err.message;
+    msg.className = 'popup-msg error';
+    btn.disabled = false;
+    btn.textContent = '저장하기';
+  }
+}
+
 // ── 데이터 로드 ───────────────────────────────────────────
 async function init() {
   try {
@@ -675,6 +920,7 @@ async function init() {
     var text = await res.text();
     var rows = parseCSV(text);
     if (rows.length === 0) throw new Error('데이터가 없어요. Apps Script 배포 상태를 확인해주세요.');
+    allRows = rows; // 팝업에서 어제 데이터 참조용
     document.getElementById('loading').style.display = 'none';
     document.getElementById('main').style.display    = 'block';
     render(rows);
