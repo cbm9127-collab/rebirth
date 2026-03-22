@@ -553,17 +553,28 @@ function getMonthly(rows) {
   var map = {};
   rows.forEach(function(r) {
     var key = r.date.getFullYear() + '-' + r.date.getMonth();
-    if (!map[key]) map[key] = { month: r.date.getMonth(), records: [] };
+    if (!map[key]) map[key] = { year: r.date.getFullYear(), month: r.date.getMonth(), records: [] };
     map[key].records.push(r);
   });
-  return Object.values(map).map(function(m) {
+
+  // 날짜순 정렬
+  var months = Object.values(map).sort(function(a, b) {
+    return (a.year * 12 + a.month) - (b.year * 12 + b.month);
+  });
+
+  return months.map(function(m, idx) {
     var rec = m.records;
+    // 시작값 — 첫 번째 월은 첫 기록, 그 이후는 이전 월 마지막 기록을 시작값으로 사용
+    var startWeight = idx === 0
+      ? rec[0].weight
+      : months[idx - 1].records[months[idx - 1].records.length - 1].weight;
+    var endWeight = rec[rec.length - 1].weight;
     return {
       label: (m.month + 1) + '월',
       days:  rec.length,
-      start: rec[0].weight,
-      end:   rec[rec.length - 1].weight,
-      loss:  +(rec[0].weight - rec[rec.length - 1].weight).toFixed(1)
+      start: startWeight,
+      end:   endWeight,
+      loss:  +(startWeight - endWeight).toFixed(1)
     };
   });
 }
