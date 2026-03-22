@@ -107,6 +107,21 @@
   #error-box { display: none; background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: var(--radius-sm); padding: 16px; color: #7F1D1D; font-size: 13px; line-height: 1.7; }
   #main { display: none; }
 
+  .nutrition-block { margin-top: 14px; }
+  .nutrition-title { font-size: 10px; font-weight: 700; color: var(--text-3); letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 8px; }
+  .nutrition-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .n-badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+  .n-kcal { background: #FEF3C7; color: #92400E; }
+  .n-pro  { background: #D1FAE5; color: #065F46; }
+  .n-carb { background: #DBEAFE; color: #1E40AF; }
+  .n-fat  { background: #FCE7F3; color: #9D174D; }
+  .n-na   { background: #FEE2E2; color: #991B1B; }
+  .n-warn { font-size: 11px; color: #991B1B; font-weight: 600; margin-top: 4px; }
+  .ing-mini { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
+  .ing-mini th { background: rgba(0,0,0,0.03); font-size: 10px; font-weight: 700; color: var(--text-3); text-align: left; padding: 5px 8px; }
+  .ing-mini td { padding: 5px 8px; border-top: 0.5px solid var(--border); color: var(--text); }
+  .ing-mini .total-row td { font-weight: 700; background: var(--teal-light); color: var(--teal-dark); }
+  
   /* ── 모바일 반응형 ────────────────────────────────────── */
   @media (max-width: 540px) {
     /* 래퍼 패딩 줄이기 */
