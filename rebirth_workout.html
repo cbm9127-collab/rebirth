@@ -67,7 +67,9 @@
   .total-time{display:flex;justify-content:flex-end;margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);}
   .total-time-label{font-size:12px;color:var(--text-2);}
   .total-time-val{font-size:14px;font-weight:700;color:var(--teal-dark);margin-left:6px;}
-
+  .yt-btn { display:inline-flex; align-items:center; font-size:10px; font-weight:600; color:#FF0000; background:#FFF0F0; border:1px solid #FFCCCC; border-radius:10px; padding:2px 8px; text-decoration:none; margin-left:6px; white-space:nowrap; flex-shrink:0; }
+  .yt-btn:hover { background:#FFE0E0; }
+  
   @media(max-width:540px){
     .wrapper{padding:1rem 0.875rem 3rem;}
     .week-grid{grid-template-columns:repeat(7,1fr);gap:4px;}
@@ -110,31 +112,32 @@ var DOW_NAMES = ['월','화','수','목','금','토','일'];
 var TODAY_DOW = (new Date().getDay() + 6) % 7; // 0=월~6=일
 
 var PHASES = {
+  {
   phase1: {
     label: 'Phase 1 — 현재~95kg · 덤벨 4kg',
     note: '유산소+근력 균형 루틴으로 체지방 감량에 집중해요.',
     schedule: [
       { dow:0, name:'월요일', focus:'휴식', focusCls:'rest',
-        warmup:'없음 (휴식일)', cooldown:'스트레칭 25분',
-        main:[{ icon:'🚶', text:'저강도 유산소', time:'30분' }] },
-      { dow:1, name:'화요일', focus:'유산소 집중', focusCls:'cardio',
-        warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🏃', text:'실내 유산소', time:'30분' }, { icon:'🚶', text:'걷기 홈트', time:'30분' }] },
-      { dow:2, name:'수요일', focus:'근력', focusCls:'strength',
-        warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분' }, { icon:'🚶', text:'저강도 유산소', time:'30분' }] },
+        morning:'30/30/30 진행', warmup:'없음 (휴식일)', cooldown:'스트레칭 25분',
+        main:[{ icon:'🚶', text:'저강도 유산소', time:'30분', url:'https://youtu.be/sMIatEvTACI?si=koCYWqXsw6YTAspx' }] },
+      { dow:1, name:'화요일', focus:'근력', focusCls:'strength',
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분', url:'https://youtu.be/7X6KRVlfLSk?si=KBOZph_D3mmtQrRP' }, { icon:'🚶', text:'저강도 유산소', time:'30분', url:'https://youtu.be/sMIatEvTACI?si=go03LP256VjGFDUV' }] },
+      { dow:2, name:'수요일', focus:'유산소 집중', focusCls:'cardio',
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏃', text:'실내 유산소', time:'30분', url:'https://youtu.be/77JW8_zt2Rc?si=af9VmJIVyWa1CwHQ' }, { icon:'🚶', text:'걷기 홈트', time:'30분', url:'https://youtu.be/INFvspqgO8M?si=3dTuknGOoQlc7kQV' }] },
       { dow:3, name:'목요일', focus:'근력', focusCls:'strength',
-        warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분' }, { icon:'🚶', text:'저강도 유산소', time:'30분' }] },
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분', url:'https://youtu.be/7X6KRVlfLSk?si=KBOZph_D3mmtQrRP' }, { icon:'🚶', text:'저강도 유산소', time:'30분', url:'https://youtu.be/sMIatEvTACI?si=go03LP256VjGFDUV' }] },
       { dow:4, name:'금요일', focus:'유산소 집중', focusCls:'cardio',
-        warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🏃', text:'실내 유산소', time:'30분' }, { icon:'🚶', text:'걷기 홈트', time:'30분' }] },
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏃', text:'실내 유산소', time:'30분', url:'https://youtu.be/77JW8_zt2Rc?si=af9VmJIVyWa1CwHQ' }, { icon:'🚶', text:'걷기 홈트', time:'30분', url:'https://youtu.be/INFvspqgO8M?si=3dTuknGOoQlc7kQV' }] },
       { dow:5, name:'토요일', focus:'근력', focusCls:'strength',
-        warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분' }, { icon:'🚶', text:'저강도 유산소', time:'30분' }] },
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분', url:'https://youtu.be/7X6KRVlfLSk?si=KBOZph_D3mmtQrRP' }, { icon:'🚶', text:'저강도 유산소', time:'30분', url:'https://youtu.be/sMIatEvTACI?si=go03LP256VjGFDUV' }] },
       { dow:6, name:'일요일', focus:'근력', focusCls:'strength',
-        warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분' }, { icon:'🚶', text:'저강도 유산소', time:'30분' }] }
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분', url:'https://youtu.be/7X6KRVlfLSk?si=KBOZph_D3mmtQrRP' }, { icon:'🚶', text:'저강도 유산소', time:'30분', url:'https://youtu.be/sMIatEvTACI?si=go03LP256VjGFDUV' }] }
     ]
   },
   phase2: {
@@ -142,26 +145,26 @@ var PHASES = {
     note: '부위별 근력 + 고강도 유산소로 체형 만들기에 집중해요.',
     schedule: [
       { dow:0, name:'월요일', focus:'코어+회복', focusCls:'strength',
-        warmup:'30/30/30 진행', cooldown:'스트레칭 25분',
-        main:[{ icon:'🧘', text:'유산소 복근', time:'20분' }] },
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'스트레칭 25분',
+        main:[{ icon:'🧘', text:'유산소 복근', time:'20분', url:'https://youtu.be/Oc8qVYw1W5U?si=bVH9h4qVU2Kk_qo7' }] },
       { dow:1, name:'화요일', focus:'하체 집중', focusCls:'strength',
-        warmup:'30/30/30 진행', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🦵', text:'하체 덤벨', time:'30분' }, { icon:'💪', text:'복근', time:'18분' }] },
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🦵', text:'하체 덤벨', time:'30분', url:'https://youtu.be/AQ7778lCNZY?si=H2C1xCR—ndxAvFz' }, { icon:'💪', text:'복근', time:'18분', url:'https://youtu.be/kETh8T3it4k?si=pzHMiceHgJR05yOg' }] },
       { dow:2, name:'수요일', focus:'전신 유산소', focusCls:'cardio',
-        warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🏃', text:'전신 유산소', time:'28분' }, { icon:'🏃', text:'전신 유산소', time:'31분' }] },
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏃', text:'전신 유산소', time:'28분', url:'https://youtu.be/hesjApxDlj0?si=Kuz73K4UNO4kY2tf' }, { icon:'🏃', text:'전신 유산소', time:'31분', url:'https://youtu.be/yJm9SGS2IhA?si=PeNbSFnfvn8RVuJs' }] },
       { dow:3, name:'목요일', focus:'상체+코어', focusCls:'strength',
-        warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🏋️', text:'덤벨 상체', time:'15분' }, { icon:'🏋️', text:'덤벨 상체', time:'20분' }, { icon:'💪', text:'덤벨 복근', time:'10분' }] },
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 상체', time:'15분', url:'https://youtu.be/9zLD6cSgHdY?si=_aJiW2tP-iInUK4D' }, { icon:'🏋️', text:'덤벨 상체', time:'20분', url:'https://youtu.be/xoWKLNwNva0?si=tw4LTC-jDd2cgyi5' }, { icon:'💪', text:'덤벨 복근', time:'10분', url:'https://youtu.be/gpTYMAxN0CM?si=Ackmwgo2Xy_PYCvs' }] },
       { dow:4, name:'금요일', focus:'전신 근력+유산소', focusCls:'strength',
-        warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🏋️', text:'덤벨 전신 근력', time:'31분' }, { icon:'🏃', text:'전신 유산소', time:'31분' }] },
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 전신 근력', time:'31분', url:'https://youtu.be/ERhNj7i3Bw4?si=LV3oVgR75wq7Kni9' }, { icon:'🏃', text:'전신 유산소', time:'31분', url:'https://youtu.be/4kZHHPH6heY?si=BDUstDI84qbqrCsd' }] },
       { dow:5, name:'토요일', focus:'고강도 유산소', focusCls:'hiit',
-        warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🔥', text:'HIIT 전신', time:'31분' }, { icon:'🏃', text:'유산소', time:'31분' }] },
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🔥', text:'HIIT 유산소', time:'31분', url:'https://youtu.be/77JW8_zt2Rc?si=LX97nH0GzQ3ZEQ0z' }, { icon:'🏃', text:'유산소', time:'31분', url:'https://youtu.be/WPkNDnnCPXU?si=8opU3HKtQKRKZT_f' }] },
       { dow:6, name:'일요일', focus:'하체+유산소', focusCls:'strength',
-        warmup:'30/30/30 진행', cooldown:'쿨다운 스트레칭',
-        main:[{ icon:'🦵', text:'덤벨 하체', time:'19분' }, { icon:'🏃', text:'유산소', time:'31분' }] }
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🦵', text:'덤벨 하체', time:'19분', url:'https://youtu.be/4qqBQ0Xs4nc?si=XeY9eHYlF_El9J1q' }, { icon:'🏃', text:'유산소', time:'31분', url:'https://youtu.be/2W-ir1eZqkU?si=CXWrxTECjfQHgZ0V' }] }
     ]
   }
 };
@@ -190,6 +193,15 @@ function renderWeekGrid() {
   });
 }
 
+var WARMUP_URL   = 'https://youtu.be/7gR50n00rQ4?si=lzdgthjTTz2oZ_qa';
+var COOLDOWN_URL = 'https://youtu.be/t9xO0Q5fa6M?si=lCFQphgB1bnyPouM';
+var STRETCH_URL  = 'https://youtu.be/jw1gxrzRgeU?si=eCXzc16mO16pLHap';
+
+function linkBtn(url) {
+  if (!url) return '';
+  return '<a href="'+url+'" target="_blank" class="yt-btn">▶ 유튜브</a>';
+}
+
 function renderDetail() {
   var sch = PHASES[currentPhase].schedule;
   var d   = sch.find(function(s){ return s.dow === selectedDow; });
@@ -204,8 +216,12 @@ function renderDetail() {
       +'<span class="ws-item-icon">'+item.icon+'</span>'
       +'<span class="ws-item-text">'+item.text+'</span>'
       +'<span class="ws-item-time">'+item.time+'</span>'
+      +linkBtn(item.url)
       +'</div>';
   }).join('');
+
+  var coolUrl  = d.cooldown && d.cooldown.includes('스트레칭 25분') ? STRETCH_URL : COOLDOWN_URL;
+  var coolTime = d.cooldown.match(/(\d+)분/) ? d.cooldown.match(/(\d+)분/)[0] : '25분';
 
   document.getElementById('day-detail').innerHTML =
     '<div class="detail-card">'
@@ -213,23 +229,12 @@ function renderDetail() {
     +  '<div class="detail-day">'+d.name+(d.dow===TODAY_DOW?' <span style="font-size:12px;color:var(--teal);">오늘</span>':'')+'</div>'
     +  '<span class="detail-focus '+d.focusCls+'">'+d.focus+'</span>'
     +'</div>'
-    +(d.warmup !== '없음 (휴식일)' ? '<div class="workout-section"><div class="ws-label">🔥 웜업</div><div class="ws-items"><div class="ws-item"><span class="ws-item-icon">🤸</span><span class="ws-item-text">'+d.warmup+'</span><span class="ws-item-time">10분</span></div></div></div>' : '')
+    +(d.morning ? '<div class="workout-section"><div class="ws-label">🌅 오전 (기상 후)</div><div class="ws-items"><div class="ws-item"><span class="ws-item-icon">⭐</span><span class="ws-item-text">'+d.morning+'</span></div></div></div>' : '')
+    +(d.warmup !== '없음 (휴식일)' ? '<div class="workout-section"><div class="ws-label">🔥 웜업</div><div class="ws-items"><div class="ws-item"><span class="ws-item-icon">🤸</span><span class="ws-item-text">'+d.warmup+'</span><span class="ws-item-time">10분</span>'+linkBtn(WARMUP_URL)+'</div></div></div>' : '')
     +'<div class="workout-section"><div class="ws-label">💪 본 운동 (저녁)</div><div class="ws-items">'+mainHTML+'</div></div>'
-    +'<div class="workout-section"><div class="ws-label">🧊 마무리</div><div class="ws-items"><div class="ws-item"><span class="ws-item-icon">🧘</span><span class="ws-item-text">'+d.cooldown+'</span><span class="ws-item-time">'+(d.cooldown.match(/(\d+)분/) ? d.cooldown.match(/(\d+)분/)[0] : '25분')+'</span></div></div></div>'
+    +'<div class="workout-section"><div class="ws-label">🧊 마무리</div><div class="ws-items"><div class="ws-item"><span class="ws-item-icon">🧘</span><span class="ws-item-text">'+d.cooldown+'</span><span class="ws-item-time">'+coolTime+'</span>'+linkBtn(coolUrl)+'</div></div></div>'
     +'<div class="total-time"><span class="total-time-label">총 예상 시간</span><span class="total-time-val">약 '+totalMin+'분</span></div>'
     +'</div>';
-}
-
-function setPhase(phase, btn) {
-  currentPhase = phase;
-  document.querySelectorAll('.phase-tab').forEach(function(b){ b.classList.remove('active'); });
-  btn.classList.add('active');
-  var p = PHASES[phase];
-  var banner = document.getElementById('current-banner');
-  banner.textContent = '📌 ' + p.label + ' — ' + p.note;
-  banner.className = 'current-banner ' + (phase === 'phase1' ? 'p1' : 'p2');
-  renderWeekGrid();
-  renderDetail();
 }
 
 // 초기 로드 — API에서 최신 체중 가져와서 Phase 자동 설정
