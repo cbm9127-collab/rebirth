@@ -69,7 +69,7 @@
   .total-time-val{font-size:14px;font-weight:700;color:var(--teal-dark);margin-left:6px;}
   .yt-btn { display:inline-flex; align-items:center; font-size:10px; font-weight:600; color:#FF0000; background:#FFF0F0; border:1px solid #FFCCCC; border-radius:10px; padding:2px 8px; text-decoration:none; margin-left:6px; white-space:nowrap; flex-shrink:0; }
   .yt-btn:hover { background:#FFE0E0; }
-  
+
   @media(max-width:540px){
     .wrapper{padding:1rem 0.875rem 3rem;}
     .week-grid{grid-template-columns:repeat(7,1fr);gap:4px;}
@@ -191,6 +191,15 @@ function renderWeekGrid() {
     btn.onclick = (function(dow){ return function(){ selectedDow = dow; renderWeekGrid(); renderDetail(); }; })(d.dow);
     grid.appendChild(btn);
   });
+}
+
+var WARMUP_URL   = 'https://youtu.be/7gR50n00rQ4?si=lzdgthjTTz2oZ_qa';
+var COOLDOWN_URL = 'https://youtu.be/t9xO0Q5fa6M?si=lCFQphgB1bnyPouM';
+var STRETCH_URL  = 'https://youtu.be/jw1gxrzRgeU?si=eCXzc16mO16pLHap';
+
+function linkBtn(url) {
+  if (!url) return '';
+  return '<a href="'+url+'" target="_blank" class="yt-btn">▶ 유튜브</a>';
 }
 
 var WARMUP_URL   = 'https://youtu.be/7gR50n00rQ4?si=lzdgthjTTz2oZ_qa';
