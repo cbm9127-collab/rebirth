@@ -137,7 +137,9 @@ function cardHTML(r) {
   var hasMemo = !!r.memo;
   var cls     = hasEx && hasMemo ? 'both' : hasEx ? 'exercise-only' : 'memo-only';
 
-  var chg    = r.change;
+  // 스프레드시트 change값 대신 이전 행과 직접 비교
+  var rIdx   = rows.indexOf(r);
+  var chg    = rIdx > 0 ? parseFloat((r.weight - rows[rIdx-1].weight).toFixed(1)) : 0;
   var chgStr = chg < 0
     ? '<span class="change-neg">' + chg.toFixed(1) + 'kg</span>'
     : chg > 0
