@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🥗 Re-birth 식단 레시피 & 영양 성분표</title>
+<style>
+  :root {
+    --teal:#1D9E75;--teal-dark:#0F6E56;--teal-light:#E1F5EE;
+    --amber:#BA7517;--amber-light:#FAEEDA;
+    --blue:#185FA5;--blue-light:#EBF4FD;
+    --bg:#FAFAF8;--surface:#F3F2EE;--white:#fff;
+    --border:rgba(0,0,0,0.08);--text:#1C1C1A;--text-2:#6B6B67;--text-3:#9E9E9A;
+    --radius:12px;--radius-sm:8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  .wrapper{max-width:800px;margin:0 auto;padding:1.5rem 1.25rem 4rem;}
+
+  /* 헤더 */
+  .header{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap;}
+  .back-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text-2);background:var(--surface);border:0.5px solid var(--border);padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;text-decoration:none;transition:background 0.15s;}
+  .back-btn:hover{background:var(--teal-light);color:var(--teal-dark);}
+  .header-title{font-size:20px;font-weight:600;letter-spacing:-0.3px;}
+  .header-sub{font-size:12px;color:var(--text-3);margin-top:3px;}
+
+  /* 목표 배너 */
+  .goal-banner{background:var(--teal-light);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:1.25rem;font-size:13px;color:var(--teal-dark);font-weight:500;line-height:1.6;}
+
+  /* 탭 */
+  .tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap;}
+  .tab{font-size:12px;font-weight:600;padding:7px 14px;border-radius:20px;border:0.5px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:all 0.15s;}
+  .tab.active{background:var(--teal-dark);color:white;border-color:var(--teal-dark);}
+
+  /* 섹션 타이틀 */
+  .sec-title{font-size:13px;font-weight:700;color:var(--text);margin:1rem 0 8px;padding-bottom:6px;border-bottom:1.5px solid var(--teal-light);}
+
+  /* 메인 카드 */
+  .meal-card{background:var(--white);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;}
+  .meal-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--surface);cursor:pointer;user-select:none;}
+  .meal-header:hover{background:#EAF5F0;}
+  .meal-name{font-size:14px;font-weight:700;color:var(--text);}
+  .meal-cond{font-size:11px;color:var(--text-3);margin-top:3px;}
+  .meal-arrow{font-size:12px;color:var(--text-3);transition:transform 0.2s;flex-shrink:0;}
+  .meal-arrow.open{transform:rotate(180deg);}
+  .meal-body{display:none;padding:16px;}
+  .meal-body.open{display:block;}
+
+  /* 영양 뱃지 */
+  .n-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+  .n-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;}
+  .n-kcal{background:#FEF3C7;color:#92400E;}
+  .n-pro {background:#D1FAE5;color:#065F46;}
+  .n-carb{background:#DBEAFE;color:#1E40AF;}
+  .n-fat {background:#FCE7F3;color:#9D174D;}
+  .n-na  {background:#FEE2E2;color:#991B1B;}
+  .n-warn{font-size:11px;color:#991B1B;font-weight:600;margin-bottom:8px;}
+
+  /* 성분 테이블 */
+  .ing-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px;}
+  .ing-table th{background:rgba(0,0,0,0.03);font-size:10px;font-weight:700;color:var(--text-3);text-align:left;padding:6px 10px;}
+  .ing-table td{padding:6px 10px;border-top:0.5px solid var(--border);color:var(--text);}
+  .ing-table .total-row td{font-weight:700;background:var(--teal-light);color:var(--teal-dark);}
+
+  /* 레시피 블록 */
+  .recipe-block{margin-top:4px;}
+  .block{margin-bottom:12px;}
+  .block-label{font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:0.7px;text-transform:uppercase;margin-bottom:6px;}
+  .block-content{font-size:13px;color:var(--text-2);line-height:1.8;white-space:pre-wrap;background:var(--surface);border-radius:var(--radius-sm);padding:10px 12px;}
+  .block-content.steps{border-left:2px solid var(--teal-light);background:transparent;padding-left:12px;}
+
+  /* 구분선 */
+  .divider{height:1px;background:var(--border);margin:14px 0;}
+
+  /* 영양제 */
+  .supp-card{background:var(--white);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;}
+  .supp-name{font-size:14px;font-weight:700;color:var(--text);}
+  .supp-timing{font-size:11px;color:var(--teal-dark);font-weight:600;background:var(--teal-light);padding:2px 8px;border-radius:12px;margin-top:4px;display:inline-block;}
+  .supp-note{font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.5;}
+  .supp-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;background:#FEE2E2;color:#991B1B;}
+  .supp-badge.required{background:var(--teal-light);color:var(--teal-dark);}
+
+  @media(max-width:540px){
+    .wrapper{padding:1rem 0.875rem 3rem;}
+    .header-title{font-size:17px;}
+    .ing-table{font-size:11px;}
+    .ing-table th,.ing-table td{padding:5px 7px;}
+    .meal-name{font-size:13px;}
+    .tabs{gap:4px;}
+    .tab{font-size:11px;padding:6px 11px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <a class="back-btn" href="rebirth_dashboard.html">← 대시보드로</a>
+    <div>
+      <div class="header-title">🥗 식단 레시피 &amp; 영양 성분표</div>
+      <div class="header-sub">Re-birth 프로젝트 전용 식단 모음</div>
+    </div>
+  </div>
+
+  <div class="goal-banner">
+    🎯 일일 목표: 칼로리 <strong>1,150kcal</strong> | 단백질 <strong>94g</strong> | 순탄수 <strong>60.5g</strong> | 나트륨 <strong>1,086mg 이하</strong>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('morning',this)">🌅 아침</button>
+    <button class="tab" onclick="setTab('lunch',this)">🍱 점심</button>
+    <button class="tab" onclick="setTab('dinner',this)">🌙 저녁</button>
+    <button class="tab" onclick="setTab('prep',this)">🥕 사전준비</button>
+    <button class="tab" onclick="setTab('supp',this)">💊 영양제</button>
+  </div>
+
+  <div id="tab-content"></div>
+</div>
+
+<script>
+// ── 영양 성분 데이터 ──────────────────────────────────────
+var NUTRITION = {
+  '아침 식단 (유산소 O)': {
+    total: { kcal:234, pro:35.2, carb:26, fat:2.6, na:141 },
+    items: [
+      { food:'더단백 초코/카라멜', amount:'1병(250ml)', kcal:105, pro:20, carb:6, fat:1, na:50 },
+      { food:'요프로 플레인', amount:'1개(150g)', kcal:84, pro:15, carb:8, fat:1.5, na:85 },
+      { food:'사과 1/2개 or 키위 1개', amount:'80~100g', kcal:40, pro:0.2, carb:11, fat:0.1, na:1 },
+      { food:'유산균 (락토핏)', amount:'1포', kcal:5, pro:0, carb:1, fat:0, na:5 }
+    ], warn:''
+  },
+  '아침 식단 (유산소 X)': {
+    total: { kcal:150, pro:20.2, carb:18, fat:1.1, na:56 },
+    items: [
+      { food:'더단백 초코/카라멜', amount:'1병(250ml)', kcal:105, pro:20, carb:6, fat:1, na:50 },
+      { food:'사과 1/2개 or 키위 1개', amount:'80~100g', kcal:40, pro:0.2, carb:11, fat:0.1, na:1 },
+      { food:'유산균 (락토핏)', amount:'1포', kcal:5, pro:0, carb:1, fat:0, na:5 }
+    ], warn:''
+  },
+  '워터-워싱 참치 에그 또띠야 랩': {
+    total: { kcal:500, pro:38.4, carb:32.7, fat:22.2, na:775 },
+    items: [
+      { food:'통밀 또띠야', amount:'1장', kcal:120, pro:3, carb:22, fat:2, na:180 },
+      { food:'워터워싱 참치', amount:'100g', kcal:90, pro:18, carb:0, fat:1, na:180 },
+      { food:'계란 스크램블', amount:'2개', kcal:150, pro:12.4, carb:1.2, fat:10, na:130 },
+      { food:'청상추·양배추', amount:'30g+50g', kcal:20, pro:1, carb:4, fat:0.2, na:15 },
+      { food:'당근라페', amount:'30g', kcal:30, pro:0.3, carb:3, fat:1.5, na:20 },
+      { food:'저염치즈', amount:'1장', kcal:45, pro:3.5, carb:0.5, fat:3.5, na:120 },
+      { food:'저당마요+스리라차', amount:'15ml', kcal:45, pro:0.2, carb:2, fat:4, na:130 }
+    ], warn:''
+  },
+  '닭가슴살 소시지 키토김밥': {
+    total: { kcal:535, pro:40.1, carb:17, fat:29.9, na:790 },
+    items: [
+      { food:'굳닭 소시지 (데침)', amount:'1팩(2개)', kcal:200, pro:22, carb:4, fat:8, na:400 },
+      { food:'계란+양배추 지단', amount:'2개+100g', kcal:175, pro:13.4, carb:6, fat:10.2, na:140 },
+      { food:'구운 김', amount:'2장', kcal:10, pro:0.5, carb:0.5, fat:0.2, na:20 },
+      { food:'저염치즈', amount:'1장', kcal:45, pro:3.5, carb:0.5, fat:3.5, na:120 },
+      { food:'당근라페', amount:'50g', kcal:50, pro:0.5, carb:5, fat:2.5, na:30 },
+      { food:'저당마요+스리라차+참기름', amount:'소스류', kcal:55, pro:0.2, carb:1, fat:5.5, na:80 }
+    ], warn:''
+  },
+  '두부 듬뿍 라페 유부초밥': {
+    total: { kcal:635, pro:36.9, carb:44.2, fat:31, na:925 },
+    items: [
+      { food:'두부 (수분 제거)', amount:'1모 300g', kcal:195, pro:18, carb:4, fat:10, na:15 },
+      { food:'유부초밥 키트 유부피', amount:'12장', kcal:180, pro:5, carb:22, fat:8, na:350 },
+      { food:'계란 스크램블', amount:'2개', kcal:150, pro:12.4, carb:1.2, fat:10, na:130 },
+      { food:'당근라페', amount:'50g', kcal:50, pro:0.5, carb:5, fat:2.5, na:30 },
+      { food:'조미액', amount:'1/2팩', kcal:60, pro:1, carb:12, fat:0.5, na:400 }
+    ], warn:'⚠️ 나트륨 최고 구간 — 조미액 반드시 1/2팩만'
+  },
+  '양배추 치즈 햄 계란말이': {
+    total: { kcal:436, pro:39.9, carb:8.1, fat:26.5, na:404 },
+    items: [
+      { food:'계란', amount:'3개 150g', kcal:225, pro:18.6, carb:1.8, fat:15, na:195 },
+      { food:'닭가슴살 햄 (데침)', amount:'75g', kcal:79, pro:16.5, carb:0.8, fat:0.9, na:71 },
+      { food:'양배추', amount:'100g', kcal:25, pro:1.3, carb:5, fat:0.1, na:18 },
+      { food:'저염치즈', amount:'1장 20g', kcal:45, pro:3.5, carb:0.5, fat:3.5, na:120 },
+      { food:'올리브오일', amount:'7ml', kcal:62, pro:0, carb:0, fat:7, na:0 }
+    ], warn:''
+  },
+  '두부면 까르보나라': {
+    total: { kcal:564, pro:57.5, carb:8.7, fat:32.3, na:540 },
+    items: [
+      { food:'두부면', amount:'200g', kcal:175, pro:16, carb:3.9, fat:10.5, na:0 },
+      { food:'닭가슴살 햄 (데침)', amount:'100g', kcal:105, pro:22, carb:1, fat:1.2, na:95 },
+      { food:'계란 전란', amount:'2개 100g', kcal:150, pro:12.4, carb:1.2, fat:10, na:130 },
+      { food:'파마산 치즈', amount:'20g', kcal:79, pro:6.6, carb:0.6, fat:5.6, na:310 },
+      { food:'마늘·올리브오일', amount:'10g+5ml', kcal:55, pro:0.5, carb:2, fat:5, na:5 }
+    ], warn:''
+  },
+  '두부 부침 정식': {
+    total: { kcal:605, pro:32.9, carb:34, fat:34.5, na:575 },
+    items: [
+      { food:'닭가슴살 볶음밥', amount:'1/2팩 100g', kcal:190, pro:5, carb:30, fat:5, na:300 },
+      { food:'두부', amount:'1/2모 150g', kcal:105, pro:9.5, carb:2, fat:5.5, na:10 },
+      { food:'계란후라이', amount:'2개', kcal:150, pro:12.4, carb:1.2, fat:10, na:130 },
+      { food:'닭가슴살 소시지', amount:'1/2팩', kcal:100, pro:11, carb:2, fat:4, na:200 },
+      { food:'올리브오일', amount:'15ml', kcal:135, pro:0, carb:0, fat:15, na:0 }
+    ], warn:'수·금은 계란 3개 기준 (680kcal)'
+  },
+  '당근라페': {
+    total: { kcal:324, pro:3.7, carb:38.6, fat:18.9, na:130 },
+    items: [
+      { food:'당근채', amount:'400g', kcal:144, pro:3.2, carb:33.6, fat:0.4, na:120 },
+      { food:'올리브유', amount:'20cc', kcal:160, pro:0, carb:0, fat:18, na:0 },
+      { food:'레몬즙+머스타드+알룰로스', amount:'합계', kcal:20, pro:0.5, carb:5, fat:0.5, na:10 }
+    ], warn:'1회 30~50g 기준 약 25~40kcal'
+  }
+};
+
+// ── 레시피 데이터 ─────────────────────────────────────────
+var RECIPES = [
+  {
+    cat:'prep', name:'당근라페', cond:'400g 대량 생산 · 사전 준비',
+    ingredients:`주재료: 당근채 400g\n소스: 올리브유 20cc, 레몬즙 40cc, 홀그레인 머스타드 10cc, 알룰로스 5cc, 후추 1cc`,
+    steps:`1. 채 썬 당근을 볼에 담습니다.\n2. 홀그레인 머스타드 10cc, 식초 30cc, 올리브유 20cc, 올리고당(또는 액상 알룰로스) 5cc, 후추 1cc를 넣고 2~3분 버무립니다.\n3. 밀폐용기에 담아 냉장 보관합니다.\n   ※ 최소 3시간 숙성 후 섭취`
+  },
+  {
+    cat:'morning', name:'아침 식단 (유산소 O)', cond:'유산소 진행한 날',
+    ingredients:`사과 1/2개 (or 키위 1개)\n단백질 음료 1병\n그릭요거트 1개\n유산균 1포`,
+    steps:`조리 없이 그대로 섭취합니다.`
+  },
+  {
+    cat:'morning', name:'아침 식단 (유산소 X)', cond:'유산소 쉬는 날',
+    ingredients:`사과 1/2개 (or 키위 1개)\n단백질 음료 1병\n유산균 1포`,
+    steps:`조리 없이 그대로 섭취합니다.`
+  },
+  {
+    cat:'lunch', name:'워터-워싱 참치 에그 또띠야 랩', cond:'화요일',
+    ingredients:`베이스: 통밀 또띠야 1장\n단백질: 참치 100g, 계란 2개, 저염 치즈 1장\n야채: 청상추 2~3장, 생양배추 50g, 당근 라페 30g\n소스: 저당 마요네즈 10cc, 스리라차 5cc`,
+    steps:`전처리: 참치 캔에 뜨거운 물을 부어 기름·나트륨·퓨린을 30% 이상 씻어낸(워터-워싱) 후, 수분을 100% 압착합니다.\n소스 배합: 수분을 제거한 참치에 저당 마요네즈 10cc, 스리라차 5cc를 버무립니다.\n조리: 약불로 달군 팬에 올리브오일 5cc를 두르고 계란 2개를 80%만 익혀 부드러운 스크램블 에그를 만듭니다.\n조립: 통밀 또띠야 → 청상추(방수막) → 저염 치즈 1장 → 생양배추+당근 라페 → 참치 마요 베이스 → 스크램블 에그 순으로 쌓아 올립니다.`
+  },
+  {
+    cat:'lunch', name:'닭가슴살 소시지 키토김밥', cond:'수요일, 금요일',
+    ingredients:`주재료: 김밥용 김 2장, 굳닭 닭가슴살 소시지 1팩(2개), 계란 2개, 생양배추 100g, 저염 슬라이스 치즈 1장\n소스: 저당 마요네즈 5cc, 스리라차 2.5cc, 올리브오일 10cc, 참기름 5cc`,
+    steps:`전처리(통풍 방어): 소시지에 칼집을 낸 후 끓는 물에 2~3분 완전히 데쳐 첨가물·퓨린을 제거합니다. 물기를 닦고 껍질도 제거합니다.\n지단 베이스: 양배추 100g과 계란 2개를 섞어 올리브오일 두른 팬에 중약불로 도톰하게 부쳐냅니다.\n조립: 김 2장 겹쳐 깔기 → 양배추 지단 → 치즈 1장 → 데친 소시지 2개 순으로 올립니다.\n마무리: 공기가 들어가지 않게 단단히 말고, 겉면에 참기름 5cc를 발라 수분 증발을 막습니다.`
+  },
+  {
+    cat:'lunch', name:'두부 듬뿍 라페 유부초밥', cond:'목요일, 토요일',
+    ingredients:`주재료: 유부초밥 키트 중 1인분 유부피, 두부 1모(약 300g), 계란 2개, 당근 라페 50g\n조미: 유부 조미액 ½팩만 사용 (나머지 전량 폐기)\n기타: 김 2장`,
+    steps:`수분 제거(핵심): 두부를 키친타올로 닦은 뒤, 기름 없는 마른 팬에 약불로 볶아 수분을 100% 날려 소보로(모래알) 상태로 만듭니다.\n스크램블: 계란 2개를 스크램블하여 준비합니다.\n배합: 볶은 두부 + 스크램블 에그 + 당근 라페를 볼에 넣고, 조미액 1팩 중 정확히 절반(50%)만 뿌려 섞습니다.\n충전: 유부피의 물기를 약 20%만 남기고 짜낸 뒤, 속재료를 단단하게 채워 넣습니다.`
+  },
+  {
+    cat:'lunch', name:'양배추 치즈 햄 계란말이', cond:'일요일',
+    ingredients:`계란 150g (약 3개), 닭가슴살 햄(슬라이스) 3장, 양배추(가늘게 채썰기) 100g, 저염 슬라이스 치즈 1장\n소스: 올리브오일 7cc, 후추 한 꼬집\n※ 소금 간 절대 금지`,
+    steps:`전처리(통풍 필수): 닭가슴살 햄 3장을 끓는 물에 1분간 데쳐 나트륨·퓨린 제거 후 잘게 다집니다.\n양배추 수분 제거(핵심): 채 썬 양배추 100g을 마른 팬에 약불로 1~2분 볶아 수분을 완전히 날립니다.\n계란물 배합: 계란 3개에 후추를 넣어 풀고, 식힌 양배추와 다진 햄을 넣어 배합합니다.\n1차 부침: 팬에 올리브오일 7cc를 두르고 중약불로 예열 후 계란물을 부어 치즈를 중앙에 올립니다.\n말기: 치즈가 살짝 녹으면 돌돌 말아 이음매가 아래로 가게 눌러 완성합니다.`
+  },
+  {
+    cat:'lunch', name:'두부면 까르보나라', cond:'월요일',
+    ingredients:`두부면 200g, 닭가슴살 햄 4장, 계란 2개, 파마산 치즈 20g\n소스: 올리브유 5cc, 마늘 2개(편 썰기) 10g, 후추 한 꼬집`,
+    steps:`사전 준비: 볼에 계란 2개를 풀고 파마산 치즈 10g과 후추를 미리 섞어둡니다. 닭가슴살 햄은 끓는 물에 1분 데쳐 한 입 크기로 잘라둡니다.\n두부면 물기 제거: 체망에 넣고 찬물로 헹군 뒤 손으로 꽉 짜 수분을 최대한 제거합니다.\n마늘 기름 & 햄 볶기: 팬에 올리브유와 편 썬 마늘을 약불로 노릇해질 때까지 볶고 햄을 중불에서 30초 볶습니다.\n두부면 투입 & 불 끄기(핵심): 두부면을 넣고 30초 볶은 뒤 반드시 불을 끄고 10~15초 식힙니다.\n소스 코팅: 불 꺼진 상태에서 계란+치즈 소스를 붓고 빠르게 버무려 완성합니다.`
+  },
+  {
+    cat:'dinner', name:'두부 부침 정식', cond:'매일 저녁 (수·금은 계란 3개)',
+    ingredients:`밥: 미트리 볶음밥 1/2팩 (100g) — 나머지 반은 밀봉 냉동\n두부: 두부 1/2모 (150g)\n단백질: 계란 2개, 닭가슴살 소시지 1/2팩\n오일: 올리브유 15cc\n※ 소금 간 절대 금지`,
+    steps:`닭가슴살 데치기: 소시지 1/2팩을 뜨거운 물에 담갔다 꺼내어 껍질을 벗겨줍니다.\n두부 굽기[중불]: 팬에 올리브오일을 두르고 두부를 도톰하게 썰어 앞뒤로 노릇하게 굽습니다.\n계란 후라이[중약불]: 두부 옆 공간에 계란 2개를 취향대로 익힙니다.\n볶음밥 데우기[중불]: 볶음밥 반 팩을 2분간 볶습니다.\n플레이팅: 접시에 볶음밥 + 구운 두부 + 계란 + 데친 소시지를 정식처럼 담아냅니다.`
+  }
+];
+
+var SUPP = [
+  { name:'유산균 (락토핏)', timing:'기상 직후 공복', required:true, note:'유산균 200억 CFU / 장 건강 유지' },
+  { name:'비맥스 정 골드', timing:'점심 식후', required:true, note:'비타민B1·B2·B6·B12 / 니아신·판토텐산 / 점심 식후 복용 필수' },
+  { name:'콜히친 (비상약)', timing:'통풍 증상 즉시', required:false, note:'통풍 발작 시 즉시 복용 + 물 500ml / 열감·통증 감지 시' }
+];
+
+// ── 카드 HTML 생성 ─────────────────────────────────────────
+function nutritionTableHTML(n) {
+  if (!n) return '';
+  var rows = n.items.map(function(it){
+    return '<tr><td>'+it.food+'</td><td>'+it.amount+'</td><td>'+it.kcal+'</td><td>'+it.pro+'</td><td>'+it.carb+'</td><td>'+it.fat+'</td><td>'+it.na+'</td></tr>';
+  }).join('');
+  return '<div class="n-badges">'
+    + '<span class="n-badge n-kcal">'+n.total.kcal+'kcal</span>'
+    + '<span class="n-badge n-pro">단백질 '+n.total.pro+'g</span>'
+    + '<span class="n-badge n-carb">탄수 '+n.total.carb+'g</span>'
+    + '<span class="n-badge n-fat">지방 '+n.total.fat+'g</span>'
+    + '<span class="n-badge n-na">나트륨 '+n.total.na+'mg</span>'
+    + '</div>'
+    + (n.warn ? '<div class="n-warn">'+n.warn+'</div>' : '')
+    + '<table class="ing-table">'
+    + '<thead><tr><th>식품</th><th>섭취량</th><th>칼로리</th><th>단백질</th><th>탄수</th><th>지방</th><th>나트륨</th></tr></thead>'
+    + '<tbody>'+rows
+    + '<tr class="total-row"><td colspan="2">합계</td><td>'+n.total.kcal+'</td><td>'+n.total.pro+'</td><td>'+n.total.carb+'</td><td>'+n.total.fat+'</td><td>'+n.total.na+'</td></tr>'
+    + '</tbody></table>';
+}
+
+function cardHTML(r, idx, defaultOpen) {
+  var n = NUTRITION[r.name];
+  var bodyClass = defaultOpen ? 'meal-body open' : 'meal-body';
+  var arrowClass = defaultOpen ? 'meal-arrow open' : 'meal-arrow';
+  return '<div class="meal-card">'
+    + '<div class="meal-header" onclick="toggle(\'b'+idx+'\')">'
+    +   '<div><div class="meal-name">'+r.name+'</div>'+(r.cond?'<div class="meal-cond">'+r.cond+'</div>':'')+'</div>'
+    +   '<span class="meal-arrow" id="arr'+idx+'">▼</span>'
+    + '</div>'
+    + '<div class="'+bodyClass+'" id="b'+idx+'">'
+    +   (n ? nutritionTableHTML(n) : '')
+    +   '<div class="divider"></div>'
+    +   '<div class="recipe-block">'
+    +     '<div class="block"><div class="block-label">🛒 재료</div><div class="block-content">'+r.ingredients+'</div></div>'
+    +     '<div class="block"><div class="block-label">👨‍🍳 조리법</div><div class="block-content steps">'+r.steps+'</div></div>'
+    +   '</div>'
+    + '</div>'
+    + '</div>';
+  // arrow 초기화
+}
+
+function toggle(id) {
+  var body = document.getElementById(id);
+  var idx  = id.replace('b','');
+  var arr  = document.getElementById('arr'+idx);
+  var open = body.classList.toggle('open');
+  if (arr) arr.classList.toggle('open', open);
+}
+
+// ── 탭 렌더 ───────────────────────────────────────────────
+function setTab(cat, btn) {
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+
+  var el = document.getElementById('tab-content');
+  var filtered = RECIPES.filter(function(r){ return r.cat === cat; });
+  var html = '';
+
+  // 아침/저녁은 기본 펼침, 점심/사전준비는 기본 접힘
+  var defaultOpen = (cat === 'morning' || cat === 'dinner');
+
+  if (cat === 'supp') {
+    SUPP.forEach(function(s){
+      html += '<div class="supp-card">'
+        +'<div><div class="supp-name">'+s.name+'</div>'
+        +'<div class="supp-timing">'+s.timing+'</div>'
+        +'<div class="supp-note">'+s.note+'</div></div>'
+        +'<span class="supp-badge'+(s.required?' required':'')+'">'+( s.required ? '필수' : '비상약')+'</span>'
+        +'</div>';
+    });
+  } else {
+    filtered.forEach(function(r, i){
+      html += cardHTML(r, cat+i, defaultOpen);
+    });
+  }
+
+  el.innerHTML = html;
+}
+
+// 초기 렌더
+setTab('morning', document.querySelector('.tab.active'));
+</script>
+</body>
+</html>
