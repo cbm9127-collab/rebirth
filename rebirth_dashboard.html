@@ -480,7 +480,11 @@
 
         <div class="popup-divider">🏃 운동</div>
         <div class="field-group">
-          <textarea class="field-input" id="f-exercise" placeholder="오늘 한 운동을 입력해주세요"></textarea>
+          <div style="font-size:11px;color:var(--text-3);margin-bottom:6px;" id="exercise-phase-label"></div>
+          <select class="field-input" id="f-exercise" onchange="onExerciseSelect()">
+            <option value="">선택하세요</option>
+          </select>
+          <textarea class="field-input" id="f-exercise-custom" placeholder="직접 입력" style="display:none;margin-top:6px;min-height:50px;"></textarea>
         </div>
 
         <div class="popup-divider">📝 오늘의 한마디</div>
@@ -939,7 +943,7 @@ async function saveRecord() {
       msg.textContent = cheers[Math.floor(Math.random() * cheers.length)];
       msg.className = 'popup-msg success';
       btn.textContent = '저장됨 ✓';
-      ['f-weight','f-breakfast-custom','f-lunch-custom','f-dinner-custom','f-exercise','f-memo']
+      ['f-weight','f-breakfast-custom','f-lunch-custom','f-dinner-custom','f-exercise-custom','f-memo']
         .forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       ['f-breakfast','f-lunch','f-dinner'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       var ns=document.getElementById('nutrition-summary'); if(ns) ns.style.display='none';
