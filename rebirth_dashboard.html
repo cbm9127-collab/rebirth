@@ -784,7 +784,125 @@ function openPopup() {
   document.body.style.overflow = 'hidden';
   fillExerciseDropdown();
 }
+  
+// ── Phase별 운동 루틴 ─────────────────────────────────────
+var WORKOUT = {
+  phase1: {
+    label: 'Phase 1 (현재~95kg) — 덤벨 4kg',
+    days: {
+      0: { name:'월 (휴식)', items:['저강도 유산소 30분'] },
+      1: { name:'화 (유산소 집중)', items:['실내 유산소 30분 + 걷기 홈트 30분'] },
+      2: { name:'수 (근력)', items:['덤벨 전신 운동 30분 + 저강도 유산소 30분'] },
+      3: { name:'목 (근력)', items:['덤벨 전신 운동 30분 + 저강도 유산소 30분'] },
+      4: { name:'금 (유산소 집중)', items:['실내 유산소 30분 + 걷기 홈트 30분'] },
+      5: { name:'토 (근력)', items:['덤벨 전신 운동 30분 + 저강도 유산소 30분'] },
+      6: { name:'일 (근력)', items:['덤벨 전신 운동 30분 + 저강도 유산소 30분'] }
+    }
+  },
+  phase2: {
+    label: 'Phase 2 (94.9~85kg) — 덤벨 6kg',
+    days: {
+      0: { name:'월 (코어+회복)', items:['유산소 복근 20분'] },
+      1: { name:'화 (하체 집중)', items:['하체 덤벨 30분 + 복근 18분'] },
+      2: { name:'수 (전신 유산소)', items:['전신 유산소 28분 + 전신 유산소 31분'] },
+      3: { name:'목 (상체+코어)', items:['덤벨 상체 15분 + 덤벨 상체 20분 + 덤벨 복근 10분'] },
+      4: { name:'금 (전신 근력+유산소)', items:['덤벨 전신 근력 31분 + 전신 유산소 31분'] },
+      5: { name:'토 (고강도 유산소)', items:['HIIT 전신 31분 + 유산소 31분'] },
+      6: { name:'일 (하체+유산소)', items:['덤벨 하체 19분 + 유산소 31분'] }
+    }
+  }
+};
 
+function getPhase(weight) {
+  return (weight && weight < 95) ? 'phase2' : 'phase1';
+}
+
+function fillExerciseDropdown() {
+  var latestWeight = allRows.length > 0 ? allRows[allRows.length-1].weight : 100;
+  var phase = getPhase(latestWeight);
+  var phaseData = WORKOUT[phase];
+  var dow = (new Date().getDay() + 6) % 7;
+  var dayData = phaseData.days[dow];
+  var label = document.getElementById('exercise-phase-label');
+  if (label) label.textContent = '📌 ' + phaseData.label + ' · ' + dayData.name;
+  var sel = document.getElementById('f-exercise');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">선택하세요</option>';
+  dayData.items.forEach(function(item) {
+    var opt = document.createElement('option');
+    opt.value = item; opt.textContent = item;
+    sel.appendChild(opt);
+  });
+  var optC = document.createElement('option');
+  optC.value = '직접입력'; optC.textContent = '직접 입력';
+  sel.appendChild(optC);
+  if (dayData.items.length > 0) sel.value = dayData.items[0];
+}
+
+function onExerciseSelect() {
+  var sel = document.getElementById('f-exercise');
+  var c   = document.getElementById('f-exercise-custom');
+  if (sel && c) c.style.display = sel.value === '직접입력' ? 'block' : 'none';
+}
+
+// ── 영양 성분 데이터 ──────────────────────────────────────
+var NUTRITION = {
+  '더단백+요프로+사과+유산균 (30/30/30)': { kcal:234, pro:35.2, carb:26, fat:2.6, na:141 },
+  '더단백+사과+유산균 (기본)':             { kcal:150, pro:20.2, carb:18, fat:1.1, na:56 },
+  '두부면 까르보나라 [월]':                { kcal:564, pro:57.5, carb:8.7, fat:32.3, na:540 },
+  '참치 에그 또띠야 랩 [화]':              { kcal:500, pro:38.4, carb:32.7, fat:22.2, na:775 },
+  '닭가슴살 소시지 키토김밥 [수·금]':      { kcal:535, pro:40.1, carb:17, fat:29.9, na:790 },
+  '두부 유부초밥 [목·토]':                 { kcal:635, pro:36.9, carb:44.2, fat:31, na:925 },
+  '양배추 치즈 햄 계란말이 [일]':          { kcal:436, pro:39.9, carb:8.1, fat:26.5, na:404 },
+  '두부 부침 정식 (계란 2개, 기본)':       { kcal:605, pro:32.9, carb:34, fat:34.5, na:575 },
+  '두부 부침 정식 (계란 3개, 수·금)':      { kcal:680, pro:37.9, carb:35.2, fat:39.5, na:640 }
+};
+
+function getMealValue(id) {
+  var sel = document.getElementById(id);
+  if (!sel) return '';
+  if (sel.value === '직접입력') {
+    var c = document.getElementById(id+'-custom');
+    return c ? c.value : '';
+  }
+  return sel.value;
+}
+
+function onMealSelect() {
+  ['f-breakfast','f-lunch','f-dinner'].forEach(function(id) {
+    var sel = document.getElementById(id);
+    var custom = document.getElementById(id+'-custom');
+    if (sel && custom) custom.style.display = sel.value === '직접입력' ? 'block' : 'none';
+  });
+  var total = { kcal:0, pro:0, carb:0, fat:0, na:0 };
+  var hasData = false;
+  ['f-breakfast','f-lunch','f-dinner'].forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (!sel || !sel.value || sel.value === '직접입력' || sel.value === '') return;
+    var n = NUTRITION[sel.value];
+    if (n) { total.kcal+=n.kcal; total.pro+=n.pro; total.carb+=n.carb; total.fat+=n.fat; total.na+=n.na; hasData=true; }
+  });
+  var summaryEl = document.getElementById('nutrition-summary');
+  var badgesEl  = document.getElementById('nutrition-badges');
+  if (hasData && summaryEl && badgesEl) {
+    var kcalColor = total.kcal > 1150 ? '#991B1B' : '#0F6E56';
+    var naColor   = total.na   > 1086 ? '#991B1B' : '#0F6E56';
+    badgesEl.innerHTML =
+      '<span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#FEF3C7;color:'+kcalColor+';">'+total.kcal.toFixed(0)+'kcal</span>'
+      +'<span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#D1FAE5;color:#065F46;">단백질 '+total.pro.toFixed(1)+'g</span>'
+      +'<span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#DBEAFE;color:#1E40AF;">탄수 '+total.carb.toFixed(1)+'g</span>'
+      +'<span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#FCE7F3;color:#9D174D;">지방 '+total.fat.toFixed(1)+'g</span>'
+      +'<span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#FEE2E2;color:'+naColor+';">나트륨 '+total.na+'mg</span>';
+    summaryEl.style.display = 'block';
+  } else if (summaryEl) {
+    summaryEl.style.display = 'none';
+  }
+}
+
+function closePopup() {
+  document.getElementById('popup-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
 function closePopup() {
   document.getElementById('popup-overlay').classList.remove('open');
   document.body.style.overflow = '';
