@@ -116,19 +116,29 @@ var allRows  = []; // 필터링을 위해 전체 데이터 저장
 // ── JSON 파서: 이름 기반이라 컬럼 위치 오류 없음 ────────────
 function parseCSV(text) {
   var json = JSON.parse(text);
-  var rows = json.map(function(r) {
+
+  // 1단계: 전체 데이터를 날짜 오름차순으로 파싱 (변화량 계산용)
+  var all = json.map(function(r) {
     return {
       date:     new Date(r.date),
       weight:   parseFloat(r.weight),
-      change:   parseFloat(r.change) || 0,
       exercise: r.exercise || '',
       memo:     r.memo || ''
     };
-  }).filter(function(r) {
-    // 운동 또는 한마디 중 하나라도 있는 날만 표시
-    return !isNaN(r.weight) && (r.exercise || r.memo);
+  }).filter(function(r){ return !isNaN(r.weight); })
+    .sort(function(a, b){ return a.date - b.date; });
+
+  // 2단계: 이전 날 체중과 직접 비교해서 변화량 계산
+  all = all.map(function(r, i) {
+    var prev   = i > 0 ? all[i-1].weight : null;
+    var change = prev !== null ? parseFloat((r.weight - prev).toFixed(1)) : 0;
+    return { date:r.date, weight:r.weight, change:change, exercise:r.exercise, memo:r.memo };
   });
-  return rows.sort(function(a, b) { return b.date - a.date; }); // 최신순
+
+  // 3단계: 운동 또는 한마디 있는 날만 필터링 후 최신순 정렬
+  return all.filter(function(r){
+    return r.exercise || r.memo;
+  }).sort(function(a, b){ return b.date - a.date; });
 }
 
 // ── 카드 한 장 HTML 생성 ──────────────────────────────────
@@ -137,9 +147,7 @@ function cardHTML(r) {
   var hasMemo = !!r.memo;
   var cls     = hasEx && hasMemo ? 'both' : hasEx ? 'exercise-only' : 'memo-only';
 
-  // 스프레드시트 change값 대신 이전 행과 직접 비교
-  var rIdx   = rows.indexOf(r);
-  var chg    = rIdx > 0 ? parseFloat((r.weight - rows[rIdx-1].weight).toFixed(1)) : 0;
+  var chg    = r.change;
   var chgStr = chg < 0
     ? '<span class="change-neg">' + chg.toFixed(1) + 'kg</span>'
     : chg > 0
