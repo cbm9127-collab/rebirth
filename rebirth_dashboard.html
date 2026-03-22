@@ -591,7 +591,15 @@ function render(rows) {
 
   // ── 요약 카드 ──────────────────────────────────────────
   document.getElementById('c-current').innerHTML       = today.weight + '<span>kg</span>';
-  document.getElementById('c-current-sub').textContent = '시작 시 ' + START_WEIGHT + 'kg';
+  var prevWeight = rows.length >= 2 ? rows[rows.length - 2].weight : null;
+  var diffText = '';
+  if (prevWeight !== null) {
+    var diff = (today.weight - prevWeight).toFixed(1);
+    if (diff > 0)      diffText = '  ▲+' + diff + 'kg';
+    else if (diff < 0) diffText = '  ▼' + diff + 'kg';
+    else               diffText = '  ±0';
+  }
+  document.getElementById('c-current-sub').textContent  = '시작 시 ' + START_WEIGHT + 'kg' + diffText;
   document.getElementById('c-loss').innerHTML          = '-' + totalLoss + '<span>kg</span>';
   document.getElementById('c-loss-sub').textContent    = '목표까지 -' + remaining + 'kg 남음';
   document.getElementById('c-streak').innerHTML        = streak + '<span>일</span>';
