@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💪 Re-birth 운동 루틴</title>
+<style>
+  :root {
+    --teal:#1D9E75;--teal-dark:#0F6E56;--teal-light:#E1F5EE;
+    --amber:#BA7517;--amber-light:#FAEEDA;
+    --blue:#185FA5;--blue-light:#EBF4FD;
+    --red:#E24B4A;--red-light:#FCEBEB;
+    --bg:#FAFAF8;--surface:#F3F2EE;--white:#fff;
+    --border:rgba(0,0,0,0.08);--text:#1C1C1A;--text-2:#6B6B67;--text-3:#9E9E9A;
+    --radius:12px;--radius-sm:8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  .wrapper{max-width:800px;margin:0 auto;padding:1.5rem 1.25rem 4rem;}
+
+  .header{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap;}
+  .back-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text-2);background:var(--surface);border:0.5px solid var(--border);padding:7px 14px;border-radius:var(--radius-sm);text-decoration:none;transition:background 0.15s;}
+  .back-btn:hover{background:var(--teal-light);color:var(--teal-dark);}
+  .header-title{font-size:20px;font-weight:600;}
+  .header-sub{font-size:12px;color:var(--text-3);margin-top:3px;}
+
+  /* Phase 탭 */
+  .phase-tabs{display:flex;gap:8px;margin-bottom:1.25rem;}
+  .phase-tab{flex:1;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--white);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all 0.15s;color:var(--text-2);}
+  .phase-tab.active{background:var(--teal);color:white;border-color:var(--teal);}
+  .phase-tab:hover:not(.active){background:var(--teal-light);border-color:var(--teal);}
+  .phase-badge{font-size:10px;font-weight:500;opacity:0.8;display:block;margin-top:2px;}
+
+  /* 현재 Phase 배너 */
+  .current-banner{border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:1.25rem;font-size:13px;font-weight:500;line-height:1.6;}
+  .current-banner.p1{background:var(--amber-light);color:var(--amber);}
+  .current-banner.p2{background:var(--teal-light);color:var(--teal-dark);}
+
+  /* 요일 카드 그리드 */
+  .week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:1.25rem;}
+  .day-tab{padding:8px 4px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--white);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:all 0.15s;color:var(--text-2);}
+  .day-tab.today{border-color:var(--teal);color:var(--teal-dark);}
+  .day-tab.active{background:var(--teal);color:white;border-color:var(--teal);}
+  .day-tab:hover:not(.active){background:var(--teal-light);}
+  .day-name{font-size:10px;color:inherit;margin-top:2px;opacity:0.8;}
+
+  /* 운동 상세 카드 */
+  .detail-card{background:var(--white);border:0.5px solid var(--border);border-radius:var(--radius);padding:20px;}
+  .detail-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+  .detail-day{font-size:18px;font-weight:700;color:var(--text);}
+  .detail-focus{font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;background:var(--teal-light);color:var(--teal-dark);}
+  .detail-focus.rest{background:var(--surface);color:var(--text-3);}
+  .detail-focus.cardio{background:var(--blue-light);color:var(--blue);}
+  .detail-focus.strength{background:var(--amber-light);color:var(--amber);}
+  .detail-focus.hiit{background:var(--red-light);color:var(--red);}
+
+  /* 워크아웃 섹션 */
+  .workout-section{margin-bottom:14px;}
+  .ws-label{font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:8px;}
+  .ws-items{display:flex;flex-direction:column;gap:6px;}
+  .ws-item{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;}
+  .ws-item-icon{font-size:16px;flex-shrink:0;}
+  .ws-item-text{font-size:13px;font-weight:500;color:var(--text);}
+  .ws-item-time{font-size:11px;font-weight:600;color:var(--teal-dark);margin-left:auto;background:var(--teal-light);padding:2px 8px;border-radius:10px;white-space:nowrap;}
+
+  /* 총 시간 */
+  .total-time{display:flex;justify-content:flex-end;margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);}
+  .total-time-label{font-size:12px;color:var(--text-2);}
+  .total-time-val{font-size:14px;font-weight:700;color:var(--teal-dark);margin-left:6px;}
+  .yt-btn { display:inline-flex; align-items:center; font-size:10px; font-weight:600; color:#FF0000; background:#FFF0F0; border:1px solid #FFCCCC; border-radius:10px; padding:2px 8px; text-decoration:none; margin-left:6px; white-space:nowrap; flex-shrink:0; }
+  .yt-btn:hover { background:#FFE0E0; }
+
+  @media(max-width:540px){
+    .wrapper{padding:1rem 0.875rem 3rem;}
+    .week-grid{grid-template-columns:repeat(7,1fr);gap:4px;}
+    .day-tab{padding:6px 2px;font-size:11px;}
+    .detail-day{font-size:16px;}
+    .ws-item-text{font-size:12px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <a class="back-btn" href="rebirth_dashboard.html">← 대시보드로</a>
+    <div>
+      <div class="header-title">💪 운동 루틴</div>
+      <div class="header-sub" id="current-weight-info">체중에 따라 Phase가 자동으로 표시돼요</div>
+    </div>
+  </div>
+
+  <div id="current-banner" class="current-banner p1"></div>
+
+  <div class="phase-tabs">
+    <button class="phase-tab active" id="tab-p1" onclick="setPhase('phase1',this)">
+      Phase 1
+      <span class="phase-badge">현재~95kg · 덤벨 4kg</span>
+    </button>
+    <button class="phase-tab" id="tab-p2" onclick="setPhase('phase2',this)">
+      Phase 2
+      <span class="phase-badge">94.9~85kg · 덤벨 6kg</span>
+    </button>
+  </div>
+
+  <div class="week-grid" id="week-grid"></div>
+  <div id="day-detail"></div>
+</div>
+
+<script>
+var API_URL = 'https://script.google.com/macros/s/AKfycbzBwSGnxFWM8UbgqFvpBgkoDTsYgUoQ2koVzBY6o0hu4JndbdwZAvKJk82S7jFNaXOMzQ/exec';
+var DOW_NAMES = ['월','화','수','목','금','토','일'];
+var TODAY_DOW = (new Date().getDay() + 6) % 7; // 0=월~6=일
+
+var PHASES = {
+  phase1: {
+    label: 'Phase 1 — 현재~95kg · 덤벨 4kg',
+    note: '유산소+근력 균형 루틴으로 체지방 감량에 집중해요.',
+    schedule: [
+      { dow:0, name:'월요일', focus:'휴식', focusCls:'rest',
+        morning:'30/30/30 진행', warmup:'없음 (휴식일)', cooldown:'스트레칭 25분',
+        main:[{ icon:'🚶', text:'저강도 유산소', time:'30분', url:'https://youtu.be/sMIatEvTACI?si=koCYWqXsw6YTAspx' }] },
+      { dow:1, name:'화요일', focus:'근력', focusCls:'strength',
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분', url:'https://youtu.be/7X6KRVlfLSk?si=KBOZph_D3mmtQrRP' }, { icon:'🚶', text:'저강도 유산소', time:'30분', url:'https://youtu.be/sMIatEvTACI?si=go03LP256VjGFDUV' }] },
+      { dow:2, name:'수요일', focus:'유산소 집중', focusCls:'cardio',
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏃', text:'실내 유산소', time:'30분', url:'https://youtu.be/77JW8_zt2Rc?si=af9VmJIVyWa1CwHQ' }, { icon:'🚶', text:'걷기 홈트', time:'30분', url:'https://youtu.be/INFvspqgO8M?si=3dTuknGOoQlc7kQV' }] },
+      { dow:3, name:'목요일', focus:'근력', focusCls:'strength',
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분', url:'https://youtu.be/7X6KRVlfLSk?si=KBOZph_D3mmtQrRP' }, { icon:'🚶', text:'저강도 유산소', time:'30분', url:'https://youtu.be/sMIatEvTACI?si=go03LP256VjGFDUV' }] },
+      { dow:4, name:'금요일', focus:'유산소 집중', focusCls:'cardio',
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏃', text:'실내 유산소', time:'30분', url:'https://youtu.be/77JW8_zt2Rc?si=af9VmJIVyWa1CwHQ' }, { icon:'🚶', text:'걷기 홈트', time:'30분', url:'https://youtu.be/INFvspqgO8M?si=3dTuknGOoQlc7kQV' }] },
+      { dow:5, name:'토요일', focus:'근력', focusCls:'strength',
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분', url:'https://youtu.be/7X6KRVlfLSk?si=KBOZph_D3mmtQrRP' }, { icon:'🚶', text:'저강도 유산소', time:'30분', url:'https://youtu.be/sMIatEvTACI?si=go03LP256VjGFDUV' }] },
+      { dow:6, name:'일요일', focus:'근력', focusCls:'strength',
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 전신 운동', time:'30분', url:'https://youtu.be/7X6KRVlfLSk?si=KBOZph_D3mmtQrRP' }, { icon:'🚶', text:'저강도 유산소', time:'30분', url:'https://youtu.be/sMIatEvTACI?si=go03LP256VjGFDUV' }] }
+    ]
+  },
+  phase2: {
+    label: 'Phase 2 — 94.9~85kg · 덤벨 6kg',
+    note: '부위별 근력 + 고강도 유산소로 체형 만들기에 집중해요.',
+    schedule: [
+      { dow:0, name:'월요일', focus:'코어+회복', focusCls:'strength',
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'스트레칭 25분',
+        main:[{ icon:'🧘', text:'유산소 복근', time:'20분', url:'https://youtu.be/Oc8qVYw1W5U?si=bVH9h4qVU2Kk_qo7' }] },
+      { dow:1, name:'화요일', focus:'하체 집중', focusCls:'strength',
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🦵', text:'하체 덤벨', time:'30분', url:'https://youtu.be/AQ7778lCNZY?si=H2C1xCR—ndxAvFz' }, { icon:'💪', text:'복근', time:'18분', url:'https://youtu.be/kETh8T3it4k?si=pzHMiceHgJR05yOg' }] },
+      { dow:2, name:'수요일', focus:'전신 유산소', focusCls:'cardio',
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏃', text:'전신 유산소', time:'28분', url:'https://youtu.be/hesjApxDlj0?si=Kuz73K4UNO4kY2tf' }, { icon:'🏃', text:'전신 유산소', time:'31분', url:'https://youtu.be/yJm9SGS2IhA?si=PeNbSFnfvn8RVuJs' }] },
+      { dow:3, name:'목요일', focus:'상체+코어', focusCls:'strength',
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 상체', time:'15분', url:'https://youtu.be/9zLD6cSgHdY?si=_aJiW2tP-iInUK4D' }, { icon:'🏋️', text:'덤벨 상체', time:'20분', url:'https://youtu.be/xoWKLNwNva0?si=tw4LTC-jDd2cgyi5' }, { icon:'💪', text:'덤벨 복근', time:'10분', url:'https://youtu.be/gpTYMAxN0CM?si=Ackmwgo2Xy_PYCvs' }] },
+      { dow:4, name:'금요일', focus:'전신 근력+유산소', focusCls:'strength',
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🏋️', text:'덤벨 전신 근력', time:'31분', url:'https://youtu.be/ERhNj7i3Bw4?si=LV3oVgR75wq7Kni9' }, { icon:'🏃', text:'전신 유산소', time:'31분', url:'https://youtu.be/4kZHHPH6heY?si=BDUstDI84qbqrCsd' }] },
+      { dow:5, name:'토요일', focus:'고강도 유산소', focusCls:'hiit',
+        morning:'', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🔥', text:'HIIT 유산소', time:'31분', url:'https://youtu.be/77JW8_zt2Rc?si=LX97nH0GzQ3ZEQ0z' }, { icon:'🏃', text:'유산소', time:'31분', url:'https://youtu.be/WPkNDnnCPXU?si=8opU3HKtQKRKZT_f' }] },
+      { dow:6, name:'일요일', focus:'하체+유산소', focusCls:'strength',
+        morning:'30/30/30 진행', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[{ icon:'🦵', text:'덤벨 하체', time:'19분', url:'https://youtu.be/4qqBQ0Xs4nc?si=XeY9eHYlF_El9J1q' }, { icon:'🏃', text:'유산소', time:'31분', url:'https://youtu.be/2W-ir1eZqkU?si=CXWrxTECjfQHgZ0V' }] }
+    ]
+  }
+};
+
+var currentPhase = 'phase1';
+var selectedDow  = TODAY_DOW;
+
+function setPhase(phase, btn) {
+  currentPhase = phase;
+  document.querySelectorAll('.phase-tab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  var p = PHASES[phase];
+  var banner = document.getElementById('current-banner');
+  banner.textContent = '📌 ' + p.label + ' — ' + p.note;
+  banner.className = 'current-banner ' + (phase === 'phase1' ? 'p1' : 'p2');
+  renderWeekGrid();
+  renderDetail();
+}
+
+function parseTime(t) {
+  var m = t.match(/(\d+)/);
+  return m ? parseInt(m[1]) : 0;
+}
+
+function renderWeekGrid() {
+  var grid = document.getElementById('week-grid');
+  var sch  = PHASES[currentPhase].schedule;
+  grid.innerHTML = '';
+  sch.forEach(function(d) {
+    var btn = document.createElement('div');
+    var cls = 'day-tab';
+    if (d.dow === TODAY_DOW)   cls += ' today';
+    if (d.dow === selectedDow) cls += ' active';
+    btn.className = cls;
+    btn.innerHTML = '<div>'+DOW_NAMES[d.dow]+'</div><div class="day-name">'+d.focus+'</div>';
+    btn.onclick = (function(dow){ return function(){ selectedDow = dow; renderWeekGrid(); renderDetail(); }; })(d.dow);
+    grid.appendChild(btn);
+  });
+}
+
+var WARMUP_URL   = 'https://youtu.be/7gR50n00rQ4?si=lzdgthjTTz2oZ_qa';
+var COOLDOWN_URL = 'https://youtu.be/t9xO0Q5fa6M?si=lCFQphgB1bnyPouM';
+var STRETCH_URL  = 'https://youtu.be/jw1gxrzRgeU?si=eCXzc16mO16pLHap';
+
+function linkBtn(url) {
+  if (!url) return '';
+  return '<a href="'+url+'" target="_blank" class="yt-btn">▶ 유튜브</a>';
+}
+
+function renderDetail() {
+  var sch = PHASES[currentPhase].schedule;
+  var d   = sch.find(function(s){ return s.dow === selectedDow; });
+  if (!d) return;
+
+  var totalMin = d.main.reduce(function(sum, item){ return sum + parseTime(item.time); }, 0);
+  if (d.warmup && d.warmup !== '없음 (휴식일)') totalMin += 10;
+  if (d.cooldown) totalMin += parseTime(d.cooldown);
+
+  var mainHTML = d.main.map(function(item){
+    return '<div class="ws-item">'
+      +'<span class="ws-item-icon">'+item.icon+'</span>'
+      +'<span class="ws-item-text">'+item.text+'</span>'
+      +'<span class="ws-item-time">'+item.time+'</span>'
+      +linkBtn(item.url)
+      +'</div>';
+  }).join('');
+
+  var coolUrl  = d.cooldown && d.cooldown.includes('스트레칭 25분') ? STRETCH_URL : COOLDOWN_URL;
+  var coolTime = d.cooldown.match(/(\d+)분/) ? d.cooldown.match(/(\d+)분/)[0] : '25분';
+
+  document.getElementById('day-detail').innerHTML =
+    '<div class="detail-card">'
+    +'<div class="detail-header">'
+    +  '<div class="detail-day">'+d.name+(d.dow===TODAY_DOW?' <span style="font-size:12px;color:var(--teal);">오늘</span>':'')+'</div>'
+    +  '<span class="detail-focus '+d.focusCls+'">'+d.focus+'</span>'
+    +'</div>'
+    +(d.morning ? '<div class="workout-section"><div class="ws-label">🌅 오전 (기상 후)</div><div class="ws-items"><div class="ws-item"><span class="ws-item-icon">⭐</span><span class="ws-item-text">'+d.morning+'</span></div></div></div>' : '')
+    +(d.warmup !== '없음 (휴식일)' ? '<div class="workout-section"><div class="ws-label">🔥 웜업</div><div class="ws-items"><div class="ws-item"><span class="ws-item-icon">🤸</span><span class="ws-item-text">'+d.warmup+'</span><span class="ws-item-time">10분</span>'+linkBtn(WARMUP_URL)+'</div></div></div>' : '')
+    +'<div class="workout-section"><div class="ws-label">💪 본 운동 (저녁)</div><div class="ws-items">'+mainHTML+'</div></div>'
+    +'<div class="workout-section"><div class="ws-label">🧊 마무리</div><div class="ws-items"><div class="ws-item"><span class="ws-item-icon">🧘</span><span class="ws-item-text">'+d.cooldown+'</span><span class="ws-item-time">'+coolTime+'</span>'+linkBtn(coolUrl)+'</div></div></div>'
+    +'<div class="total-time"><span class="total-time-label">총 예상 시간</span><span class="total-time-val">약 '+totalMin+'분</span></div>'
+    +'</div>';
+}
+
+// 초기 로드 — API에서 최신 체중 가져와서 Phase 자동 설정
+async function init() {
+  try {
+    var res  = await fetch(API_URL);
+    var data = await res.json();
+    if (data && data.length > 0) {
+      var last = data[data.length - 1];
+      var w    = parseFloat(last.weight);
+      document.getElementById('current-weight-info').textContent = '최근 체중 ' + w + 'kg 기준으로 자동 선택됐어요';
+      var phase = w < 95 ? 'phase2' : 'phase1';
+      var activeTab = document.getElementById('tab-' + (phase === 'phase1' ? 'p1' : 'p2'));
+      setPhase(phase, activeTab);
+      return;
+    }
+  } catch(e) {}
+  // fallback
+  setPhase('phase1', document.getElementById('tab-p1'));
+}
+
+init();
+</script>
+</body>
+</html>
