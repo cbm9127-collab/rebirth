@@ -305,8 +305,18 @@
         <div class="card-sub" id="c-bmi-sub"></div>
       </div>
       <div class="card dday">
-        <div class="card-label">목표일 D-day</div>
-        <div class="card-num" id="c-dday">—<span>일</span></div>
+        <div class="card-label">D-day / 경과일</div>
+        <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin:4px 0;">
+          <div style="text-align:center;">
+            <div id="c-dday" style="font-size:26px;font-weight:800;color:#185FA5;line-height:1.1;">—<span style="font-size:14px;font-weight:600;">일</span></div>
+            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">남은 날</div>
+          </div>
+          <div style="width:1px;height:32px;background:var(--border);"></div>
+          <div style="text-align:center;">
+            <div id="c-elapsed" style="font-size:26px;font-weight:800;color:var(--teal-dark);line-height:1.1;">—<span style="font-size:14px;font-weight:600;">일</span></div>
+            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">시작 후</div>
+          </div>
+        </div>
         <div class="card-sub">2026년 6월 30일까지</div>
       </div>
     </div>
@@ -643,10 +653,14 @@ function render(rows) {
   document.getElementById('last-updated').textContent  = '마지막 업데이트: ' + (today.date.getMonth() + 1) + '/' + today.date.getDate();
 
   // ── D-day 카운터 ───────────────────────────────────────
-  var goalDate = new Date(2026, 5, 30); // 6월 30일
-  var nowDate  = new Date();
-  var dday     = Math.ceil((goalDate - nowDate) / 86400000);
+  var goalDate  = new Date(2026, 5, 30); // 6월 30일
+  var startDate = new Date(2026, 0, 12); // 시작일 1월 12일
+  var nowDate   = new Date();
+  var dday      = Math.ceil((goalDate - nowDate) / 86400000);
+  var elapsed   = Math.floor((nowDate - startDate) / 86400000) + 1;
   document.getElementById('c-dday').innerHTML = dday + '<span>일</span>';
+  var elEl = document.getElementById('c-elapsed');
+  if (elEl) elEl.innerHTML = elapsed + '<span style="font-size:14px;font-weight:600;">일</span>';
 
   // 카드 그리드 5개 반응형
   var grid = document.getElementById('cards-grid');
