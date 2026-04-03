@@ -833,53 +833,28 @@ function render(rows) {
 
 // ── 요일별 식단 스케줄 ─────────────────────────────────────
 // dow: 0=월~6=일 (JS getDay()는 0=일이므로 변환 필요)
-var MEAL_SCHEDULE = {
-  0: { // 월
-    tag: '30/30/30',
-    breakfast: ['더단백+요프로+계란1+키위+유산균'],
-    lunch:     ['두부면 까르보나라'],
-    dinner:    ['두부½+계란2+소시지+볶음밥']
-  },
-  1: { // 화
-    tag: '기본',
-    breakfast: ['더단백+계란2+키위+유산균'],
-    lunch:     ['소시지 에그 또띠야 랩'],
-    dinner:    ['두부½+계란3+볶음밥 (소시지 제외)']
-  },
-  2: { // 수
-    tag: '30/30/30',
-    breakfast: ['더단백+요프로+계란1+키위+유산균'],
-    lunch:     ['참치 키토김밥 (2단계 워터워싱)'],
-    dinner:    ['두부1모+계란2+소시지+볶음밥']
-  },
-  3: { // 목
-    tag: '기본',
-    breakfast: ['더단백+계란2+키위+유산균'],
-    lunch:     ['두부 계란 볶음밥 + 닭가슴살 햄'],
-    dinner:    ['두부½+계란2+소시지+볶음밥']
-  },
-  4: { // 금
-    tag: '30/30/30',
-    breakfast: ['더단백+요프로+계란1+키위+유산균'],
-    lunch:     ['소시지 키토김밥'],
-    dinner:    ['두부½+계란2+소시지+볶음밥']
-  },
-  5: { // 토
-    tag: '기본',
-    breakfast: ['더단백+계란2+키위+유산균'],
-    lunch:     ['두부 계란 볶음밥 + 닭가슴살 햄'],
-    dinner:    ['두부½+계란2+소시지+볶음밥']
-  },
-  6: { // 일
-    tag: '기본',
-    breakfast: ['더단백+계란2+키위+유산균'],
-    lunch:     ['양배추 치즈 햄 계란말이'],
-    dinner:    ['두부1모+계란2+소시지+볶음밥']
-  }
+var MEAL_SCHEDULE_P1 = {
+  0: { tag:'30/30/30', breakfast:['더단백+요프로+계란1+키위+유산균'], lunch:['두부면 까르보나라'], dinner:['두부½+계란2+소시지+볶음밥'] },
+  1: { tag:'기본',     breakfast:['더단백+계란2+키위+유산균'],        lunch:['소시지 에그 또띠야 랩'], dinner:['두부½+계란3+볶음밥 (소시지 제외)'] },
+  2: { tag:'30/30/30', breakfast:['더단백+요프로+계란1+키위+유산균'], lunch:['참치 키토김밥 (2단계 워터워싱)'], dinner:['두부1모+계란2+소시지+볶음밥'] },
+  3: { tag:'기본',     breakfast:['더단백+계란2+키위+유산균'],        lunch:['두부 계란 볶음밥 + 닭가슴살 햄'], dinner:['두부½+계란2+소시지+볶음밥'] },
+  4: { tag:'30/30/30', breakfast:['더단백+요프로+계란1+키위+유산균'], lunch:['소시지 키토김밥'], dinner:['두부½+계란2+소시지+볶음밥'] },
+  5: { tag:'기본',     breakfast:['더단백+계란2+키위+유산균'],        lunch:['두부 계란 볶음밥 + 닭가슴살 햄'], dinner:['두부½+계란2+소시지+볶음밥'] },
+  6: { tag:'기본',     breakfast:['더단백+계란2+키위+유산균'],        lunch:['양배추 치즈 햄 계란말이'], dinner:['두부1모+계란2+소시지+볶음밥'] }
+};
+var MEAL_SCHEDULE_P2 = {
+  0: { tag:'30/30/30', breakfast:['더단백+요프로+구운계란1+키위+유산균'], lunch:['밀프랩: 귀리곤약밥+브로콜리+버섯+매콤어니언+구운계란'], dinner:['오트밀죽+두부1모+미트리 오리지널'] },
+  1: { tag:'기본',     breakfast:['더단백+구운계란2+키위+유산균'],        lunch:['밀프랩: 귀리곤약밥+브로콜리+버섯+청양랜치+구운계란'], dinner:['오트밀죽+두부1모+미트리 청양고추'] },
+  2: { tag:'30/30/30', breakfast:['더단백+요프로+구운계란1+키위+유산균'], lunch:['밀프랩: 귀리곤약밥+브로콜리+버섯+블랙알리오+구운계란'], dinner:['오트밀죽+두부1모+미트리 리얼갈릭'] },
+  3: { tag:'기본',     breakfast:['더단백+구운계란2+키위+유산균'],        lunch:['밀프랩: 귀리곤약밥+브로콜리+버섯+오리지널+구운계란'], dinner:['오트밀죽+두부1모+미트리 단호박'] },
+  4: { tag:'30/30/30', breakfast:['더단백+요프로+구운계란1+키위+유산균'], lunch:['밀프랩: 귀리곤약밥+브로콜리+버섯+양념치킨+구운계란'], dinner:['오트밀죽+두부1모+미트리 리얼치즈'] },
+  5: { tag:'기본',     breakfast:['더단백+구운계란2+키위+유산균'],        lunch:['밀프랩: 귀리곤약밥+브로콜리+버섯+블랙페퍼+구운계란'], dinner:['오트밀죽+두부1모+미트리 매콤치즈'] },
+  6: { tag:'기본',     breakfast:['더단백+구운계란2+키위+유산균'],        lunch:['양배추 치즈 햄 계란말이 (밀프랩 휴식)'], dinner:['오트밀죽+두부1모+미트리 오리지널 ★60g'] }
 };
 
 // ── 영양 성분 데이터 ──────────────────────────────────────
 var NUTRITION = {
+  // Phase 1
   '더단백+요프로+계란1+키위+유산균': { kcal:330, pro:42, carb:31, fat:9, na:207 },
   '더단백+계란2+키위+유산균':        { kcal:321, pro:33, carb:23, fat:11, na:187 },
   '두부면 까르보나라':               { kcal:575, pro:49, carb:14, fat:31, na:584 },
@@ -890,7 +865,26 @@ var NUTRITION = {
   '양배추 치즈 햄 계란말이':         { kcal:457, pro:39, carb:8,  fat:29, na:384 },
   '두부½+계란2+소시지+볶음밥':       { kcal:610, pro:39, carb:35, fat:33, na:515 },
   '두부½+계란3+볶음밥 (소시지 제외)':{ kcal:578, pro:34, carb:34, fat:29, na:428 },
-  '두부1모+계란2+소시지+볶음밥':     { kcal:700, pro:48, carb:37, fat:38, na:520 }
+  '두부1모+계란2+소시지+볶음밥':     { kcal:700, pro:48, carb:37, fat:38, na:520 },
+  // Phase 2 아침
+  '더단백+요프로+구운계란1+키위+유산균': { kcal:330, pro:42, carb:31, fat:3, na:207 },
+  '더단백+구운계란2+키위+유산균':        { kcal:321, pro:33, carb:23, fat:7, na:187 },
+  // Phase 2 점심 (밀프랩)
+  '밀프랩: 귀리곤약밥+브로콜리+버섯+매콤어니언+구운계란': { kcal:362, pro:33.9, carb:46.8, fat:0, na:540 },
+  '밀프랩: 귀리곤약밥+브로콜리+버섯+청양랜치+구운계란':   { kcal:367, pro:32.9, carb:42.8, fat:0, na:460 },
+  '밀프랩: 귀리곤약밥+브로콜리+버섯+블랙알리오+구운계란': { kcal:342, pro:31.9, carb:44.8, fat:0, na:540 },
+  '밀프랩: 귀리곤약밥+브로콜리+버섯+오리지널+구운계란':   { kcal:337, pro:34.9, carb:40.8, fat:0, na:480 },
+  '밀프랩: 귀리곤약밥+브로콜리+버섯+양념치킨+구운계란':   { kcal:352, pro:32.9, carb:44.8, fat:0, na:500 },
+  '밀프랩: 귀리곤약밥+브로콜리+버섯+블랙페퍼+구운계란':   { kcal:347, pro:36.9, carb:40.8, fat:0, na:400 },
+  '양배추 치즈 햄 계란말이 (밀프랩 휴식)': { kcal:457, pro:39, carb:8, fat:29, na:384 },
+  // Phase 2 저녁 (오트밀죽)
+  '오트밀죽+두부1모+미트리 오리지널':     { kcal:725, pro:54.9, carb:42.2, fat:0, na:470 },
+  '오트밀죽+두부1모+미트리 청양고추':     { kcal:730, pro:54.9, carb:42.2, fat:0, na:440 },
+  '오트밀죽+두부1모+미트리 리얼갈릭':     { kcal:735, pro:54.9, carb:45.2, fat:0, na:440 },
+  '오트밀죽+두부1모+미트리 단호박':       { kcal:725, pro:54.9, carb:44.2, fat:0, na:450 },
+  '오트밀죽+두부1모+미트리 리얼치즈':     { kcal:745, pro:56.9, carb:42.2, fat:0, na:440 },
+  '오트밀죽+두부1모+미트리 매콤치즈':     { kcal:745, pro:56.9, carb:42.2, fat:0, na:450 },
+  '오트밀죽+두부1모+미트리 오리지널 ★60g':{ kcal:728, pro:55.4, carb:49.4, fat:0, na:470 }
 };
 
 // ── 요일별 운동 루틴 ─────────────────────────────────────
@@ -927,7 +921,7 @@ var WORKOUT = {
 // JS getDay() 0=일,1=월...6=토 → 내부 0=월~6=일 변환
 function getTodayDow() { return (new Date().getDay() + 6) % 7; }
 
-function getPhase(weight) { return (weight && weight < 95) ? 'phase2' : 'phase1'; }
+function getPhase(weight) { return (weight && weight < 93) ? 'phase2' : 'phase1'; }
 
 // 드롭다운에 옵션 채우기 헬퍼
 function fillSelect(id, items, defaultVal) {
@@ -948,13 +942,16 @@ function fillSelect(id, items, defaultVal) {
 // 요일에 맞는 식단 드롭다운 자동 채우기
 function fillMealDropdowns() {
   var dow   = getTodayDow();
-  var sched = MEAL_SCHEDULE[dow];
+  var latestWeight = allRows.length > 0 ? allRows[allRows.length-1].weight : 100;
+  var phase = getPhase(latestWeight);
+  var sched = phase === 'phase2' ? MEAL_SCHEDULE_P2[dow] : MEAL_SCHEDULE_P1[dow];
+  var phaseLabel = phase === 'phase2' ? 'Phase 2 밀프랩' : 'Phase 1';
   var label = document.getElementById('meal-phase-label');
-  if (label) label.textContent = '📅 오늘(' + ['월','화','수','목','금','토','일'][dow] + ') ' + sched.tag + ' 식단';
+  if (label) label.textContent = '📅 오늘(' + ['월','화','수','목','금','토','일'][dow] + ') ' + phaseLabel + ' · ' + sched.tag + ' 식단';
   fillSelect('f-breakfast', sched.breakfast, sched.breakfast[0]);
   fillSelect('f-lunch',     sched.lunch,     sched.lunch[0]);
   fillSelect('f-dinner',    sched.dinner,    sched.dinner[0]);
-  onMealSelect(); // 영양 합계 즉시 계산
+  onMealSelect();
 }
 
 // 운동 섹션 자동 채우기 (오전 30/30/30 + 본 운동만 표시)
@@ -1099,57 +1096,37 @@ function toggleMilestone() {
 }
 
 // ── 오늘 식단 렌더 ──────────────────────────────────────
-var TODAY_MENU = {
-  // 유산소 O (30/30/30) = 월·수·금 / 유산소 X (기본) = 화·목·토·일
-  // 아침: 30/30/30일 = 더단백+요프로+계란1+키위+유산균(330kcal)
-  //       기본일     = 더단백+계란2+키위+유산균(321kcal)
-  0: { // 월요일 — 유산소 O / 합계 1515kcal
-    morning: { label:'아침', name:'더단백+요프로+계란1+키위+유산균', kcal:330 },
-    lunch:   { label:'점심', name:'두부면 까르보나라', kcal:575 },
-    dinner:  { label:'저녁', name:'두부½+계란2+소시지+볶음밥', kcal:610 }
-  },
-  1: { // 화요일 — 유산소 X / 합계 1499kcal
-    morning: { label:'아침', name:'더단백+계란2+키위+유산균', kcal:321 },
-    lunch:   { label:'점심', name:'소시지 에그 또띠야 랩', kcal:600 },
-    dinner:  { label:'저녁', name:'두부½+계란3+볶음밥 (소시지 제외)', kcal:578 }
-  },
-  2: { // 수요일 — 유산소 O / 합계 1496kcal
-    morning: { label:'아침', name:'더단백+요프로+계란1+키위+유산균', kcal:330 },
-    lunch:   { label:'점심', name:'참치 키토김밥 (2단계 워터워싱)', kcal:466 },
-    dinner:  { label:'저녁', name:'두부1모+계란2+소시지+볶음밥', kcal:700 }
-  },
-  3: { // 목요일 — 유산소 X / 합계 1495kcal
-    morning: { label:'아침', name:'더단백+계란2+키위+유산균', kcal:321 },
-    lunch:   { label:'점심', name:'두부 계란 볶음밥 + 닭가슴살 햄', kcal:564 },
-    dinner:  { label:'저녁', name:'두부½+계란2+소시지+볶음밥', kcal:610 }
-  },
-  4: { // 금요일 — 유산소 O / 합계 1501kcal
-    morning: { label:'아침', name:'더단백+요프로+계란1+키위+유산균', kcal:330 },
-    lunch:   { label:'점심', name:'소시지 키토김밥', kcal:561 },
-    dinner:  { label:'저녁', name:'두부½+계란2+소시지+볶음밥', kcal:610 }
-  },
-  5: { // 토요일 — 유산소 X / 합계 1495kcal
-    morning: { label:'아침', name:'더단백+계란2+키위+유산균', kcal:321 },
-    lunch:   { label:'점심', name:'두부 계란 볶음밥 + 닭가슴살 햄', kcal:564 },
-    dinner:  { label:'저녁', name:'두부½+계란2+소시지+볶음밥', kcal:610 }
-  },
-  6: { // 일요일 — 유산소 X / 합계 1478kcal
-    morning: { label:'아침', name:'더단백+계란2+키위+유산균', kcal:321 },
-    lunch:   { label:'점심', name:'양배추 치즈 햄 계란말이', kcal:457 },
-    dinner:  { label:'저녁', name:'두부1모+계란2+소시지+볶음밥', kcal:700 }
-  }
+var TODAY_MENU_P1 = {
+  0: { morning:{label:'아침',name:'더단백+요프로+계란1+키위+유산균',kcal:330}, lunch:{label:'점심',name:'두부면 까르보나라',kcal:575}, dinner:{label:'저녁',name:'두부½+계란2+소시지+볶음밥',kcal:610} },
+  1: { morning:{label:'아침',name:'더단백+계란2+키위+유산균',kcal:321}, lunch:{label:'점심',name:'소시지 에그 또띠야 랩',kcal:600}, dinner:{label:'저녁',name:'두부½+계란3+볶음밥 (소시지 제외)',kcal:578} },
+  2: { morning:{label:'아침',name:'더단백+요프로+계란1+키위+유산균',kcal:330}, lunch:{label:'점심',name:'참치 키토김밥 (2단계 워터워싱)',kcal:466}, dinner:{label:'저녁',name:'두부1모+계란2+소시지+볶음밥',kcal:700} },
+  3: { morning:{label:'아침',name:'더단백+계란2+키위+유산균',kcal:321}, lunch:{label:'점심',name:'두부 계란 볶음밥 + 닭가슴살 햄',kcal:564}, dinner:{label:'저녁',name:'두부½+계란2+소시지+볶음밥',kcal:610} },
+  4: { morning:{label:'아침',name:'더단백+요프로+계란1+키위+유산균',kcal:330}, lunch:{label:'점심',name:'소시지 키토김밥',kcal:561}, dinner:{label:'저녁',name:'두부½+계란2+소시지+볶음밥',kcal:610} },
+  5: { morning:{label:'아침',name:'더단백+계란2+키위+유산균',kcal:321}, lunch:{label:'점심',name:'두부 계란 볶음밥 + 닭가슴살 햄',kcal:564}, dinner:{label:'저녁',name:'두부½+계란2+소시지+볶음밥',kcal:610} },
+  6: { morning:{label:'아침',name:'더단백+계란2+키위+유산균',kcal:321}, lunch:{label:'점심',name:'양배추 치즈 햄 계란말이',kcal:457}, dinner:{label:'저녁',name:'두부1모+계란2+소시지+볶음밥',kcal:700} }
+};
+var TODAY_MENU_P2 = {
+  0: { morning:{label:'아침',name:'더단백+요프로+구운계란1+키위+유산균',kcal:330}, lunch:{label:'점심',name:'밀프랩: 귀리곤약밥+브로콜리+버섯+매콤어니언+구운계란',kcal:362}, dinner:{label:'저녁',name:'오트밀죽+두부1모+미트리 오리지널',kcal:725} },
+  1: { morning:{label:'아침',name:'더단백+구운계란2+키위+유산균',kcal:321}, lunch:{label:'점심',name:'밀프랩: 귀리곤약밥+브로콜리+버섯+청양랜치+구운계란',kcal:367}, dinner:{label:'저녁',name:'오트밀죽+두부1모+미트리 청양고추',kcal:730} },
+  2: { morning:{label:'아침',name:'더단백+요프로+구운계란1+키위+유산균',kcal:330}, lunch:{label:'점심',name:'밀프랩: 귀리곤약밥+브로콜리+버섯+블랙알리오+구운계란',kcal:342}, dinner:{label:'저녁',name:'오트밀죽+두부1모+미트리 리얼갈릭',kcal:735} },
+  3: { morning:{label:'아침',name:'더단백+구운계란2+키위+유산균',kcal:321}, lunch:{label:'점심',name:'밀프랩: 귀리곤약밥+브로콜리+버섯+오리지널+구운계란',kcal:337}, dinner:{label:'저녁',name:'오트밀죽+두부1모+미트리 단호박',kcal:725} },
+  4: { morning:{label:'아침',name:'더단백+요프로+구운계란1+키위+유산균',kcal:330}, lunch:{label:'점심',name:'밀프랩: 귀리곤약밥+브로콜리+버섯+양념치킨+구운계란',kcal:352}, dinner:{label:'저녁',name:'오트밀죽+두부1모+미트리 리얼치즈',kcal:745} },
+  5: { morning:{label:'아침',name:'더단백+구운계란2+키위+유산균',kcal:321}, lunch:{label:'점심',name:'밀프랩: 귀리곤약밥+브로콜리+버섯+블랙페퍼+구운계란',kcal:347}, dinner:{label:'저녁',name:'오트밀죽+두부1모+미트리 매콤치즈',kcal:745} },
+  6: { morning:{label:'아침',name:'더단백+구운계란2+키위+유산균',kcal:321}, lunch:{label:'점심',name:'양배추 치즈 햄 계란말이 (밀프랩 휴식)',kcal:457}, dinner:{label:'저녁',name:'오트밀죽+두부1모+미트리 오리지널 ★60g',kcal:728} }
 };
 var DOW_KO = ['일','월','화','수','목','금','토'];
 
 function renderTodayMeal() {
-  var dow   = new Date().getDay(); // 0=일~6=토
-  // TODAY_MENU는 0=월 기준이므로 변환 (일=6, 월=0 ... 토=5)
+  var dow     = new Date().getDay();
   var menuIdx = (dow + 6) % 7;
-  var menu  = TODAY_MENU[menuIdx];
-  var el    = document.getElementById('today-meal-card');
-  var label = document.getElementById('today-dow-label');
+  var latestWeight = allRows.length > 0 ? allRows[allRows.length-1].weight : 100;
+  var phase   = getPhase(latestWeight);
+  var menu    = phase === 'phase2' ? TODAY_MENU_P2[menuIdx] : TODAY_MENU_P1[menuIdx];
+  var el      = document.getElementById('today-meal-card');
+  var label   = document.getElementById('today-dow-label');
   if (!el || !menu) return;
-  label.textContent = DOW_KO[dow] + '요일';
+  var phaseTag = phase === 'phase2' ? ' · Phase 2 밀프랩' : ' · Phase 1';
+  label.textContent = DOW_KO[dow] + '요일' + phaseTag;
   var total = menu.morning.kcal + menu.lunch.kcal + menu.dinner.kcal;
   el.innerHTML =
     '<div class="today-meal-row">'
