@@ -180,48 +180,48 @@ var P1_AMBASIC={time:'아침',badge:'t-am',name:'더단백+계란2+키위+유산
 // ═══════════════════════════════════════════════════════════
 //  Phase 2 공통 아침
 // ═══════════════════════════════════════════════════════════
-var P2_AM3030={time:'아침',badge:'t-am',name:'30/30/30 — 더단백+요프로+계란1+키위+유산균',
-  kcal:330,pro:42,carb:31,fat:3,na:207,
+var P2_AM3030={time:'아침',badge:'t-am',name:'30/30/30 — 더단백+요프로+계란1+사과½+유산균',
+  kcal:319,pro:41.3,carb:29.5,fat:3,na:205,
   items:[
     {food:'더단백 초코/카라멜',amt:'1병(250ml)',kcal:105,pro:20,carb:6,fat:1,na:50},
     {food:'요프로 플레인',amt:'1개(150g)',kcal:84,pro:15,carb:8,fat:1.5,na:85},
     {food:'오메가 구운계란',amt:'1개(40g)',kcal:50,pro:5,carb:0.5,fat:2.9,na:60},
-    {food:'키위',amt:'1개(100g)',kcal:61,pro:1.1,carb:14.7,fat:0.5,na:2},
+    {food:'사과',amt:'½개(100g)',kcal:50,pro:0.3,carb:13.5,fat:0.1,na:2},
     {food:'유산균(락토핏)',amt:'1포',kcal:5,pro:0,carb:1,fat:0,na:5}
   ],
-  ing:'더단백 초코/카라멜 1병\n요프로 플레인 1개\n오메가 구운계란 1개\n키위 1개\n유산균(락토핏) 1포',
-  steps:'기상 후 30분 이내\n① 유산균 → ② 더단백 → ③ 요프로 → ④ 구운계란 → ⑤ 키위',
+  ing:'더단백 초코/카라멜 1병\n요프로 플레인 1개\n오메가 구운계란 1개\n사과 ½개\n유산균(락토핏) 1포',
+  steps:'기상 후 30분 이내\n① 유산균 → ② 더단백 → ③ 요프로 → ④ 구운계란 → ⑤ 사과',
   gout:'',tip:'요프로의 당은 유당 — 과당 아님, 통풍 영향 없음'
 };
-var P2_AMBASIC={time:'아침',badge:'t-am',name:'기본 — 더단백+계란2+키위+유산균',
-  kcal:321,pro:33,carb:23,fat:7,na:187,
+var P2_AMBASIC={time:'아침',badge:'t-am',name:'기본 — 더단백+계란2+사과½+유산균',
+  kcal:310,pro:32.3,carb:21.5,fat:7,na:185,
   items:[
     {food:'더단백 초코/카라멜',amt:'1병(250ml)',kcal:105,pro:20,carb:6,fat:1,na:50},
     {food:'오메가 구운계란',amt:'2개(80g)',kcal:100,pro:10,carb:1,fat:5.8,na:120},
-    {food:'키위',amt:'1개(100g)',kcal:61,pro:1.1,carb:14.7,fat:0.5,na:2},
+    {food:'사과',amt:'½개(100g)',kcal:50,pro:0.3,carb:13.5,fat:0.1,na:2},
     {food:'유산균(락토핏)',amt:'1포',kcal:5,pro:0,carb:1,fat:0,na:5}
   ],
-  ing:'더단백 초코/카라멜 1병\n오메가 구운계란 2개\n키위 1개\n유산균(락토핏) 1포',
+  ing:'더단백 초코/카라멜 1병\n오메가 구운계란 2개\n사과 ½개\n유산균(락토핏) 1포',
   steps:'기상 후 섭취. 별도 조리 없음.',
-  gout:'',tip:''
+  gout:'',tip:'사과의 비타민C는 요산 배출에 도움이 돼요.'
 };
 
 // ═══════════════════════════════════════════════════════════
 //  Phase 2 저녁 생성 함수
 // ═══════════════════════════════════════════════════════════
 function mkDinner(mn,mk,mp,mc,mna,oatg){
-  oatg=oatg||40;
-  var ok=Math.round(148*(oatg/40));
-  var oc=Math.round(27*(oatg/40)*10)/10;
-  var op=Math.round(5*(oatg/40)*10)/10;
-  var tk=ok+150+10+45+20+210+mk;
-  var tp=Math.round((op+12.4+0.5+19+mp)*10)/10;
-  var tc=Math.round((oc+1.2+1+4+mc)*10)/10;
-  var tn=5+130+28+2+15+mna;
-  var note=oatg>40?' ★오트밀 60g':'';
+  oatg=oatg||30;
+  var ok=Math.round(111*(oatg/30));
+  var oc=Math.round(20.25*(oatg/30)*10)/10;
+  var op=Math.round(3.75*(oatg/30)*10)/10;
+  var tk=ok+150+10+45+20+105+mk;
+  var tp=Math.round((op+12.4+0.5+9.5+mp)*10)/10;
+  var tc=Math.round((oc+1.2+1+2+mc)*10)/10;
+  var tn=5+130+28+2+8+mna;
+  var note=oatg>30?' ★오트밀 '+oatg+'g':'';
   return {
     time:'저녁',badge:'t-di',
-    name:'오트밀죽+두부1모+미트리 '+mn+note,
+    name:'오트밀죽+두부½모+미트리 '+mn+note,
     kcal:tk,pro:tp,carb:tc,fat:'-',na:tn,
     items:[
       {food:'오트밀(롤드오츠)',amt:oatg+'g',kcal:ok,pro:op,carb:oc,fat:2,na:5},
@@ -229,11 +229,11 @@ function mkDinner(mn,mk,mp,mc,mna,oatg){
       {food:'조미김',amt:'6장(2g)',kcal:10,pro:0,carb:0,fat:0.9,na:28},
       {food:'참기름',amt:'5ml',kcal:45,pro:0,carb:0,fat:5,na:0},
       {food:'들깨가루',amt:'약간',kcal:20,pro:0.5,carb:1,fat:1,na:2},
-      {food:'두부',amt:'1모(300g)',kcal:210,pro:19,carb:4,fat:11,na:15},
+      {food:'두부',amt:'½모(150g)',kcal:105,pro:9.5,carb:2,fat:5.5,na:8},
       {food:'미트리 스테이크 '+mn,amt:'1개(100g)',kcal:mk,pro:mp,carb:mc,fat:'-',na:mna}
     ],
-    ing:'오트밀 '+oatg+'g\n계란 2개\n조미김 6장, 참기름 5ml, 들깨가루 약간\n두부 1모(300g)\n미트리 스테이크 '+mn+' 1개',
-    steps:'[전자레인지 방식]\n① 오트밀+물(180ml)+미리 푼 계란 2개 넣고 섞기\n② 700W 3분 → 꺼내서 섞기 → 다시 3분\n③ 들깨가루·참기름 뿌려 마무리\n[두부]\n④ 올리브오일에 중불 앞뒤 굽기. 소금 금지\n[미트리]\n⑤ 포장 일부 개봉 → 700W 2분\n⑥ 조미김 6장과 함께 섭취',
+    ing:'오트밀 '+oatg+'g\n계란 2개\n조미김 6장, 참기름 5ml, 들깨가루 약간\n두부 ½모(150g)\n미트리 스테이크 '+mn+' 1개',
+    steps:'[전자레인지 방식]\n① 오트밀+물(130ml)+미리 푼 계란 2개 넣고 섞기\n② 700W 2분30초 → 꺼내서 섞기 → 다시 2분\n③ 들깨가루·참기름 뿌려 마무리\n[두부]\n④ 올리브오일에 중불 앞뒤 굽기. 소금 금지\n[미트리]\n⑤ 포장 일부 개봉 → 700W 2분\n⑥ 조미김 6장과 함께 섭취',
     gout:'소금 간 절대 금지\n두부·오트밀 저퓨린 ✅',
     tip:'조미김 6장 나트륨 28mg — 거의 영향 없음'
   };
@@ -477,19 +477,19 @@ var P2={
   tabs:['월','화','수','목','금','토','일','밀프랩'],
   keys:['mon','tue','wed','thu','fri','sat','sun','prep'],
   days:{
-    mon:{label:'월요일',tag:'30/30/30 ✅',sum:{kcal:1421,pro:133,carb:98,na:1182,sugar:14,note:'칼로리·단백질·나트륨·당류 ✅ / 탄수화물 98g (순탄수 기준 ✅)'},
-      meals:[P2_AM3030,mkLunch2('스팀통닭가슴살 매콤어니언',140,21,8,450,6),mkDinner('오리지널',140,18,9,290,40)]},
-    tue:{label:'화요일',tag:'기본',sum:{kcal:1407,pro:124,carb:92,na:1132,sugar:13,note:'전 항목 목표 달성 ✅'},
-      meals:[P2_AMBASIC,mkLunch2('스팀통닭가슴살 청양랜치',145,20,4,370,3),mkDinner('청양고추',145,18,9,260,40)]},
-    wed:{label:'수요일',tag:'30/30/30 ✅',sum:{kcal:1421,pro:132,carb:98,na:1227,sugar:12,note:'칼로리·단백질·나트륨·당류 ✅ / 탄수화물 98g (순탄수 기준 ✅)'},
-      meals:[P2_AM3030,mkLunch2('스팀통닭가슴살 블랙알리오',120,19,6,450,4),mkDinner('리얼갈릭',150,18,12,260,40)]},
-    thu:{label:'목요일',tag:'기본',sum:{kcal:1397,pro:125,carb:92,na:1157,sugar:11,note:'전 항목 목표 달성 ✅'},
-      meals:[P2_AMBASIC,mkLunch2('스팀통닭가슴살 오리지널',115,22,2,390,1),mkDinner('단호박',140,18,11,270,40)]},
-    fri:{label:'금요일',tag:'30/30/30 ✅',sum:{kcal:1436,pro:135,carb:98,na:1192,sugar:12,note:'칼로리·단백질·나트륨·당류 ✅ / 탄수화물 98g (순탄수 기준 ✅)'},
-      meals:[P2_AM3030,mkLunch2('스팀통닭가슴살 양념치킨',130,20,6,410,4),mkDinner('리얼치즈',160,20,9,260,40)]},
-    sat:{label:'토요일',tag:'기본',sum:{kcal:1447,pro:129,carb:92,na:1077,sugar:13,note:'전 항목 목표 달성 ✅'},
-      meals:[P2_AMBASIC,mkLunch2('스팀통닭가슴살 블랙페퍼',125,24,2,310,1),mkDinner('매콤치즈',160,20,9,270,40)]},
-    sun:{label:'일요일',tag:'기본',sum:{kcal:1506,pro:127,carb:81,na:1031,sugar:12,note:'칼로리 소폭 초과(6kcal) — 무시 가능 ✅'},
+    mon:{label:'월요일',tag:'30/30/30 ✅',sum:{kcal:1262,pro:119,carb:110,na:1215,sugar:12,note:'칼로리·단백질·나트륨·당류 ✅'},
+      meals:[P2_AM3030,mkLunch2('스팀통닭가슴살 매콤어니언',140,21,8,450,6),mkDinner('오리지널',140,18,9,290)]},
+    tue:{label:'화요일',tag:'기본',sum:{kcal:1263,pro:109,carb:98,na:1085,sugar:11,note:'칼로리·나트륨·당류 ✅ / 단백질 109g (목표 110g 근접)'},
+      meals:[P2_AMBASIC,mkLunch2('스팀통닭가슴살 청양랜치',145,20,4,370,3),mkDinner('청양고추',145,18,9,260)]},
+    wed:{label:'수요일',tag:'30/30/30 ✅',sum:{kcal:1252,pro:117,carb:103,na:1185,sugar:10,note:'칼로리·단백질·나트륨·당류 ✅'},
+      meals:[P2_AM3030,mkLunch2('스팀통닭가슴살 블랙알리오',120,19,6,450,4),mkDinner('리얼갈릭',150,18,12,260)]},
+    thu:{label:'목요일',tag:'기본',sum:{kcal:1228,pro:111,carb:96,na:1135,sugar:9,note:'전 항목 목표 달성 ✅'},
+      meals:[P2_AMBASIC,mkLunch2('스팀통닭가슴살 오리지널',115,22,2,390,1),mkDinner('단호박',140,18,11,270)]},
+    fri:{label:'금요일',tag:'30/30/30 ✅',sum:{kcal:1272,pro:120,carb:103,na:1145,sugar:10,note:'칼로리·단백질·나트륨·당류 ✅'},
+      meals:[P2_AM3030,mkLunch2('스팀통닭가슴살 양념치킨',130,20,6,410,4),mkDinner('리얼치즈',160,20,9,260)]},
+    sat:{label:'토요일',tag:'기본',sum:{kcal:1258,pro:115,carb:96,na:1095,sugar:11,note:'전 항목 목표 달성 ✅'},
+      meals:[P2_AMBASIC,mkLunch2('스팀통닭가슴살 블랙페퍼',125,24,2,310,1),mkDinner('매콤치즈',160,20,9,270)]},
+    sun:{label:'일요일',tag:'기본',sum:{kcal:1348,pro:115,carb:63,na:1039,sugar:10,note:'전 항목 목표 달성 ✅'},
       meals:[
         P2_AMBASIC,
         {time:'점심',badge:'t-lu',name:'양배추 치즈 햄 계란말이 (밀프랩 휴식일)',kcal:457,pro:39,carb:8,fat:29,na:384,
@@ -504,7 +504,7 @@ var P2={
           steps:'[토요일 밤 준비] 햄 데치기+다지기, 양배추 채썰기\n[일요일 아침]\n① 양배추 수분 제거: 마른 팬 약불 1~2분\n② 계란물 배합 (소금 금지)\n③ 중약불로 부치고 치즈 올리기\n④ 치즈 녹으면 돌돌 말기',
           gout:'햄 데치기 1분 필수\n소금 간 절대 금지',
           tip:'토요일 밤 사전 준비하면 조리 10분 이내'},
-        mkDinner('오리지널',140,18,9,290,60)
+        mkDinner('오리지널',140,18,9,290)
       ]},
     prep:{label:'밀프랩 준비',tag:'주 1회',sum:null,
       meals:[
