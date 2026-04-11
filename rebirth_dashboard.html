@@ -450,6 +450,13 @@
         <button class="popup-close" onclick="closePopup()">✕</button>
       </div>
       <div class="popup-body">
+        <!-- 📅 기록 날짜 선택 (오늘 포함 과거 30일) -->
+        <div class="field-group" style="margin-bottom:14px;">
+          <div class="field-label">📅 기록 날짜 선택</div>
+          <select class="field-input" id="f-record-date" onchange="onRecordDateChange()"></select>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">지나간 일자를 선택하면 해당 요일 기준으로 식단·운동 기본값이 맞춰집니다.</div>
+        </div>
+
         <!-- 어제 기록 -->
         <div class="yesterday-box" id="yesterday-box" style="display:none">
           <div class="yesterday-title">📅 어제 기록 <span id="yday-date" style="font-weight:400;color:var(--text-3)"></span></div>
@@ -953,7 +960,7 @@ function fillSelect(id, items, defaultVal) {
 
 // 요일에 맞는 식단 드롭다운 (오늘 요일의 Phase1+Phase2 메뉴 둘 다 그룹으로 표시)
 function fillMealDropdowns() {
-  var dow          = getTodayDow();
+  var dow          = getSelectedDow();
   var latestWeight = allRows.length > 0 ? allRows[allRows.length-1].weight : 100;
   var phase        = getPhase(latestWeight);
   var p1           = MEAL_SCHEDULE_P1[dow];
@@ -961,7 +968,7 @@ function fillMealDropdowns() {
   var curSched     = phase === 'phase2' ? p2 : p1;
   var dowNames     = ['월','화','수','목','금','토','일'];
   var label = document.getElementById('meal-phase-label');
-  if (label) label.textContent = '📅 오늘(' + dowNames[dow] + ') · 현재 ' + (phase === 'phase2' ? 'Phase 2' : 'Phase 1');
+  if (label) label.textContent = '📅 선택일(' + dowNames[dow] + ') · 현재 ' + (phase === 'phase2' ? 'Phase 2' : 'Phase 1');
 
   function fillBoth(id, p1items, p2items, defaultVal) {
     var sel = document.getElementById(id);
@@ -988,7 +995,7 @@ function fillExerciseDropdown() {
   var latestWeight = allRows.length > 0 ? allRows[allRows.length-1].weight : 100;
   var phase     = getPhase(latestWeight);
   var phaseData = WORKOUT[phase];
-  var dow       = getTodayDow();
+  var dow       = getSelectedDow();
   var dayData   = phaseData.days[dow];
   var label     = document.getElementById('exercise-phase-label');
   if (label) label.textContent = '📌 ' + phaseData.label + ' · ' + dayData.name;
@@ -1141,19 +1148,65 @@ function getMealValue(id) {
 }
 
 function openPopup() {
-  var today = new Date();
-  var dateStr = today.getFullYear() + '-'
-    + String(today.getMonth()+1).padStart(2,'0') + '-'
-    + String(today.getDate()).padStart(2,'0');
-  document.getElementById('popup-date').textContent =
-    today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
-  document.getElementById('popup-overlay').dataset.date = dateStr;
+  populateDateDropdown();   // 드롭다운 채우기 (오늘 + 과거 30일)
+  applySelectedDateToPopup(); // 헤더 날짜, dataset.date 세팅
   document.getElementById('popup-msg').textContent = '';
   document.getElementById('popup-msg').className = 'popup-msg';
   document.getElementById('popup-save-btn').disabled = false;
   document.getElementById('popup-save-btn').textContent = '저장하기';
   document.getElementById('popup-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  fillMealDropdowns();
+  fillExerciseDropdown();
+}
+
+// 드롭다운 옵션 생성: 오늘 + 과거 30일
+function populateDateDropdown() {
+  var sel = document.getElementById('f-record-date');
+  if (!sel) return;
+  var dowNames = ['일','월','화','수','목','금','토'];
+  sel.innerHTML = '';
+  var today = new Date();
+  today.setHours(0,0,0,0);
+  for (var i = 0; i < 31; i++) {
+    var d = new Date(today);
+    d.setDate(today.getDate() - i);
+    var y = d.getFullYear();
+    var m = String(d.getMonth()+1).padStart(2,'0');
+    var day = String(d.getDate()).padStart(2,'0');
+    var val = y + '-' + m + '-' + day;
+    var txt = (i === 0 ? '오늘 · ' : (i === 1 ? '어제 · ' : ''))
+              + y + '-' + m + '-' + day + ' (' + dowNames[d.getDay()] + ')';
+    var o = document.createElement('option');
+    o.value = val;
+    o.textContent = txt;
+    sel.appendChild(o);
+  }
+  sel.value = sel.options[0].value; // 기본: 오늘
+}
+
+// 드롭다운에서 선택된 날짜를 popup-date/dataset.date에 반영
+function applySelectedDateToPopup() {
+  var sel = document.getElementById('f-record-date');
+  var dateStr = sel ? sel.value : null;
+  var d = dateStr ? new Date(dateStr + 'T00:00:00') : new Date();
+  var dateText = d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + d.getDate() + '일';
+  document.getElementById('popup-date').textContent = dateText;
+  document.getElementById('popup-overlay').dataset.date =
+    d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+// 선택된 날짜의 요일 (월=0 ~ 일=6, 기존 getTodayDow 규칙과 동일)
+function getSelectedDow() {
+  var sel = document.getElementById('f-record-date');
+  if (!sel || !sel.value) return getTodayDow();
+  var d = new Date(sel.value + 'T00:00:00');
+  return (d.getDay() + 6) % 7;
+}
+
+// 드롭다운 변경 시: 헤더/저장날짜 갱신 + 식단·운동 기본값 재적용
+function onRecordDateChange() {
+  applySelectedDateToPopup();
   fillMealDropdowns();
   fillExerciseDropdown();
 }
