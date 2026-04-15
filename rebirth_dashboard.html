@@ -26,14 +26,13 @@
   .badge-live { display: inline-flex; align-items: center; gap: 5px; background: var(--teal-light); color: var(--teal-dark); font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; margin-top: 6px; }
   .badge-live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); display: inline-block; }
 
-  /* 카드 그리드 */
-  .cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 1.5rem; }
-  @media(min-width:540px){ .cards { grid-template-columns: repeat(4,1fr); } }
-  .card { background: var(--surface); border-radius: var(--radius-sm); padding: 14px 16px; }
-  .card-label { font-size: 11px; color: var(--text-2); margin-bottom: 6px; font-weight: 500; }
-  .card-num { font-size: 28px; font-weight: 600; line-height: 1; }
-  .card-num span { font-size: 14px; font-weight: 400; color: var(--text-2); margin-left: 1px; }
-  .card-sub { font-size: 11px; color: var(--text-3); margin-top: 5px; }
+  /* 카드 그리드 — 항상 2×2 */
+  .cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 1.5rem; }
+  .card { background: var(--surface); border-radius: var(--radius); padding: 22px 24px; min-height: 110px; display: flex; flex-direction: column; justify-content: center; }
+  .card-label { font-size: 12px; color: var(--text-2); margin-bottom: 8px; font-weight: 500; }
+  .card-num { font-size: 36px; font-weight: 700; line-height: 1; }
+  .card-num span { font-size: 16px; font-weight: 400; color: var(--text-2); margin-left: 2px; }
+  .card-sub { font-size: 12px; color: var(--text-3); margin-top: 7px; }
   .card.accent .card-num { color: var(--teal-dark); }
   .card.amber .card-num { color: var(--amber); }
   .card.blue .card-num { color: var(--blue); }
@@ -273,7 +272,7 @@
     <div class="header">
       <div class="header-left">
         <h1>🌿 PROJECT Re-birth</h1>
-        <p>최종 목표 74kg · 식단 &amp; 운동으로 건강해지기</p>
+        <p>🥇 1차 80kg (6/30) &nbsp;·&nbsp; 🥈 2차 75kg (8/30) &nbsp;·&nbsp; 식단 &amp; 운동으로 건강해지기</p>
         <div class="badge-live">Google Sheets 실시간 연동</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
@@ -294,30 +293,26 @@
         <div class="card-num" id="c-loss">—<span>kg</span></div>
         <div class="card-sub" id="c-loss-sub"></div>
       </div>
-      <div class="card amber">
-        <div class="card-label">연속 기록</div>
-        <div class="card-num" id="c-streak">—<span>일</span></div>
-        <div class="card-sub" id="c-streak-sub"></div>
-      </div>
+
       <div class="card blue">
         <div class="card-label">현재 BMI</div>
         <div class="card-num" id="c-bmi">—</div>
         <div class="card-sub" id="c-bmi-sub"></div>
       </div>
       <div class="card dday">
-        <div class="card-label">D-day / 경과일</div>
+        <div class="card-label">D-day</div>
         <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin:4px 0;">
           <div style="text-align:center;">
-            <div id="c-dday" style="font-size:26px;font-weight:800;color:#185FA5;line-height:1.1;">—<span style="font-size:14px;font-weight:600;">일</span></div>
-            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">남은 날</div>
+            <div id="c-dday" style="font-size:40px;font-weight:800;color:#185FA5;line-height:1.1;">—<span style="font-size:16px;font-weight:600;">일</span></div>
+            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">🥇 80kg (6/30)</div>
           </div>
           <div style="width:1px;height:32px;background:var(--border);"></div>
           <div style="text-align:center;">
-            <div id="c-elapsed" style="font-size:26px;font-weight:800;color:var(--teal-dark);line-height:1.1;">—<span style="font-size:14px;font-weight:600;">일</span></div>
-            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">시작 후</div>
+            <div id="c-elapsed" style="font-size:40px;font-weight:800;color:#6B6B67;line-height:1.1;">—<span style="font-size:16px;font-weight:600;">일</span></div>
+            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">🥈 75kg (8/30)</div>
           </div>
         </div>
-        <div class="card-sub">2026년 6월 30일까지</div>
+        <div class="card-sub" id="c-dday-sub"></div>
       </div>
     </div>
 
@@ -366,7 +361,7 @@
         <div class="chart-legend">
           <span><span class="legend-dot" style="background:#1D9E75"></span>실제 체중</span>
           <span><span class="legend-dot" style="background:#BA7517"></span>7일 이동평균 <span style="color:var(--text-3);font-size:11px;">단기 노이즈를 제거한 진짜 추세</span></span>
-          <span><span class="legend-dot" style="background:#D85A30;opacity:0.6"></span>목표 74kg</span>
+          <span><span class="legend-dot" style="background:#D85A30;opacity:0.6"></span>1차 목표 80kg 🥇</span>
         </div>
         <div class="chart-wrap"><canvas id="weightChart"></canvas></div>
       </div>
@@ -406,30 +401,21 @@
       </div>
       <div class="pace-bars">
         <div class="pace-bar-item">
-          <div class="pace-bar-label">최근 7일 평균 감량</div>
+          <div class="pace-bar-label">이번 주 감량 (화~오늘)</div>
           <div class="pace-bar-val" id="pace-recent">—</div>
+          <div class="pace-bar-sub" id="pace-recent-range" style="font-size:10px;color:var(--text-3);margin-top:2px;"></div>
           <div class="pace-bar-bg"><div class="pace-bar-fill" id="pace-recent-bar" style="width:0%;background:#1D9E75"></div></div>
         </div>
         <div class="pace-bar-item">
-          <div class="pace-bar-label">전체 일평균 감량</div>
+          <div class="pace-bar-label">지난 주 감량 (화~월)</div>
           <div class="pace-bar-val" id="pace-avg">—</div>
+          <div class="pace-bar-sub" id="pace-avg-range" style="font-size:10px;color:var(--text-3);margin-top:2px;"></div>
           <div class="pace-bar-bg"><div class="pace-bar-fill" id="pace-avg-bar" style="width:0%;background:#BA7517"></div></div>
         </div>
       </div>
     </div>
 
-    <!-- 연속 기록 스트릭 -->
-    <div class="section">
-      <div class="section-head">연속 기록 스트릭</div>
-      <div class="streak-box">
-        <div class="streak-num" id="streak-num">0</div>
-        <div class="streak-info">
-          <div class="streak-label" id="streak-label">일 연속 기록 중</div>
-          <div class="streak-sub" id="streak-sub"></div>
-        </div>
-      </div>
-      <div class="streak-dots" id="streak-dots" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:4px;"></div>
-    </div>
+
 
 
 
@@ -546,10 +532,11 @@
 <script>
 var allRows      = []; // 전역 데이터 저장 (팝업 참조용)
 var API_URL      = 'https://script.google.com/macros/s/AKfycbzBwSGnxFWM8UbgqFvpBgkoDTsYgUoQ2koVzBY6o0hu4JndbdwZAvKJk82S7jFNaXOMzQ/exec';
-var START_WEIGHT = 122.8;
-var GOAL_WEIGHT  = 74;
-var HEIGHT_M     = 1.80; // 신장 180cm
-var MILESTONES   = [120, 115, 110, 105, 100, 95, 90, 85, 80, 74];
+var START_WEIGHT  = 122.8;
+var GOAL_WEIGHT   = 80;   // 1차 목표
+var GOAL_WEIGHT2  = 75;   // 2차 목표
+var HEIGHT_M      = 1.80; // 신장 180cm
+var MILESTONES    = [120, 115, 110, 105, 100, 95, 90, 85, 80, 75];
 
 // ── CSV 파싱 ─────────────────────────────────────────────
 // JSON 파서: Apps Script가 이름 기반 JSON을 반환하므로 컬럼 위치 오류 없음
@@ -632,20 +619,22 @@ function getMonthly(rows) {
 }
 
 // ── BMI 구간 텍스트 ───────────────────────────────────────
+// 대한비만학회 한국 성인 BMI 진단 기준
 function bmiInfo(bmi) {
-  if (bmi < 18.5) return { label: '저체중', color: '#1E40AF', next: '정상(18.5)까지 +' + (18.5 - bmi).toFixed(1) };
-  if (bmi < 25)   return { label: '정상',   color: '#166534', next: '과체중(25) 경계까지 +' + (25 - bmi).toFixed(1) };
-  if (bmi < 30)   return { label: '과체중', color: '#854D0E', next: '정상(25)까지 -' + (bmi - 25).toFixed(1) + ' / 비만(30) 경계까지 +' + (30 - bmi).toFixed(1) };
-  if (bmi < 35)   return { label: '비만',   color: '#9A3412', next: '과체중(30)까지 -' + (bmi - 30).toFixed(1) };
-  return               { label: '고도비만', color: '#991B1B', next: '비만(35)까지 -' + (bmi - 35).toFixed(1) };
+  if (bmi < 18.5) return { label: '저체중',           color: '#1E40AF', next: '정상체중(18.5)까지 +' + (18.5 - bmi).toFixed(1) };
+  if (bmi < 23.0) return { label: '정상체중',          color: '#166534', next: '과체중(23.0) 경계까지 +' + (23.0 - bmi).toFixed(1) };
+  if (bmi < 25.0) return { label: '과체중 (비만 전단계)', color: '#854D0E', next: '정상체중(23.0)까지 -' + (bmi - 23.0).toFixed(1) + ' / 1단계 비만(25.0) 경계까지 +' + (25.0 - bmi).toFixed(1) };
+  if (bmi < 30.0) return { label: '1단계 비만 (경도)',  color: '#9A3412', next: '과체중(25.0)까지 -' + (bmi - 25.0).toFixed(1) + ' / 2단계 비만(30.0) 경계까지 +' + (30.0 - bmi).toFixed(1) };
+  if (bmi < 35.0) return { label: '2단계 비만 (중등도)', color: '#7F1D1D', next: '1단계 비만(30.0)까지 -' + (bmi - 30.0).toFixed(1) + ' / 3단계 비만(35.0) 경계까지 +' + (35.0 - bmi).toFixed(1) };
+  return                 { label: '3단계 비만 (고도)',  color: '#450a0a', next: '2단계 비만(35.0)까지 -' + (bmi - 35.0).toFixed(1) };
 }
 
 // ── 전체 렌더 ─────────────────────────────────────────────
 function render(rows) {
   var today     = rows[rows.length - 1];
   var totalLoss = +(START_WEIGHT - today.weight).toFixed(1);
-  var remaining = +(today.weight - GOAL_WEIGHT).toFixed(1);
-  var pct       = Math.min(100, +((totalLoss / (START_WEIGHT - GOAL_WEIGHT)) * 100).toFixed(1));
+  var remaining = +(today.weight - GOAL_WEIGHT).toFixed(1);   // 1차 기준
+  var pct       = Math.min(100, +((totalLoss / (START_WEIGHT - GOAL_WEIGHT)) * 100).toFixed(1)); // 1차 기준
   var days      = Math.round((today.date - rows[0].date) / 86400000) + 1;
   var avgLoss   = +(totalLoss / rows.length).toFixed(2);
   var streak    = calcStreak(rows);
@@ -664,64 +653,118 @@ function render(rows) {
   }
   document.getElementById('c-current-sub').textContent = '시작 시 ' + START_WEIGHT + 'kg' + diffText;
   document.getElementById('c-loss').innerHTML          = '-' + totalLoss + '<span>kg</span>';
-  document.getElementById('c-loss-sub').textContent    = '목표까지 -' + remaining + 'kg 남음';
-  document.getElementById('c-streak').innerHTML        = streak + '<span>일</span>';
-  document.getElementById('c-streak-sub').textContent  = '연속 기록 중';
+  var remaining1 = +(today.weight - GOAL_WEIGHT).toFixed(1);
+  document.getElementById('c-loss-sub').textContent    = '1차(80kg)까지 -' + remaining1 + 'kg 남음';
+  var _cStreak = document.getElementById('c-streak'); if (_cStreak) _cStreak.innerHTML = streak + '<span>일</span>';
+  var _cStreakSub = document.getElementById('c-streak-sub'); if (_cStreakSub) _cStreakSub.textContent = '연속 기록 중';
   document.getElementById('c-bmi').textContent         = bmi;
   document.getElementById('c-bmi-sub').textContent     = bmiData.label;
   document.getElementById('last-updated').textContent  = '마지막 업데이트: ' + (today.date.getMonth() + 1) + '/' + today.date.getDate();
 
-  // ── D-day 카운터 ───────────────────────────────────────
-  var goalDate  = new Date(2026, 5, 30); // 6월 30일
-  var startDate = new Date(2026, 0, 12); // 시작일 1월 12일
+  // ── D-day 카운터 (1차 6/30, 2차 8/30) ─────────────────
+  var goal1Date = new Date(2026, 5, 30); // 1차 6월 30일
+  var goal2Date = new Date(2026, 7, 30); // 2차 8월 30일
   var nowDate   = new Date();
-  var dday      = Math.ceil((goalDate - nowDate) / 86400000);
-  var elapsed   = Math.floor((nowDate - startDate) / 86400000) + 1;
-  document.getElementById('c-dday').innerHTML = dday + '<span>일</span>';
+  var dday1     = Math.ceil((goal1Date - nowDate) / 86400000);
+  var dday2     = Math.ceil((goal2Date - nowDate) / 86400000);
+  document.getElementById('c-dday').innerHTML = dday1 + '<span>일</span>';
   var elEl = document.getElementById('c-elapsed');
-  if (elEl) elEl.innerHTML = elapsed + '<span style="font-size:14px;font-weight:600;">일</span>';
+  if (elEl) elEl.innerHTML = dday2 + '<span style="font-size:13px;font-weight:600;">일</span>';
+  var subEl = document.getElementById('c-dday-sub');
+  if (subEl) subEl.textContent = '시작 후 ' + (Math.floor((nowDate - new Date(2026,0,12))/86400000)+1) + '일째';
 
   // 카드 그리드 5개 반응형
+  // 카드 그리드 항상 2×2 고정
   var grid = document.getElementById('cards-grid');
-  if (window.innerWidth >= 600) grid.style.gridTemplateColumns = 'repeat(5,1fr)';
-  else grid.style.gridTemplateColumns = 'repeat(2,1fr)';
+  if (grid) grid.style.gridTemplateColumns = 'repeat(2,1fr)';
 
-  // ── 감량 페이스 신호등 ──────────────────────────────────
-  var recentRows = rows.slice(-7);
-  var recentLoss = recentRows.length >= 2
-    ? +((recentRows[0].weight - recentRows[recentRows.length-1].weight) / (recentRows.length-1)).toFixed(2)
-    : avgLoss;
-  var ratio = avgLoss > 0 ? recentLoss / avgLoss : 1;
+  // ── 감량 페이스 신호등 (이번 주 vs 지난 주, 화~월 기준) ──
+  // 오늘 기준으로 이번 주 화요일 날짜 계산 (화=2, JS:0=일)
+  function getWeekTue(refDate, weekOffset) {
+    // weekOffset: 0=이번주, -1=지난주
+    var d = new Date(refDate);
+    var day = d.getDay(); // 0=일,1=월,...,6=토
+    // 화요일(2) 기준: 이번 주 화요일까지의 차이
+    var diffToTue = (day >= 2) ? (day - 2) : (day + 5); // 이번주 화요일
+    var thisTue = new Date(d);
+    thisTue.setDate(d.getDate() - diffToTue + (weekOffset * 7));
+    thisTue.setHours(0,0,0,0);
+    return thisTue;
+  }
+
+  var now        = new Date(today.date);
+  var thisTue    = getWeekTue(now, 0);   // 이번 주 화요일
+  var lastTue    = getWeekTue(now, -1);  // 지난 주 화요일
+  var lastMon    = new Date(thisTue);
+  lastMon.setDate(thisTue.getDate() - 1); // 지난 주 월요일(=이번 주 화요일 전날)
+
+  function fmt(d) { return (d.getMonth()+1) + '/' + d.getDate(); }
+
+  // 이번 주 구간: 이번 주 화요일 ~ 오늘
+  var thisWeekRows = rows.filter(function(r) {
+    return r.date >= thisTue && r.date <= now;
+  });
+  // 지난 주 구간: 지난 주 화요일 ~ 지난 주 월요일
+  var lastWeekRows = rows.filter(function(r) {
+    return r.date >= lastTue && r.date <= lastMon;
+  });
+
+  // 구간 감량 계산 (시작체중 - 마지막체중)
+  function weekLoss(wrows) {
+    if (wrows.length < 2) return null;
+    return +(wrows[0].weight - wrows[wrows.length-1].weight).toFixed(2);
+  }
+
+  var thisLoss = weekLoss(thisWeekRows);
+  var lastLoss = weekLoss(lastWeekRows);
+
+  // 비교 기준: 이번 주 vs 지난 주
+  var ratio = (lastLoss && lastLoss > 0 && thisLoss !== null)
+    ? thisLoss / lastLoss : 1;
 
   var paceLight, paceTitle, paceSub, paceLightCls;
-  if (ratio >= 0.9) {
+  if (thisLoss === null) {
+    paceLightCls = 'yellow'; paceLight = '⏳';
+    paceTitle = '이번 주 데이터 수집 중';
+    paceSub   = '이번 주(화~오늘) 기록이 2일 이상 쌓이면 비교가 시작돼요.';
+  } else if (ratio >= 0.9) {
     paceLightCls = 'green'; paceLight = '🟢';
     paceTitle = '순항 중이에요!';
-    paceSub   = '최근 7일 페이스가 전체 평균과 비슷하거나 빠릅니다. 지금 이대로 유지하세요.';
+    paceSub   = '이번 주 감량 페이스가 지난 주와 비슷하거나 빠릅니다. 지금 이대로 유지하세요.';
   } else if (ratio >= 0.5) {
     paceLightCls = 'yellow'; paceLight = '🟡';
     paceTitle = '페이스가 다소 느려졌어요';
-    paceSub   = '최근 7일 감량이 평균보다 약간 낮아요. 식단이나 운동 패턴을 점검해보세요.';
+    paceSub   = '이번 주 감량이 지난 주보다 약간 낮아요. 식단이나 운동 패턴을 점검해보세요.';
   } else {
     paceLightCls = 'red'; paceLight = '🔴';
     paceTitle = '정체기 가능성이 있어요';
-    paceSub   = '최근 7일 감량이 크게 줄었어요. 식단 변화나 수분 섭취를 늘려보세요. 정체기는 자연스러운 현상이에요!';
+    paceSub   = '이번 주 감량이 지난 주보다 크게 줄었어요. 식단 변화나 수분 섭취를 늘려보세요. 정체기는 자연스러운 현상이에요!';
   }
-  document.getElementById('pace-light').className = 'pace-light ' + paceLightCls;
+
+  document.getElementById('pace-light').className   = 'pace-light ' + paceLightCls;
   document.getElementById('pace-light').textContent = paceLight;
   document.getElementById('pace-title').textContent = paceTitle;
   document.getElementById('pace-sub').textContent   = paceSub;
-  document.getElementById('pace-recent').textContent = '-' + recentLoss.toFixed(2) + 'kg/일';
-  document.getElementById('pace-avg').textContent    = '-' + avgLoss + 'kg/일';
-  var maxVal = Math.max(recentLoss, avgLoss, 0.01);
+
+  var thisStr = thisLoss !== null ? '-' + thisLoss.toFixed(2) + 'kg' : '—';
+  var lastStr = lastLoss !== null ? '-' + lastLoss.toFixed(2) + 'kg' : '—';
+  document.getElementById('pace-recent').textContent = thisStr;
+  document.getElementById('pace-avg').textContent    = lastStr;
+
+  var rRange = document.getElementById('pace-recent-range');
+  var aRange = document.getElementById('pace-avg-range');
+  if (rRange) rRange.textContent = fmt(thisTue) + ' ~ 오늘';
+  if (aRange) aRange.textContent = fmt(lastTue) + ' ~ ' + fmt(lastMon);
+
+  var maxVal = Math.max(thisLoss || 0, lastLoss || 0, 0.01);
   setTimeout(function(){
-    document.getElementById('pace-recent-bar').style.width = Math.min(100, (recentLoss/maxVal)*100) + '%';
-    document.getElementById('pace-avg-bar').style.width    = Math.min(100, (avgLoss/maxVal)*100) + '%';
+    document.getElementById('pace-recent-bar').style.width = Math.min(100, ((thisLoss||0)/maxVal)*100) + '%';
+    document.getElementById('pace-avg-bar').style.width    = Math.min(100, ((lastLoss||0)/maxVal)*100) + '%';
   }, 300);
 
   // ── 진행률 ────────────────────────────────────────────
   document.getElementById('prog-pct').textContent  = pct + '%';
-  document.getElementById('prog-detail').innerHTML = START_WEIGHT + 'kg → <strong>' + today.weight + 'kg</strong> → ' + GOAL_WEIGHT + 'kg';
+  document.getElementById('prog-detail').innerHTML = START_WEIGHT + 'kg → <strong>' + today.weight + 'kg</strong> → ' + GOAL_WEIGHT + 'kg 🥇';
   setTimeout(function() { document.getElementById('prog-bar').style.width = pct + '%'; }, 100);
 
   var msEl = document.getElementById('milestones');
@@ -732,7 +775,8 @@ function render(rows) {
     var icon = done ? '✓ ' : near ? '▶ ' : '';
     var span = document.createElement('span');
     span.className   = 'ms ' + cls;
-    span.textContent = icon + m + 'kg' + (m === 74 ? ' 🏆' : '');
+    var badge = m === 80 ? ' 🥇' : m === 75 ? ' 🥈' : '';
+    span.textContent = icon + m + 'kg' + badge;
     msEl.appendChild(span);
   });
 
@@ -785,21 +829,23 @@ function render(rows) {
     }
   });
 
-  // ── 연속 기록 스트릭 ────────────────────────────────────
-  document.getElementById('streak-num').textContent  = streak;
-  document.getElementById('streak-label').textContent = streak + '일 연속 기록 중';
-  document.getElementById('streak-sub').textContent  = '총 기록일 ' + rows.length + '일 / 다이어트 ' + days + '일째';
+  // ── 연속 기록 스트릭 (null guard) ──────────────────────
+  var _sNum = document.getElementById('streak-num'); if (_sNum) _sNum.textContent = streak;
+  var _sLbl = document.getElementById('streak-label'); if (_sLbl) _sLbl.textContent = streak + '일 연속 기록 중';
+  var _sSub = document.getElementById('streak-sub'); if (_sSub) _sSub.textContent = '총 기록일 ' + rows.length + '일 / 다이어트 ' + days + '일째';
 
   // 최근 30일 점 시각화
-  var dotsEl   = document.getElementById('streak-dots');
-  var dateSet  = new Set(rows.map(function(r){ return r.date.toISOString().slice(0,10); }));
-  var dotStart = new Date(today.date);
-  dotStart.setDate(dotStart.getDate() - 29);
-  for (var d = new Date(dotStart); d <= today.date; d.setDate(d.getDate() + 1)) {
-    var dot = document.createElement('div');
-    dot.className = 'streak-dot ' + (dateSet.has(d.toISOString().slice(0,10)) ? 'on' : 'off');
-    dot.title = (d.getMonth()+1) + '/' + d.getDate();
-    dotsEl.appendChild(dot);
+  var dotsEl = document.getElementById('streak-dots');
+  if (dotsEl) {
+    var dateSet  = new Set(rows.map(function(r){ return r.date.toISOString().slice(0,10); }));
+    var dotStart = new Date(today.date);
+    dotStart.setDate(dotStart.getDate() - 29);
+    for (var d = new Date(dotStart); d <= today.date; d.setDate(d.getDate() + 1)) {
+      var dot = document.createElement('div');
+      dot.className = 'streak-dot ' + (dateSet.has(d.toISOString().slice(0,10)) ? 'on' : 'off');
+      dot.title = (d.getMonth()+1) + '/' + d.getDate();
+      dotsEl.appendChild(dot);
+    }
   }
 
   // ── BMI 트래커 ───────────────────────────────────────────
