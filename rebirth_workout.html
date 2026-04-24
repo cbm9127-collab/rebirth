@@ -98,7 +98,11 @@
     </button>
     <button class="phase-tab" id="tab-p2" onclick="setPhase('phase2',this)">
       Phase 2
-      <span class="phase-badge">91.3~80kg · 덤벨 6kg</span>
+      <span class="phase-badge">91.3~89kg · 덤벨 6kg</span>
+    </button>
+    <button class="phase-tab" id="tab-p25" onclick="setPhase('phase2_5',this)">
+      Phase 2.5
+      <span class="phase-badge">89~80kg · 아침 러닝 추가</span>
     </button>
   </div>
 
@@ -190,6 +194,57 @@ var PHASES = {
           { icon:'🏃', text:'저강도 유산소', time:'31분', url:'https://youtu.be/4kZHHPH6heY?si=Z2hCZaHMXSQ_y9UJ' }
         ] }
     ]
+  },
+  phase2_5: {
+    label: 'Phase 2.5 — 89~80kg · 덤벨 6kg + 아침 러닝',
+    note: '매일 아침 러닝으로 기초대사량을 높이고 저녁 덤벨/유산소로 체형을 완성해요.',
+    schedule: [
+      { dow:0, name:'월요일', focus:'휴식+복근', focusCls:'rest',
+        morning:'아침 러닝 (야외 20~30분)', warmup:'없음 (휴식일)', cooldown:'스트레칭 20분',
+        main:[
+          { icon:'🧘', text:'복근', time:'9분', url:'https://youtu.be/QSZ0mUGO_CA?si=q95stwwkpJFE4EVn' },
+          { icon:'🚶', text:'저강도 유산소', time:'16분', url:'https://youtu.be/02K-k6daPb4?si=hufboqwEdtETRhnG' }
+        ] },
+      { dow:1, name:'화요일', focus:'근력(덤벨)', focusCls:'strength',
+        morning:'아침 러닝 (야외 20~30분)', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[
+          { icon:'🦵', text:'상하체 덤벨', time:'30분', url:'https://youtu.be/js8z5wIZ0wg?si=Csmg9t94J1iyVON4' },
+          { icon:'🧘', text:'복근', time:'9분', url:'https://youtu.be/QSZ0mUGO_CA?si=q95stwwkpJFE4EVn' },
+          { icon:'🏃', text:'코어 운동', time:'10분', url:'https://youtu.be/QSZ0mUGO_CA?si=q95stwwkpJFE4EVn' }
+        ] },
+      { dow:2, name:'수요일', focus:'유산소', focusCls:'hiit',
+        morning:'아침 러닝 (야외 20~30분)', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[
+          { icon:'🔥', text:'칼소폭', time:'28분', url:'https://youtu.be/77JW8_zt2Rc?si=5dwvNZ5Mv_xlps4d' },
+          { icon:'🏃', text:'떡국타파', time:'28분', url:'https://youtu.be/hesjApxDlj0?si=8ckPZfLX4c2EnKFp' }
+        ] },
+      { dow:3, name:'목요일', focus:'근력(덤벨)', focusCls:'strength',
+        morning:'아침 러닝 (야외 20~30분)', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[
+          { icon:'🦵', text:'상하체 덤벨', time:'30분', url:'https://youtu.be/js8z5wIZ0wg?si=Csmg9t94J1iyVON4' },
+          { icon:'🧘', text:'복근', time:'9분', url:'https://youtu.be/QSZ0mUGO_CA?si=q95stwwkpJFE4EVn' },
+          { icon:'🏃', text:'코어 운동', time:'10분', url:'https://youtu.be/QSZ0mUGO_CA?si=q95stwwkpJFE4EVn' }
+        ] },
+      { dow:4, name:'금요일', focus:'유산소', focusCls:'hiit',
+        morning:'아침 러닝 (야외 20~30분)', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[
+          { icon:'🔥', text:'칼소폭', time:'28분', url:'https://youtu.be/77JW8_zt2Rc?si=5dwvNZ5Mv_xlps4d' },
+          { icon:'🏃', text:'떡국타파', time:'28분', url:'https://youtu.be/hesjApxDlj0?si=8ckPZfLX4c2EnKFp' }
+        ] },
+      { dow:5, name:'토요일', focus:'근력(덤벨)', focusCls:'strength',
+        morning:'아침 러닝 (야외 20~30분)', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[
+          { icon:'🦵', text:'상하체 덤벨', time:'30분', url:'https://youtu.be/js8z5wIZ0wg?si=Csmg9t94J1iyVON4' },
+          { icon:'🧘', text:'복근', time:'9분', url:'https://youtu.be/QSZ0mUGO_CA?si=q95stwwkpJFE4EVn' },
+          { icon:'🏃', text:'코어 운동', time:'10분', url:'https://youtu.be/QSZ0mUGO_CA?si=q95stwwkpJFE4EVn' }
+        ] },
+      { dow:6, name:'일요일', focus:'근력+코어', focusCls:'strength',
+        morning:'아침 러닝 (야외 20~30분)', warmup:'동적 스트레칭', cooldown:'쿨다운 스트레칭',
+        main:[
+          { icon:'🏋️', text:'전신 근력', time:'30분', url:'https://youtu.be/S3KJj3OReKc?si=34aoIbQqdW9JvIUN' },
+          { icon:'🏃', text:'코어 운동', time:'15분', url:'https://youtu.be/QSZ0mUGO_CA?si=q95stwwkpJFE4EVn' }
+        ] }
+    ]
   }
 };
 
@@ -203,7 +258,7 @@ function setPhase(phase, btn) {
   var p = PHASES[phase];
   var banner = document.getElementById('current-banner');
   banner.textContent = '📌 ' + p.label + ' — ' + p.note;
-  banner.className = 'current-banner ' + (phase === 'phase1' ? 'p1' : 'p2');
+  banner.className = 'current-banner ' + (phase === 'phase1' ? 'p1' : phase === 'phase2_5' ? 'p25' : 'p2');
   renderWeekGrid();
   renderDetail();
 }
@@ -284,8 +339,9 @@ async function init() {
       var last = data[data.length - 1];
       var w    = parseFloat(last.weight);
       document.getElementById('current-weight-info').textContent = '최근 체중 ' + w + 'kg 기준으로 자동 선택됐어요';
-      var phase = w < 95 ? 'phase2' : 'phase1';
-      var activeTab = document.getElementById('tab-' + (phase === 'phase1' ? 'p1' : 'p2'));
+      var phase = w < 89 ? 'phase2_5' : w < 95 ? 'phase2' : 'phase1';
+      var tabId = phase === 'phase1' ? 'p1' : phase === 'phase2_5' ? 'p25' : 'p2';
+      var activeTab = document.getElementById('tab-' + tabId);
       setPhase(phase, activeTab);
       return;
     }

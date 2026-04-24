@@ -980,13 +980,25 @@ var WORKOUT = {
       5: { name:'토 (하체+복근)',      morning:'',              main:['하체 덤벨 19분', '복근 9분', '저강도 유산소 31분'] },
       6: { name:'일 (전신 근력+복근)', morning:'',              main:['전신 덤벨 근력 30분', '복근 9분', '저강도 유산소 31분'] }
     }
+  },
+  phase2_5: {
+    label: 'Phase 2.5 (89~80kg) — 덤벨 6kg + 아침 러닝',
+    days: {
+      0: { name:'월 (휴식+복근)',   morning:'아침 러닝', main:['복근 9분', '저강도 유산소 16분'] },
+      1: { name:'화 (근력)',        morning:'아침 러닝', main:['상하체 덤벨 30분', '복근 9분', '코어 운동 10분'] },
+      2: { name:'수 (유산소)',      morning:'아침 러닝', main:['칼소폭 28분', '떡국타파 28분'] },
+      3: { name:'목 (근력)',        morning:'아침 러닝', main:['상하체 덤벨 30분', '복근 9분', '코어 운동 10분'] },
+      4: { name:'금 (유산소)',      morning:'아침 러닝', main:['칼소폭 28분', '떡국타파 28분'] },
+      5: { name:'토 (근력)',        morning:'아침 러닝', main:['상하체 덤벨 30분', '복근 9분', '코어 운동 10분'] },
+      6: { name:'일 (근력+코어)',   morning:'아침 러닝', main:['전신 근력 30분', '코어 운동 15분'] }
+    }
   }
 };
 
 // JS getDay() 0=일,1=월...6=토 → 내부 0=월~6=일 변환
 function getTodayDow() { return (new Date().getDay() + 6) % 7; }
 
-function getPhase(weight) { return (weight && weight < 95) ? 'phase2' : 'phase1'; }
+function getPhase(weight) { return (weight && weight < 89) ? 'phase2_5' : (weight && weight < 95) ? 'phase2' : 'phase1'; }
 
 // 드롭다운에 옵션 채우기 헬퍼
 function fillSelect(id, items, defaultVal) {
@@ -1014,7 +1026,7 @@ function fillMealDropdowns() {
   var curSched     = phase === 'phase2' ? p2 : p1;
   var dowNames     = ['월','화','수','목','금','토','일'];
   var label = document.getElementById('meal-phase-label');
-  if (label) label.textContent = '📅 선택일(' + dowNames[dow] + ') · 현재 ' + (phase === 'phase2' ? 'Phase 2' : 'Phase 1');
+  if (label) label.textContent = '📅 선택일(' + dowNames[dow] + ') · 현재 ' + (phase === 'phase2_5' ? 'Phase 2.5' : phase === 'phase2' ? 'Phase 2' : 'Phase 1');
 
   function fillBoth(id, p1items, p2items, defaultVal) {
     var sel = document.getElementById(id);
