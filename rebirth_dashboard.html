@@ -186,6 +186,20 @@
   .popup-save:hover { background:#0F6E56; }
   .popup-save:disabled { background:#9E9E9A; cursor:not-allowed; }
   .popup-msg { font-size:13px; text-align:center; margin-top:10px; min-height:20px; }
+  /* 러닝 사진 2장 */
+  .run-photo-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
+  .run-photo-slot { position:relative; }
+  .run-photo-label { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:100%; padding:14px 6px; border:1.5px dashed var(--border); border-radius:10px; cursor:pointer; font-size:11px; color:var(--text-2); background:var(--surface); transition:all .15s; box-sizing:border-box; }
+  .run-photo-label:hover { border-color:var(--teal); color:var(--teal-dark); }
+  .run-photo-label .run-photo-icon { font-size:20px; }
+  .run-photo-preview { display:none; width:100%; height:100px; object-fit:cover; border-radius:10px; }
+  .run-photo-del { display:none; position:absolute; top:4px; right:4px; background:rgba(0,0,0,.55); color:white; border:none; border-radius:50%; width:20px; height:20px; font-size:11px; cursor:pointer; line-height:20px; text-align:center; padding:0; }
+  .run-ai-bar { display:none; align-items:center; gap:8px; background:linear-gradient(135deg,#e0f7ef,#f0fdf8); border:1.5px solid #6ee7c7; border-radius:10px; padding:9px 12px; margin-top:8px; font-size:12px; color:#1D9E75; font-weight:600; }
+  .run-ai-bar .spin { display:inline-block; animation:runSpin .8s linear infinite; }
+  @keyframes runSpin { to { transform:rotate(360deg); } }
+  .run-ai-bar.err  { background:#fef2f2; border-color:#fca5a5; color:#dc2626; }
+  .run-ai-bar.done { background:#f0fdf4; border-color:#86efac; color:#166534; }
+  .run-ai-filled { background:linear-gradient(135deg,#e0f7ef,#fff) !important; border-color:#6ee7c7 !important; }
   .popup-msg.success { color:#1D9E75; }
   .popup-msg.error   { color:#D85A30; }
 
@@ -330,7 +344,10 @@
         <span class="memo-btn-icon">💪</span>
         운동 루틴 보기
       </button>
-
+      <button class="memo-btn" onclick="window.location.href='rebirth_running.html'">
+        <span class="memo-btn-icon">🏃</span>
+        러닝 기록
+      </button>
     </div>
 
     <!-- 목표 달성률 -->
@@ -501,6 +518,36 @@
 
         <div class="popup-divider">🏃 운동</div>
         <div style="font-size:11px;color:var(--text-3);margin-bottom:10px;" id="exercise-phase-label"></div>
+
+        <!-- 아침 러닝 기록 -->
+        <div class="field-group">
+          <div class="field-label">🌅 아침 러닝 <span style="font-size:11px;color:var(--teal-dark);font-weight:700;">— 사진 첨부 시 AI가 자동으로 데이터를 추출해요 ✨</span></div>
+          <div class="run-ai-bar" id="run-ai-bar">
+            <span class="spin" id="run-ai-icon">⚙️</span>
+            <span id="run-ai-text">러닝 데이터를 읽고 있어요...</span>
+          </div>
+          <div class="run-photo-grid">
+            <div class="run-photo-slot">
+              <label class="run-photo-label" for="f-run-photo-1" id="run-label-1">
+                <span class="run-photo-icon">📷</span>
+                <span>사진 1</span>
+              </label>
+              <img class="run-photo-preview" id="run-preview-1" src="" alt="">
+              <button class="run-photo-del" id="run-del-1" onclick="delRunPhoto(1)">✕</button>
+              <input type="file" id="f-run-photo-1" accept="image/*" style="display:none" onchange="onRunPhoto(1,this)">
+            </div>
+            <div class="run-photo-slot">
+              <label class="run-photo-label" for="f-run-photo-2" id="run-label-2">
+                <span class="run-photo-icon">📷</span>
+                <span>사진 2</span>
+              </label>
+              <img class="run-photo-preview" id="run-preview-2" src="" alt="">
+              <button class="run-photo-del" id="run-del-2" onclick="delRunPhoto(2)">✕</button>
+              <input type="file" id="f-run-photo-2" accept="image/*" style="display:none" onchange="onRunPhoto(2,this)">
+            </div>
+          </div>
+        </div>
+
         <!-- 오전: 30/30/30 해당 요일만 표시 -->
         <div class="field-group" id="ex-morning-wrap" style="display:none;">
           <div class="field-label">🌅 오전 (30/30/30)</div>
@@ -1214,6 +1261,14 @@ function openPopup() {
   document.getElementById('popup-save-btn').textContent = '저장하기';
   document.getElementById('popup-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  // 러닝 필드 초기화
+  window._runPhotos = { 1: null, 2: null };
+  [1,2].forEach(function(n){
+    delRunPhoto(n);
+    var fi = document.getElementById('f-run-photo-' + n); if(fi) fi.value='';
+  });
+  window._dashRunExtracted = null;
+  var aibar = document.getElementById('run-ai-bar'); if(aibar) aibar.style.display='none';
   fillMealDropdowns();
   fillExerciseDropdown();
 }
@@ -1345,6 +1400,88 @@ function closeOnOverlay(e) {
   if (e.target === document.getElementById('popup-overlay')) closePopup();
 }
 
+
+// ── 러닝 사진 핸들러 ─────────────────────────────────
+window._runPhotos = { 1: null, 2: null };
+function onRunPhoto(n, input) {
+  if (!input.files || !input.files[0]) return;
+  var mime = input.files[0].type || 'image/jpeg';
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    window._runPhotos[n] = { base64: e.target.result.split(',')[1], mime: mime };
+    document.getElementById('run-preview-' + n).src = e.target.result;
+    document.getElementById('run-preview-' + n).style.display = 'block';
+    document.getElementById('run-label-' + n).style.display = 'none';
+    document.getElementById('run-del-' + n).style.display = 'block';
+    if (n === 1) extractDashRunData(e.target.result.split(',')[1], mime);
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+async function extractDashRunData(base64, mime) {
+  var bar  = document.getElementById('run-ai-bar');
+  var icon = document.getElementById('run-ai-icon');
+  var text = document.getElementById('run-ai-text');
+  bar.className = 'run-ai-bar';
+  bar.style.display = 'flex';
+  icon.textContent = '⚙️'; icon.className = 'spin';
+  text.textContent = '러닝 데이터를 읽고 있어요...';
+
+  var prompt = [
+    '이 이미지는 러닝 앱(Strava, 나이키런클럽, 가민, 애플워치, 삼성헬스 등)의 운동 기록 스크린샷입니다.',
+    '이미지에서 아래 데이터를 추출해서 반드시 JSON 형식으로만 응답하세요. 다른 텍스트는 절대 포함하지 마세요.',
+    '{"km": 숫자(소수점 2자리, 없으면 null), "min": 숫자(정수 분, 없으면 null), "kcal": 숫자(정수, 없으면 null)}',
+    '주의: 거리는 km 단위로 변환(마일이면 ×1.609), 시간은 분 정수로 변환(25:30→25, 1:05:00→65)',
+    '러닝 데이터 없으면: {"km":null,"min":null,"kcal":null}'
+  ].join('\n');
+
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 150,
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: { type: 'base64', media_type: mime, data: base64 } },
+          { type: 'text',  text: prompt }
+        ]}]
+      })
+    });
+    var data   = await res.json();
+    var raw    = (data.content||[]).filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('').trim();
+    var parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    var filled = [];
+
+    window._dashRunExtracted = { km: parsed.km, min: parsed.min, kcal: parsed.kcal };
+    if (parsed.km   != null) filled.push('거리 '    + parsed.km  + 'km');
+    if (parsed.min  != null) filled.push('시간 '    + parsed.min + '분');
+    if (parsed.kcal != null) filled.push('칼로리 '  + parsed.kcal + 'kcal');
+
+    if (filled.length > 0) {
+      icon.className = ''; icon.textContent = '✅';
+      bar.className = 'run-ai-bar done';
+      text.textContent = '자동 입력 완료 — ' + filled.join(' / ');
+    } else {
+      bar.className = 'run-ai-bar err';
+      icon.className = ''; icon.textContent = '⚠️';
+      text.textContent = '러닝 데이터를 찾지 못했어요. 직접 입력해주세요.';
+    }
+  } catch(e) {
+    bar.className = 'run-ai-bar err';
+    icon.className = ''; icon.textContent = '❌';
+    text.textContent = '분석 실패 — 직접 입력해주세요.';
+  }
+}
+function delRunPhoto(n) {
+  window._runPhotos[n] = null;
+  document.getElementById('run-preview-' + n).style.display = 'none';
+  document.getElementById('run-preview-' + n).src = '';
+  document.getElementById('run-label-' + n).style.display = 'flex';
+  document.getElementById('run-del-' + n).style.display = 'none';
+  document.getElementById('f-run-photo-' + n).value = '';
+}
+
 async function saveRecord() {
   var btn = document.getElementById('popup-save-btn');
   var msg = document.getElementById('popup-msg');
@@ -1367,6 +1504,7 @@ async function saveRecord() {
     lunch:     getMealValue('f-lunch'),
     dinner:    getMealValue('f-dinner'),
     exercise:  getExerciseValue(),
+
     memo:      document.getElementById('f-memo').value
   };
 
@@ -1385,6 +1523,43 @@ async function saveRecord() {
         .forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       ['f-breakfast','f-lunch','f-dinner'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       var ns=document.getElementById('nutrition-summary'); if(ns) ns.style.display='none';
+
+      // ── rebirth_running.html 연동: 러닝 데이터 localStorage 저장 ──
+      var _ext = window._dashRunExtracted || {};
+      var rkm  = parseFloat(_ext.km  || 0);
+      var rmin = parseInt( _ext.min || 0);
+      if (rkm > 0 && rmin > 0) {
+        try {
+          var RKEY = 'rebirth_runs_v1';
+          var existing = [];
+          try { existing = JSON.parse(localStorage.getItem(RKEY) || '[]'); } catch(e) {}
+
+          // 같은 날짜 기록이 있으면 업데이트, 없으면 추가
+          var dateStr = payload.date; // 'YYYY-MM-DD'
+          var idx = existing.findIndex(function(r){ return r.date === dateStr; });
+          var photos = [];
+          if (window._runPhotos) {
+            [1,2].forEach(function(n){
+              if (window._runPhotos[n] && window._runPhotos[n].base64) {
+                photos.push('data:' + window._runPhotos[n].mime + ';base64,' + window._runPhotos[n].base64);
+              }
+            });
+          }
+          var runEntry = {
+            id:     idx >= 0 ? existing[idx].id : Date.now(),
+            date:   dateStr,
+            km:     rkm,
+            min:    rmin,
+            kcal:   _ext.kcal ? parseInt(_ext.kcal) : null,
+            memo:   payload.memo || '',
+            photos: photos.length > 0 ? photos : (idx >= 0 ? existing[idx].photos : [])
+          };
+          if (idx >= 0) { existing[idx] = runEntry; }
+          else          { existing.unshift(runEntry); }
+          localStorage.setItem(RKEY, JSON.stringify(existing));
+        } catch(e) { console.warn('러닝 데이터 로컬 저장 실패:', e); }
+      }
+
       setTimeout(function(){ closePopup(); location.reload(); }, 2000);
     } else {
       throw new Error(data.error || '저장 실패');
