@@ -1134,9 +1134,6 @@ function getExerciseValue() {
   });
   if (mainParts.length > 0) parts.push('[본 운동] ' + mainParts.join(', '));
 
-  // 추가 메모 (선택)
-  if (extra && extra.value.trim()) parts.push(extra.value.trim());
-
   return parts.join('\n');
 }
 
