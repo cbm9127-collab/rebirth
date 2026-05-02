@@ -1403,15 +1403,19 @@ async function saveRecord() {
       msg.textContent = cheers[Math.floor(Math.random() * cheers.length)];
       msg.className = 'popup-msg success';
       btn.textContent = '저장됨 ✓';
+
+      // ── 러닝 값: 필드 clear 전에 먼저 수집 ───────────
+      var _rkm  = parseFloat((document.getElementById('f-run-km')  || {}).value  || 0) || 0;
+      var _rmin = parseInt(  (document.getElementById('f-run-min') || {}).value  || 0) || 0;
+      var _rkcal= parseInt(  (document.getElementById('f-run-kcal')|| {}).value  || 0) || 0;
+
       ['f-weight','f-breakfast-custom','f-lunch-custom','f-dinner-custom','f-run-km','f-run-min','f-run-kcal','f-memo']
         .forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       ['f-breakfast','f-lunch','f-dinner'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       var ns=document.getElementById('nutrition-summary'); if(ns) ns.style.display='none';
 
       // ── 러닝 데이터 → localStorage 연동 ──────────────
-      var rkm  = parseFloat(document.getElementById('f-run-km')  ? document.getElementById('f-run-km').value  : 0) || 0;
-      var rmin = parseInt( document.getElementById('f-run-min')  ? document.getElementById('f-run-min').value  : 0) || 0;
-      if (rkm > 0 && rmin > 0) {
+      if (_rkm > 0 && _rmin > 0) {
         try {
           var RKEY = 'rebirth_runs_v1';
           var existing = [];
@@ -1419,19 +1423,19 @@ async function saveRecord() {
           var todayStr = new Date().toISOString().slice(0,10);
           var idx = -1;
           for (var ri = 0; ri < existing.length; ri++) { if (existing[ri].date === todayStr) { idx = ri; break; } }
-          var rkcalEl = document.getElementById('f-run-kcal');
           var runEntry = {
-            id:     idx >= 0 ? existing[idx].id : Date.now(),
-            date:   todayStr,
-            km:     rkm,
-            min:    rmin,
-            kcal:   rkcalEl && rkcalEl.value ? parseInt(rkcalEl.value) : null,
-            memo:   '',
+            id:   idx >= 0 ? existing[idx].id : Date.now(),
+            date: todayStr,
+            km:   _rkm,
+            min:  _rmin,
+            kcal: _rkcal || null,
+            memo: '',
             photos: []
           };
           if (idx >= 0) existing[idx] = runEntry;
           else existing.unshift(runEntry);
           localStorage.setItem(RKEY, JSON.stringify(existing));
+          console.log('[러닝 저장]', runEntry);
         } catch(_e) { console.warn('러닝 저장 실패', _e); }
       }
 
