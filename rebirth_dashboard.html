@@ -326,13 +326,9 @@
         <span class="memo-btn-icon">🥗</span>
         식단 레시피 &amp; 영양 성분표
       </button>
-      <button class="memo-btn" onclick="window.location.href='rebirth_workout.html'">
-        <span class="memo-btn-icon">💪</span>
-        운동 루틴 보기
-      </button>
       <button class="memo-btn" onclick="window.location.href='rebirth_running.html'">
         <span class="memo-btn-icon">🏃</span>
-        러닝 기록
+        운동 & 러닝 기록
       </button>
 
     </div>
@@ -1333,7 +1329,7 @@ function renderTodayMeal() {
   var menuIdx = (dow + 6) % 7;
   var latestWeight = allRows.length > 0 ? allRows[allRows.length-1].weight : 100;
   var phase   = getPhase(latestWeight);
-  var menu    = phase === 'phase2' ? TODAY_MENU_P2[menuIdx] : TODAY_MENU_P1[menuIdx];
+  var menu    = (phase === 'phase2' || phase === 'phase2_5') ? TODAY_MENU_P2[menuIdx] : TODAY_MENU_P1[menuIdx];
   var el      = document.getElementById('today-meal-card');
   var label   = document.getElementById('today-dow-label');
   if (!el || !menu) return;
