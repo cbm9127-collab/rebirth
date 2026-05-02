@@ -1427,36 +1427,53 @@ async function extractDashRunData(base64, mime) {
   icon.textContent = '⚙️'; icon.className = 'spin';
   text.textContent = '러닝 데이터를 읽고 있어요...';
 
-  var prompt = [
-    '이 이미지는 러닝 앱(Strava, 나이키런클럽, 가민, 애플워치, 삼성헬스 등)의 운동 기록 스크린샷입니다.',
-    '이미지에서 아래 데이터를 추출해서 반드시 JSON 형식으로만 응답하세요. 다른 텍스트는 절대 포함하지 마세요.',
-    '{"km": 숫자(소수점 2자리, 없으면 null), "min": 숫자(정수 분, 없으면 null), "kcal": 숫자(정수, 없으면 null)}',
-    '주의: 거리는 km 단위로 변환(마일이면 ×1.609), 시간은 분 정수로 변환(25:30→25, 1:05:00→65)',
-    '러닝 데이터 없으면: {"km":null,"min":null,"kcal":null}'
-  ].join('\n');
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbzBwSGnxFWM8UbgqFvpBgkoDTsYgUoQ2koVzBY6o0hu4JndbdwZAvKJk82S7jFNaXOMzQ/exec';
 
   try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 150,
-        messages: [{ role: 'user', content: [
-          { type: 'image', source: { type: 'base64', media_type: mime, data: base64 } },
-          { type: 'text',  text: prompt }
-        ]}]
-      })
-    });
-    var data   = await res.json();
-    var raw    = (data.content||[]).filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('').trim();
-    var parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
-    var filled = [];
+    // ── Step 1: Google Vision OCR ──────────────────────
+    var ocrUrl = GAS_URL + '?action=vision&image=' + encodeURIComponent(base64);
+    var ocrRes = await fetch(ocrUrl);
+    var ocrData = await ocrRes.json();
+    var ocrText = (ocrData.text || '').replace(/\n/g, ' ');
 
-    window._dashRunExtracted = { km: parsed.km, min: parsed.min, kcal: parsed.kcal };
-    if (parsed.km   != null) filled.push('거리 '    + parsed.km  + 'km');
-    if (parsed.min  != null) filled.push('시간 '    + parsed.min + '분');
-    if (parsed.kcal != null) filled.push('칼로리 '  + parsed.kcal + 'kcal');
+    if (!ocrText) throw new Error('OCR 텍스트 없음');
+
+    // ── Step 2: 텍스트에서 러닝 데이터 파싱 ──────────────
+    var km   = null;
+    var min  = null;
+    var kcal = null;
+
+    // 거리: 숫자 + km (예: 3.73KM, 3.73 km, 3.73Km)
+    var kmMatch = ocrText.match(/(\d+\.\d+)\s*[Kk][Mm]/);
+    if (kmMatch) km = parseFloat(kmMatch[1]);
+
+    // 마일 → km 변환 (MI 단위)
+    if (!km) {
+      var miMatch = ocrText.match(/(\d+\.\d+)\s*[Mm][Ii]/);
+      if (miMatch) km = Math.round(parseFloat(miMatch[1]) * 1.609 * 100) / 100;
+    }
+
+    // 시간: H:MM:SS 또는 MM:SS 패턴
+    var timeMatch = ocrText.match(/(\d{1,2}):(\d{2}):(\d{2})/);
+    if (timeMatch) {
+      min = parseInt(timeMatch[1]) * 60 + parseInt(timeMatch[2]);
+    } else {
+      var minMatch = ocrText.match(/(\d{2}):(\d{2})/);
+      if (minMatch) min = parseInt(minMatch[1]);
+    }
+
+    // 칼로리: 숫자 + KCAL (활동 칼로리 우선)
+    // "295KCAL" "339KCAL" 같은 패턴에서 첫 번째(활동) 칼로리
+    var kcalMatches = ocrText.match(/(\d+)\s*[Kk][Cc][Aa][Ll]/g);
+    if (kcalMatches && kcalMatches.length > 0) {
+      kcal = parseInt(kcalMatches[0].replace(/[^0-9]/g,''));
+    }
+
+    var filled = [];
+    window._dashRunExtracted = { km: km, min: min, kcal: kcal };
+    if (km   != null) filled.push('거리 ' + km + 'km');
+    if (min  != null) filled.push('시간 ' + min + '분');
+    if (kcal != null) filled.push('칼로리 ' + kcal + 'kcal');
 
     if (filled.length > 0) {
       icon.className = ''; icon.textContent = '✅';
@@ -1465,12 +1482,14 @@ async function extractDashRunData(base64, mime) {
     } else {
       bar.className = 'run-ai-bar err';
       icon.className = ''; icon.textContent = '⚠️';
-      text.textContent = '러닝 데이터를 찾지 못했어요. 직접 입력해주세요.';
+      text.textContent = 'OCR 인식됐지만 러닝 데이터를 찾지 못했어요.';
+      console.log('[Vision OCR 결과]', ocrText);
     }
-  } catch(e) {
+  } catch(err) {
+    console.error('[Vision Extract]', err);
     bar.className = 'run-ai-bar err';
     icon.className = ''; icon.textContent = '❌';
-    text.textContent = '분석 실패 — 직접 입력해주세요.';
+    text.textContent = '분석 실패 — ' + (err.message || '').slice(0, 60);
   }
 }
 function delRunPhoto(n) {

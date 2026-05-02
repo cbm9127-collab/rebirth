@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>RE-birth · 러닝 기록</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #F4F2EE;
+    --surface:  #FFFFFF;
+    --border:   #E4E2DC;
+    --teal:     #2AB08E;
+    --teal-d:   #1D9E75;
+    --teal-l:   #E8F8F3;
+    --orange:   #E8633A;
+    --orange-l: #FEF0EB;
+    --text-1:   #1C1C1A;
+    --text-2:   #6B6B67;
+    --text-3:   #9E9E9A;
+    --radius:   14px;
+    --radius-s: 10px;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); font-family:'Pretendard',sans-serif; color:var(--text-1); min-height:100vh; }
+
+  /* ── 헤더 ── */
+  .header {
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    padding:0 16px;
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; gap:12px; height:54px;
+  }
+  .header-back { background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-2); padding:4px; }
+  .header-title { font-size:17px; font-weight:700; flex:1; }
+  .header-add-btn {
+    background:var(--teal); color:white; border:none; border-radius:20px;
+    padding:7px 16px; font-size:13px; font-weight:700; cursor:pointer;
+  }
+  .header-add-btn:hover { background:var(--teal-d); }
+
+  /* ── 히어로 ── */
+  .hero {
+    background:linear-gradient(135deg,#1C1C1A 0%, #2a2a27 100%);
+    padding:24px 16px 28px;
+    color:white;
+  }
+  .hero-label { font-size:11px; font-weight:600; letter-spacing:2px; color:rgba(255,255,255,.5); margin-bottom:6px; }
+  .hero-title { font-family:'Bebas Neue',sans-serif; font-size:42px; letter-spacing:2px; line-height:1; margin-bottom:16px; }
+  .hero-title span { color:var(--teal); }
+  .hero-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .hero-stat { background:rgba(255,255,255,.07); border-radius:12px; padding:12px; text-align:center; }
+  .hero-stat-num { font-size:22px; font-weight:800; line-height:1; }
+  .hero-stat-num.teal { color:var(--teal); }
+  .hero-stat-num.orange { color:#F4845A; }
+  .hero-stat-lbl { font-size:10px; color:rgba(255,255,255,.5); margin-top:4px; }
+
+  /* ── 탭 ── */
+  .tabs { display:flex; gap:0; background:var(--surface); border-bottom:1px solid var(--border); }
+  .tab { flex:1; padding:12px 0; font-size:13px; font-weight:600; text-align:center; cursor:pointer; color:var(--text-3); border-bottom:2.5px solid transparent; transition:all .15s; background:none; border-top:none; border-left:none; border-right:none; }
+  .tab.active { color:var(--teal-d); border-bottom-color:var(--teal); }
+
+  /* ── 내용 영역 ── */
+  .content { padding:16px; max-width:640px; margin:0 auto; }
+
+  /* ── 기록 카드 ── */
+  .run-card {
+    background:var(--surface); border-radius:var(--radius);
+    padding:16px; margin-bottom:12px;
+    border:1px solid var(--border);
+    position:relative; overflow:hidden;
+  }
+  .run-card::before {
+    content:'';
+    position:absolute; left:0; top:0; bottom:0; width:4px;
+    background:var(--teal);
+    border-radius:4px 0 0 4px;
+  }
+  .run-card-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+  .run-date { font-size:13px; font-weight:700; color:var(--text-1); }
+  .run-dow { font-size:11px; color:var(--text-3); font-weight:500; margin-top:2px; }
+  .run-delete-btn { background:none; border:none; color:var(--text-3); cursor:pointer; font-size:16px; padding:2px 6px; border-radius:6px; }
+  .run-delete-btn:hover { background:var(--orange-l); color:var(--orange); }
+
+  .run-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:12px; }
+  .run-metric { text-align:center; background:var(--bg); border-radius:8px; padding:8px 4px; }
+  .run-metric-val { font-size:16px; font-weight:800; color:var(--text-1); line-height:1; }
+  .run-metric-val.teal { color:var(--teal-d); }
+  .run-metric-lbl { font-size:10px; color:var(--text-3); margin-top:3px; }
+
+  .run-photos { display:grid; gap:8px; margin-bottom:10px; }
+  .run-photos.cols-2 { grid-template-columns:1fr 1fr; }
+  .run-photos.cols-1 { grid-template-columns:1fr; }
+  .run-photo-img { width:100%; border-radius:10px; object-fit:cover; cursor:pointer; max-height:180px; }
+  .run-photo-img:hover { opacity:.9; }
+
+  .run-memo { font-size:12px; color:var(--text-2); background:var(--bg); border-radius:8px; padding:8px 10px; line-height:1.6; }
+
+  /* ── 빈 상태 ── */
+  .empty { text-align:center; padding:60px 20px; }
+  .empty-icon { font-size:48px; margin-bottom:12px; }
+  .empty-title { font-size:16px; font-weight:700; color:var(--text-2); margin-bottom:6px; }
+  .empty-sub { font-size:13px; color:var(--text-3); }
+
+  /* ── 통계 탭 ── */
+  .stat-section { margin-bottom:20px; }
+  .stat-title { font-size:13px; font-weight:700; color:var(--text-2); margin-bottom:10px; }
+  .week-bars { display:flex; gap:6px; align-items:flex-end; height:80px; }
+  .week-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
+  .week-bar { width:100%; background:var(--teal-l); border-radius:4px 4px 0 0; transition:height .3s; min-height:3px; }
+  .week-bar.today { background:var(--teal); }
+  .week-bar-val { font-size:9px; color:var(--text-3); }
+  .week-bar-lbl { font-size:9px; color:var(--text-3); }
+
+  .best-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .best-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; }
+  .best-card-val { font-size:22px; font-weight:800; color:var(--teal-d); }
+  .best-card-lbl { font-size:11px; color:var(--text-3); margin-top:4px; }
+
+  /* ── 추가 팝업 ── */
+  .overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200; display:none; align-items:flex-end; justify-content:center; }
+  .overlay.open { display:flex; }
+  .sheet {
+    background:var(--surface); border-radius:20px 20px 0 0; width:100%; max-width:640px;
+    padding:20px 16px 32px; max-height:92vh; overflow-y:auto;
+    animation:slideUp .25s ease;
+  }
+  @keyframes slideUp { from { transform:translateY(40px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+  .sheet-handle { width:36px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 18px; }
+  .sheet-title { font-size:16px; font-weight:800; margin-bottom:16px; }
+
+  .field-lbl { font-size:12px; font-weight:600; color:var(--text-2); margin-bottom:5px; }
+  .field-inp { width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:10px; font-size:14px; font-family:'Pretendard',sans-serif; background:var(--bg); color:var(--text-1); outline:none; }
+  .field-inp:focus { border-color:var(--teal); background:white; }
+  .field-group { margin-bottom:12px; }
+  .row-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+
+  .photo-upload-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+  .photo-slot { position:relative; }
+  .photo-lbl-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; width:100%; height:90px; border:1.5px dashed var(--border); border-radius:10px; cursor:pointer; font-size:11px; color:var(--text-3); background:var(--bg); transition:all .15s; }
+  .photo-lbl-btn:hover { border-color:var(--teal); color:var(--teal-d); }
+  .photo-lbl-btn .icon { font-size:22px; }
+  .photo-prev { display:none; width:100%; height:90px; object-fit:cover; border-radius:10px; }
+  .photo-del { display:none; position:absolute; top:4px; right:4px; background:rgba(0,0,0,.55); color:white; border:none; border-radius:50%; width:22px; height:22px; font-size:12px; cursor:pointer; line-height:22px; text-align:center; padding:0; }
+  /* AI 자동입력 */
+  .ai-scan-bar { display:none; align-items:center; gap:8px; background:linear-gradient(135deg,#e0f7ef,#f0fdf8); border:1.5px solid #6ee7c7; border-radius:10px; padding:10px 14px; margin-bottom:12px; font-size:12px; color:#1D9E75; font-weight:600; }
+  .ai-scan-bar .spin { display:inline-block; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .ai-scan-bar.error { background:#fef2f2; border-color:#fca5a5; color:#dc2626; }
+  .ai-scan-bar.done  { background:#f0fdf4; border-color:#86efac; color:#166534; }
+  .ai-filled { background:linear-gradient(135deg,#e0f7ef,#fff) !important; border-color:#6ee7c7 !important; }
+
+  .save-btn { width:100%; padding:14px; background:var(--teal); color:white; border:none; border-radius:14px; font-size:15px; font-weight:800; cursor:pointer; margin-top:6px; }
+  .save-btn:hover { background:var(--teal-d); }
+  .save-btn:disabled { opacity:.55; cursor:not-allowed; }
+  .save-msg { font-size:12px; text-align:center; margin-top:8px; min-height:18px; color:var(--teal-d); }
+
+  /* ── 라이트박스 ── */
+  .lightbox { position:fixed; inset:0; background:rgba(0,0,0,.88); z-index:300; display:none; align-items:center; justify-content:center; padding:20px; }
+  .lightbox.open { display:flex; }
+  .lightbox img { max-width:100%; max-height:85vh; border-radius:12px; }
+  .lightbox-close { position:absolute; top:16px; right:16px; background:rgba(255,255,255,.15); border:none; color:white; width:36px; height:36px; border-radius:50%; font-size:18px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="header">
+  <button class="header-back" onclick="history.back()">←</button>
+  <div class="header-title">🏃 러닝 기록</div>
+  <button class="header-add-btn" onclick="openSheet()">+ 기록하기</button>
+</div>
+
+<!-- 히어로 통계 -->
+<div class="hero">
+  <div class="hero-label">PROJECT RE-BIRTH</div>
+  <div class="hero-title">RUN<span>LOG</span></div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num teal" id="stat-total-km">—</div>
+      <div class="hero-stat-lbl">총 거리 (km)</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num" id="stat-count">—</div>
+      <div class="hero-stat-lbl">총 러닝 횟수</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num orange" id="stat-streak">—</div>
+      <div class="hero-stat-lbl">현재 연속 (일)</div>
+    </div>
+  </div>
+</div>
+
+<!-- 탭 -->
+<div class="tabs">
+  <button class="tab active" id="tab-log"  onclick="setTab('log')">기록</button>
+  <button class="tab"        id="tab-stat" onclick="setTab('stat')">통계</button>
+</div>
+
+<!-- 기록 탭 -->
+<div class="content" id="view-log">
+  <div id="run-list"></div>
+</div>
+
+<!-- 통계 탭 -->
+<div class="content" id="view-stat" style="display:none;">
+  <div class="stat-section">
+    <div class="stat-title">이번 주 (화~오늘) 거리 km</div>
+    <div class="week-bars" id="week-bars"></div>
+  </div>
+  <div class="stat-section">
+    <div class="stat-title">🏆 베스트 기록</div>
+    <div class="best-grid">
+      <div class="best-card">
+        <div class="best-card-val" id="best-km">—</div>
+        <div class="best-card-lbl">최장 거리 (km)</div>
+      </div>
+      <div class="best-card">
+        <div class="best-card-val" id="best-pace">—</div>
+        <div class="best-card-lbl">최고 페이스 (분/km)</div>
+      </div>
+      <div class="best-card">
+        <div class="best-card-val" id="best-min">—</div>
+        <div class="best-card-lbl">최장 시간 (분)</div>
+      </div>
+      <div class="best-card">
+        <div class="best-card-val" id="avg-km">—</div>
+        <div class="best-card-lbl">평균 거리 (km)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 추가 시트 -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="sheet" id="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">🏃 러닝 기록 추가</div>
+
+    <div class="field-group">
+      <div class="field-lbl">날짜</div>
+      <input class="field-inp" type="date" id="s-date">
+    </div>
+
+    <div class="row-3">
+      <div class="field-group" style="margin-bottom:0">
+        <div class="field-lbl">거리 (km)</div>
+        <input class="field-inp" type="number" step="0.01" id="s-km" placeholder="3.50">
+      </div>
+      <div class="field-group" style="margin-bottom:0">
+        <div class="field-lbl">시간 (분)</div>
+        <input class="field-inp" type="number" step="1" id="s-min" placeholder="25">
+      </div>
+      <div class="field-group" style="margin-bottom:0">
+        <div class="field-lbl">칼로리</div>
+        <input class="field-inp" type="number" step="1" id="s-kcal" placeholder="—">
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text-3);margin:6px 0 14px;padding-left:2px;" id="pace-preview">페이스 —</div>
+
+    <div class="field-group">
+      <div class="field-lbl">📸 러닝 사진 (최대 2장)</div>
+      <div class="photo-upload-grid">
+        <div class="photo-slot">
+          <label class="photo-lbl-btn" for="s-photo-1" id="s-lbl-1">
+            <span class="icon">📷</span><span>사진 1</span>
+          </label>
+          <img class="photo-prev" id="s-prev-1" src="" alt="">
+          <button class="photo-del" id="s-del-1" onclick="delPhoto(1)">✕</button>
+          <input type="file" id="s-photo-1" accept="image/*" style="display:none" onchange="onPhoto(1,this)">
+        </div>
+        <div class="photo-slot">
+          <label class="photo-lbl-btn" for="s-photo-2" id="s-lbl-2">
+            <span class="icon">📷</span><span>사진 2</span>
+          </label>
+          <img class="photo-prev" id="s-prev-2" src="" alt="">
+          <button class="photo-del" id="s-del-2" onclick="delPhoto(2)">✕</button>
+          <input type="file" id="s-photo-2" accept="image/*" style="display:none" onchange="onPhoto(2,this)">
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-lbl">메모 (선택)</div>
+      <textarea class="field-inp" id="s-memo" placeholder="오늘 러닝 어땠나요?" style="min-height:56px;resize:none;"></textarea>
+    </div>
+
+    <button class="save-btn" id="s-save-btn" onclick="saveRun()">저장</button>
+    <div class="save-msg" id="s-msg"></div>
+  </div>
+</div>
+
+<!-- 라이트박스 -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+// ── 스토리지 키 ──────────────────────────────────────────
+var STORE_KEY = 'rebirth_runs_v1';
+
+// ── 데이터 로드/저장 ─────────────────────────────────────
+function loadRuns() {
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+function saveRuns(runs) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(runs)); } catch(e) {}
+}
+
+// ── 날짜 유틸 ────────────────────────────────────────────
+var DOW = ['일','월','화','수','목','금','토'];
+function formatDate(str) {
+  var d = new Date(str + 'T00:00:00');
+  return (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + DOW[d.getDay()] + ')';
+}
+function todayStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function pace(km, min) {
+  if (!km || !min || +km === 0) return '—';
+  var p = +min / +km;
+  var m = Math.floor(p);
+  var s = Math.round((p - m) * 60);
+  return m + "'" + String(s).padStart(2,'0') + '"';
+}
+
+// ── 전역 사진 버퍼 ───────────────────────────────────────
+var _photos = { 1: null, 2: null };
+
+function onPhoto(n, input) {
+  if (!input.files || !input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _photos[n] = e.target.result;
+    document.getElementById('s-prev-' + n).src = e.target.result;
+    document.getElementById('s-prev-' + n).style.display = 'block';
+    document.getElementById('s-lbl-' + n).style.display = 'none';
+    document.getElementById('s-del-' + n).style.display = 'block';
+    // 사진 1이면 AI 자동 추출
+    if (n === 1) extractRunData(e.target.result, input.files[0].type || 'image/jpeg');
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+async function extractRunData(dataUrl, mimeType) {
+  var bar  = document.getElementById('ai-scan-bar');
+  var icon = document.getElementById('ai-scan-icon');
+  var text = document.getElementById('ai-scan-text');
+  bar.className = 'ai-scan-bar';
+  bar.style.display = 'flex';
+  icon.textContent = '⚙️';
+  icon.className = 'spin';
+  text.textContent = '러닝 데이터를 읽고 있어요...';
+
+  var base64 = dataUrl.split(',')[1];
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbzBwSGnxFWM8UbgqFvpBgkoDTsYgUoQ2koVzBY6o0hu4JndbdwZAvKJk82S7jFNaXOMzQ/exec';
+
+  try {
+    // ── Google Vision OCR ──────────────────────────────
+    var ocrUrl = GAS_URL + '?action=vision&image=' + encodeURIComponent(base64);
+    var ocrRes  = await fetch(ocrUrl);
+    var ocrData = await ocrRes.json();
+    var ocrText = (ocrData.text || '').replace(/\n/g, ' ');
+
+    if (!ocrText) throw new Error('OCR 텍스트 없음');
+
+    // ── 파싱 ──────────────────────────────────────────
+    var km = null, min = null, kcal = null;
+
+    var kmMatch = ocrText.match(/(\d+\.\d+)\s*[Kk][Mm]/);
+    if (kmMatch) km = parseFloat(kmMatch[1]);
+    if (!km) {
+      var miMatch = ocrText.match(/(\d+\.\d+)\s*[Mm][Ii]/);
+      if (miMatch) km = Math.round(parseFloat(miMatch[1]) * 1.609 * 100) / 100;
+    }
+
+    var timeMatch = ocrText.match(/(\d{1,2}):(\d{2}):(\d{2})/);
+    if (timeMatch) {
+      min = parseInt(timeMatch[1]) * 60 + parseInt(timeMatch[2]);
+    } else {
+      var minMatch = ocrText.match(/(\d{2}):(\d{2})/);
+      if (minMatch) min = parseInt(minMatch[1]);
+    }
+
+    var kcalMatches = ocrText.match(/(\d+)\s*[Kk][Cc][Aa][Ll]/g);
+    if (kcalMatches && kcalMatches.length > 0) {
+      kcal = parseInt(kcalMatches[0].replace(/[^0-9]/g, ''));
+    }
+
+    var filled = [];
+    if (km != null) {
+      document.getElementById('s-km').value = km;
+      document.getElementById('s-km').classList.add('ai-filled');
+      filled.push('거리 ' + km + 'km');
+    }
+    if (min != null) {
+      document.getElementById('s-min').value = min;
+      document.getElementById('s-min').classList.add('ai-filled');
+      filled.push('시간 ' + min + '분');
+    }
+    if (kcal != null) {
+      document.getElementById('s-kcal').value = kcal;
+      document.getElementById('s-kcal').classList.add('ai-filled');
+      filled.push('칼로리 ' + kcal + 'kcal');
+    }
+
+    var kmV = document.getElementById('s-km').value;
+    var minV = document.getElementById('s-min').value;
+    document.getElementById('pace-preview').textContent = '페이스 ' + pace(kmV, minV) + ' /km';
+
+    if (filled.length > 0) {
+      icon.className = ''; icon.textContent = '✅';
+      bar.className = 'ai-scan-bar done';
+      text.textContent = '자동 입력 완료 — ' + filled.join(' / ') + ' (수정 가능)';
+    } else {
+      bar.className = 'ai-scan-bar error';
+      icon.className = ''; icon.textContent = '⚠️';
+      text.textContent = '러닝 데이터를 찾지 못했어요. 직접 입력해주세요.';
+      console.log('[Vision OCR]', ocrText);
+    }
+  } catch(e) {
+    bar.className = 'ai-scan-bar error';
+    icon.className = ''; icon.textContent = '❌';
+    text.textContent = '분석 실패 — ' + (e.message || '').slice(0, 60);
+    console.error('[Vision Extract]', e);
+  }
+}
+function delPhoto(n) {
+  _photos[n] = null;
+  document.getElementById('s-prev-' + n).style.display = 'none';
+  document.getElementById('s-prev-' + n).src = '';
+  document.getElementById('s-lbl-' + n).style.display = 'flex';
+  document.getElementById('s-del-' + n).style.display = 'none';
+  document.getElementById('s-photo-' + n).value = '';
+}
+
+// ── 시트 열기/닫기 ───────────────────────────────────────
+function openSheet(editId) {
+  _photos = { 1: null, 2: null };
+  [1,2].forEach(function(n){ delPhoto(n); });
+  document.getElementById('s-km').value   = '';
+  document.getElementById('s-min').value  = '';
+  document.getElementById('s-kcal').value = '';
+  document.getElementById('s-memo').value = '';
+  document.getElementById('s-msg').textContent = '';
+  document.getElementById('s-save-btn').disabled = false;
+  document.getElementById('s-save-btn').textContent = '저장';
+  document.getElementById('s-date').value = todayStr();
+  document.getElementById('pace-preview').textContent = '페이스 —';
+  ['s-km','s-min','s-kcal'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.classList.remove('ai-filled');
+  });
+  var bar = document.getElementById('ai-scan-bar');
+  if(bar) bar.style.display = 'none';
+  document.getElementById('overlay').classList.add('open');
+}
+function closeSheet() { document.getElementById('overlay').classList.remove('open'); }
+function overlayClick(e) { if (e.target === document.getElementById('overlay')) closeSheet(); }
+
+// ── 페이스 실시간 업데이트 ───────────────────────────────
+['s-km','s-min'].forEach(function(id) {
+  document.getElementById(id).addEventListener('input', function(){
+    var km = document.getElementById('s-km').value;
+    var min= document.getElementById('s-min').value;
+    document.getElementById('pace-preview').textContent = '페이스 ' + pace(km, min) + ' /km';
+  });
+});
+
+// ── 저장 ────────────────────────────────────────────────
+function saveRun() {
+  var date = document.getElementById('s-date').value;
+  var km   = document.getElementById('s-km').value;
+  var min  = document.getElementById('s-min').value;
+  var kcal = document.getElementById('s-kcal').value;
+  var memo = document.getElementById('s-memo').value.trim();
+
+  if (!date) { alert('날짜를 선택해주세요.'); return; }
+  if (!km || !min) { alert('거리와 시간은 필수예요.'); return; }
+
+  var btn = document.getElementById('s-save-btn');
+  btn.disabled = true; btn.textContent = '저장 중...';
+
+  var run = {
+    id:   Date.now(),
+    date: date,
+    km:   parseFloat(km),
+    min:  parseInt(min),
+    kcal: kcal ? parseInt(kcal) : null,
+    memo: memo,
+    photos: [_photos[1], _photos[2]].filter(Boolean)
+  };
+
+  var runs = loadRuns();
+  runs.unshift(run);
+  saveRuns(runs);
+
+  document.getElementById('s-msg').textContent = '✅ 저장됐어요!';
+  setTimeout(function(){
+    closeSheet();
+    renderAll();
+  }, 800);
+}
+
+// ── 기록 삭제 ────────────────────────────────────────────
+function deleteRun(id) {
+  if (!confirm('이 기록을 삭제할까요?')) return;
+  var runs = loadRuns().filter(function(r){ return r.id !== id; });
+  saveRuns(runs);
+  renderAll();
+}
+
+// ── 라이트박스 ───────────────────────────────────────────
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ── 탭 ──────────────────────────────────────────────────
+function setTab(t) {
+  document.getElementById('tab-log').classList.toggle('active', t === 'log');
+  document.getElementById('tab-stat').classList.toggle('active', t === 'stat');
+  document.getElementById('view-log').style.display  = t === 'log'  ? 'block' : 'none';
+  document.getElementById('view-stat').style.display = t === 'stat' ? 'block' : 'none';
+  if (t === 'stat') renderStat();
+}
+
+// ── 렌더: 기록 목록 ──────────────────────────────────────
+function renderList() {
+  var runs = loadRuns();
+  var el = document.getElementById('run-list');
+  if (runs.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🏃</div><div class="empty-title">아직 러닝 기록이 없어요</div><div class="empty-sub">+ 기록하기로 오늘 러닝을 추가해보세요!</div></div>';
+    return;
+  }
+  el.innerHTML = runs.map(function(r){
+    var p = pace(r.km, r.min);
+    var photos = r.photos || [];
+    var photosHtml = '';
+    if (photos.length > 0) {
+      var cls = photos.length >= 2 ? 'cols-2' : 'cols-1';
+      photosHtml = '<div class="run-photos ' + cls + '">' +
+        photos.map(function(src){
+          return '<img class="run-photo-img" src="' + src + '" onclick="openLightbox(this.src)">';
+        }).join('') + '</div>';
+    }
+    var memoHtml = r.memo ? '<div class="run-memo">' + r.memo + '</div>' : '';
+    return '<div class="run-card">' +
+      '<div class="run-card-head">' +
+        '<div><div class="run-date">' + formatDate(r.date) + '</div></div>' +
+        '<button class="run-delete-btn" onclick="deleteRun(' + r.id + ')">🗑</button>' +
+      '</div>' +
+      '<div class="run-metrics">' +
+        '<div class="run-metric"><div class="run-metric-val teal">' + r.km + '</div><div class="run-metric-lbl">km</div></div>' +
+        '<div class="run-metric"><div class="run-metric-val">' + r.min + '</div><div class="run-metric-lbl">분</div></div>' +
+        '<div class="run-metric"><div class="run-metric-val">' + p + '</div><div class="run-metric-lbl">페이스</div></div>' +
+        '<div class="run-metric"><div class="run-metric-val">' + (r.kcal || '—') + '</div><div class="run-metric-lbl">kcal</div></div>' +
+      '</div>' +
+      photosHtml + memoHtml +
+    '</div>';
+  }).join('');
+}
+
+// ── 렌더: 히어로 통계 ────────────────────────────────────
+function renderHero() {
+  var runs = loadRuns();
+  var totalKm = runs.reduce(function(s,r){ return s + r.km; }, 0);
+  // 연속 계산 (오늘부터 역산)
+  var dateSet = {};
+  runs.forEach(function(r){ dateSet[r.date] = true; });
+  var streak = 0;
+  var cur = new Date();
+  for (var i = 0; i < 365; i++) {
+    var ds = cur.getFullYear() + '-' + String(cur.getMonth()+1).padStart(2,'0') + '-' + String(cur.getDate()).padStart(2,'0');
+    if (dateSet[ds]) { streak++; cur.setDate(cur.getDate()-1); }
+    else if (i === 0) { cur.setDate(cur.getDate()-1); } // 오늘 아직 안 뛴 경우 어제부터
+    else break;
+  }
+  document.getElementById('stat-total-km').textContent = totalKm.toFixed(1);
+  document.getElementById('stat-count').textContent    = runs.length;
+  document.getElementById('stat-streak').textContent   = streak;
+}
+
+// ── 렌더: 통계 ───────────────────────────────────────────
+function renderStat() {
+  var runs = loadRuns();
+  // 베스트
+  if (runs.length === 0) return;
+  var bestKm   = Math.max.apply(null, runs.map(function(r){ return r.km; }));
+  var bestMin  = Math.max.apply(null, runs.map(function(r){ return r.min; }));
+  var avgKm    = (runs.reduce(function(s,r){ return s+r.km; },0) / runs.length).toFixed(1);
+  // 최고 페이스 = 가장 낮은 분/km
+  var paceArr  = runs.filter(function(r){ return r.km && r.min; }).map(function(r){ return { pace: r.min/r.km, r: r }; });
+  var bestPace = paceArr.length ? paceArr.reduce(function(a,b){ return a.pace < b.pace ? a : b; }) : null;
+
+  document.getElementById('best-km').textContent   = bestKm;
+  document.getElementById('best-min').textContent  = bestMin + '분';
+  document.getElementById('avg-km').textContent    = avgKm;
+  document.getElementById('best-pace').textContent = bestPace ? pace(bestPace.r.km, bestPace.r.min) : '—';
+
+  // 이번 주 바 차트 (화~일 기준, 7일)
+  var barsEl = document.getElementById('week-bars');
+  var today  = new Date();
+  var days   = [];
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date(today);
+    d.setDate(d.getDate() - i);
+    var ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    var dayRuns = runs.filter(function(r){ return r.date === ds; });
+    var km = dayRuns.reduce(function(s,r){ return s+r.km; }, 0);
+    days.push({ lbl: DOW[d.getDay()], km: km, isToday: i===0 });
+  }
+  var maxKm = Math.max.apply(null, days.map(function(d){ return d.km; })) || 1;
+  barsEl.innerHTML = days.map(function(d){
+    var h = Math.round((d.km / maxKm) * 68);
+    return '<div class="week-bar-wrap">' +
+      '<div class="week-bar-val">' + (d.km > 0 ? d.km.toFixed(1) : '') + '</div>' +
+      '<div class="week-bar' + (d.isToday ? ' today' : '') + '" style="height:' + (h||3) + 'px;"></div>' +
+      '<div class="week-bar-lbl">' + d.lbl + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── 전체 렌더 ────────────────────────────────────────────
+function renderAll() { renderList(); renderHero(); }
+
+// ── 초기 실행 ────────────────────────────────────────────
+renderAll();
+</script>
+</body>
+</html>
