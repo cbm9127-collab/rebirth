@@ -29,6 +29,8 @@
   .phase-btn{flex:1;padding:12px 8px;border-radius:var(--radius-sm);border:none;background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;text-align:center;color:var(--text-3);line-height:1.4;}
   .phase-btn.p1.active{background:var(--amber-light);color:var(--amber);box-shadow:0 2px 8px rgba(186,117,23,0.15);}
   .phase-btn.p2.active{background:var(--purple-light);color:var(--purple);box-shadow:0 2px 8px rgba(124,58,237,0.15);}
+  .phase-btn.pf.active{background:var(--teal-light);color:var(--teal-dark);box-shadow:0 2px 8px rgba(15,110,86,0.15);}
+  .phase-desc.pdf{background:var(--teal-light);color:var(--teal-dark);border-color:rgba(15,110,86,0.2);}
   .phase-btn:not(.active):hover{background:rgba(0,0,0,0.03);}
 
   .phase-desc{font-size:12px;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:1rem;line-height:1.6;border:0.5px solid var(--border);}
@@ -128,6 +130,7 @@
   <div class="phase-toggle">
     <button class="phase-btn p1 active" onclick="setPhase(1,this)">Phase 1<br><span style="font-size:10px;font-weight:500;">전통 메뉴 + 볶음밥 저녁</span></button>
     <button class="phase-btn p2" onclick="setPhase(2,this)">Phase 2<br><span style="font-size:10px;font-weight:500;">밀프랩 점심 + 오트밀 저녁</span></button>
+    <button class="phase-btn pf" onclick="setPhase(3,this)">Final Phase<br><span style="font-size:10px;font-weight:500;">2주 로테이션 닭가슴살+미트리</span></button>
   </div>
 
   <div id="phase-desc"></div>
@@ -527,13 +530,114 @@ var P2={
 // ═══════════════════════════════════════════════════════════
 //  렌더 로직
 // ═══════════════════════════════════════════════════════════
-var PHASES=[null,P1,P2];
+// ══════════════════════════════════════════════════════════
+//  Final Phase 데이터 (2주 로테이션)
+// ══════════════════════════════════════════════════════════
+var PF_AM={time:'아침',badge:'t-am',name:'더단백 초코+계란2+사과½+유산균',
+  kcal:317,pro:33,carb:22,fat:7,na:185,
+  items:[
+    {food:'더단백 초코',amt:'1병(250ml)',kcal:105,pro:20,carb:6,fat:1,na:50},
+    {food:'삶은 계란',amt:'2개',kcal:160,pro:13,carb:2,fat:10,na:130},
+    {food:'사과',amt:'½개(100g)',kcal:52,pro:0.3,carb:13.8,fat:0.2,na:2},
+    {food:'유산균(락토핏)',amt:'1포',kcal:0,pro:0,carb:0,fat:0,na:3}
+  ],
+  ing:'더단백 초코 1병\n삶은 계란 2개\n사과 ½개\n유산균(락토핏) 1포',
+  steps:'기상 후: 유산균 → 더단백 → 계란 → 사과 순서',
+  gout:'',tip:''
+};
+
+// 2주 로테이션 기준 (기준일: 2026-04-21 화요일 = 1주차)
+// week1 화~토: 청양마요/스위트갈릭/볼케이노/피클머스타드/중화짬뽕
+// week2 화~토: 매콤데리야끼/화이트머쉬룸/중화짜장/핫양념치킨/떡볶이맛
+// 미트리(저녁): 화-청양고추, 수-리얼갈릭, 목-단호박, 금-리얼치즈, 토-매콤치즈
+
+function makePFLunch(name,kcal,pro,na,sugar,warn){
+  return {time:'점심',badge:'t-noon',name:'밀프랩 — '+name,
+    kcal:kcal,pro:pro,carb:45,fat:2,na:na,
+    items:[
+      {food:'귀리현미곤약밥',amt:'150g',kcal:130,pro:4,carb:30,fat:0.5,na:10},
+      {food:'양배추',amt:'100g',kcal:25,pro:1.3,carb:5.8,fat:0.1,na:18},
+      {food:'팽이버섯',amt:'100g',kcal:22,pro:2.7,carb:4.2,fat:0.3,na:2},
+      {food:name,amt:'1팩',kcal:Math.round(kcal-177-55),pro:Math.round(pro-7-6.5),carb:5,fat:1,na:na-30},
+      {food:'삶은 계란',amt:'1개',kcal:55,pro:6.5,carb:1,fat:3.5,na:65}
+    ],
+    ing:'귀리현미곤약밥 150g\n양배추 100g (20초 데치기)\n팽이버섯 100g\n'+name+' 1팩\n삶은 계란 1개',
+    steps:'① 일요일·수요일 밤 밀프랩 준비\n② 양배추 20초 데치기 후 소분\n③ 팽이버섯 날것 소분',
+    gout:'',tip: warn||''};
+}
+function makePFDinner(name,kcal,pro,na){
+  return {time:'저녁',badge:'t-pm',name:'오트밀계란죽+두부½+'+name,
+    kcal:kcal,pro:pro,carb:33,fat:8,na:na,
+    items:[
+      {food:'롤드오츠',amt:'35g',kcal:130,pro:5,carb:23,fat:2.5,na:2},
+      {food:'계란',amt:'2개',kcal:160,pro:13,carb:2,fat:10,na:130},
+      {food:'두부',amt:'½모(150g)',kcal:80,pro:9,carb:2,fat:4,na:10},
+      {food:name,amt:'1팩',kcal:Math.round(kcal-370),pro:Math.round(pro-27),carb:6,fat:1.5,na:na-142}
+    ],
+    ing:'롤드오츠 35g + 물 120ml + 계란 2개 + 참기름 5cc + 들깨가루 5g\n두부 ½모\n'+name+' 1팩',
+    steps:'① 냄비에 롤드오츠+물 끓이기\n② 계란 풀어 넣고 저으면서 익히기\n③ 참기름+들깨가루 마무리\n④ 두부+미트리 곁들이기',
+    gout:'',tip:''};
+}
+
+var PF={
+  keys:['sun','mon','w1-tue','w1-wed','w1-thu','w1-fri','w1-sat','w2-tue','w2-wed','w2-thu','w2-fri','w2-sat'],
+  tabs:['일','월','화 (1주)','수 (1주)','목 (1주)','금 (1주)','토 (1주)','화 (2주)','수 (2주)','목 (2주)','금 (2주)','토 (2주)'],
+  days:{
+    sun:{label:'일요일',tag:'고정',meals:[
+      PF_AM,
+      {time:'점심',badge:'t-noon',name:'한끼통살 스파이시',kcal:115,pro:17,carb:2,fat:2,na:350,
+       items:[{food:'한끼통살 스파이시',amt:'1팩',kcal:115,pro:17,carb:2,fat:2,na:350}],
+       ing:'한끼통살 스파이시 1팩',steps:'바로 섭취',gout:'',tip:''},
+      makePFDinner('미트리 오리지널',601,46,443)
+    ],sum:{kcal:833,pro:96,carb:57,na:978,note:'일요일 고정 메뉴'}},
+    mon:{label:'월요일',tag:'격주 교체',meals:[
+      PF_AM,
+      {time:'점심',badge:'t-noon',name:'한끼통살 허니바사삭 / 땡초바사삭 (격주)',kcal:128,pro:17,carb:8,fat:3,na:390,
+       items:[{food:'한끼통살 허니바사삭 또는 땡초바사삭',amt:'1팩',kcal:128,pro:17,carb:8,fat:3,na:390}],
+       ing:'한끼통살 허니바사삭 또는 땡초바사삭 1팩',steps:'바로 섭취',gout:'',tip:'격주 교체'},
+      makePFDinner('미트리 오리지널',601,46,443)
+    ],sum:{kcal:1046,pro:96,carb:30,na:1018,note:'월요일 고정 메뉴'}},
+    'w1-tue':{label:'화요일 (1주차)',tag:'Week 1',meals:[
+      PF_AM,makePFLunch('청양마요 닭가슴살',458,38,533,null,''),makePFDinner('미트리 청양고추',606,47,448)
+    ],sum:{kcal:1381,pro:118,carb:77,na:1166,note:'1주차 화요일'}},
+    'w1-wed':{label:'수요일 (1주차)',tag:'Week 1',meals:[
+      PF_AM,makePFLunch('스위트갈릭 닭가슴살',446,39,516,null,''),makePFDinner('미트리 리얼갈릭',611,47,448)
+    ],sum:{kcal:1374,pro:119,carb:80,na:1099,note:'1주차 수요일'}},
+    'w1-thu':{label:'목요일 (1주차)',tag:'Week 1',meals:[
+      PF_AM,makePFLunch('볼케이노 닭가슴살',446,38,554,null,''),makePFDinner('미트리 단호박',601,47,448)
+    ],sum:{kcal:1364,pro:118,carb:79,na:1147,note:'1주차 목요일'}},
+    'w1-fri':{label:'금요일 (1주차)',tag:'Week 1',meals:[
+      PF_AM,makePFLunch('피클머스타드 닭가슴살',437,38,624,null,''),makePFDinner('미트리 리얼치즈',621,49,448)
+    ],sum:{kcal:1375,pro:120,carb:77,na:1257,note:'1주차 금요일'}},
+    'w1-sat':{label:'토요일 (1주차)',tag:'Week 1 ⚠️ 물3L',meals:[
+      PF_AM,makePFLunch('중화짬뽕 닭가슴살',436,38,581,null,'⚠️ 중화짬뽕: 굴 알레르기 주의 / 물 3L 이상 섭취'),makePFDinner('미트리 매콤치즈',621,49,453)
+    ],sum:{kcal:1374,pro:120,carb:77,na:1187,note:'⚠️ 굴 알레르기 주의 · 물 3L 이상'}},
+    'w2-tue':{label:'화요일 (2주차)',tag:'Week 2',meals:[
+      PF_AM,makePFLunch('매콤데리야끼 닭가슴살',435,38,629,null,''),makePFDinner('미트리 청양고추',606,47,448)
+    ],sum:{kcal:1358,pro:118,carb:77,na:1222,note:'2주차 화요일'}},
+    'w2-wed':{label:'수요일 (2주차)',tag:'Week 2',meals:[
+      PF_AM,makePFLunch('화이트머쉬룸 닭가슴살',428,37,619,null,''),makePFDinner('미트리 리얼갈릭',611,47,448)
+    ],sum:{kcal:1356,pro:117,carb:80,na:1212,note:'2주차 수요일'}},
+    'w2-thu':{label:'목요일 (2주차)',tag:'Week 2 ⚠️ 물3L',meals:[
+      PF_AM,makePFLunch('중화짜장 닭가슴살',435,38,724,null,'⚠️ 중화짜장: 굴 알레르기 주의 / 물 3L 이상 섭취'),makePFDinner('미트리 단호박',601,47,448)
+    ],sum:{kcal:1353,pro:118,carb:77,na:1317,note:'⚠️ 굴 알레르기 주의 · 물 3L 이상'}},
+    'w2-fri':{label:'금요일 (2주차)',tag:'Week 2',meals:[
+      PF_AM,makePFLunch('핫양념치킨 닭가슴살',443,37,665,null,''),makePFDinner('미트리 리얼치즈',621,49,448)
+    ],sum:{kcal:1381,pro:119,carb:77,na:1308,note:'2주차 금요일'}},
+    'w2-sat':{label:'토요일 (2주차)',tag:'Week 2',meals:[
+      PF_AM,makePFLunch('떡볶이맛 닭가슴살',450,39,574,null,''),makePFDinner('미트리 매콤치즈',621,49,453)
+    ],sum:{kcal:1388,pro:121,carb:79,na:1180,note:'2주차 토요일'}}
+  }
+};
+
+var PHASES=[null,P1,P2,PF];
 var PHASE_DESCS=[
   '',
   '<b>Phase 1</b> — 점심: 두부면 까르보나라·또띠야 랩·키토김밥 등 직접 요리 / 저녁: 볶음밥+두부+계란+소시지 정식',
-  '<b>Phase 2</b> — 점심: 귀리곤약밥+득근파티 밀프랩 도시락 (2분 완성) / 저녁: 오트밀죽+두부1모+미트리 스테이크'
+  '<b>Phase 2</b> — 점심: 귀리곤약밥+득근파티 밀프랩 도시락 (2분 완성) / 저녁: 오트밀죽+두부1모+미트리 스테이크',
+  '<b>Final Phase</b> — 아침: 더단백+계란2+사과½ / 점심: 밀프랩 닭가슴살 2주 로테이션 / 저녁: 오트밀죽+두부½+미트리 로테이션'
 ];
-var PHASE_CLS=['','pd1','pd2'];
+var PHASE_CLS=['','pd1','pd2','pdf'];
 var curPhase=1,curKey='';
 
 function tblHTML(items,tot){
@@ -622,6 +726,23 @@ function autoSelectToday(){
   var today=dm[new Date().getDay()];
   if(curPhase===1 && (today==='thu'||today==='sat')){
     today='thsat';
+  }
+  if(curPhase===3){
+    // Final Phase: 요일 + 주차 계산
+    var BASE=new Date(2026,3,21); // 2026-04-21 화요일 = 1주차
+    var now=new Date();
+    var dow=now.getDay();
+    if(dow===0){ today='sun'; }
+    else if(dow===1){ today='mon'; }
+    else {
+      var thisTue=new Date(now);
+      var d=(dow>=2)?(dow-2):(7+dow-2);
+      thisTue.setDate(now.getDate()-d); thisTue.setHours(0,0,0,0);
+      var wk=Math.round((thisTue-BASE)/(7*86400000));
+      var isW1=((wk%2)+2)%2===0;
+      var dowKeys={2:'tue',3:'wed',4:'thu',5:'fri',6:'sat'};
+      today=(isW1?'w1-':'w2-')+(dowKeys[dow]||'tue');
+    }
   }
   var idx=data.keys.indexOf(today);
   if(idx<0) idx=0;

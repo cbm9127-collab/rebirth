@@ -281,8 +281,8 @@
       </div>
     </div>
 
-    <!-- 요약 카드 -->
-    <div class="cards" style="grid-template-columns:repeat(2,1fr);" id="cards-grid">
+    <!-- 요약 카드 (3개) -->
+    <div class="cards" style="grid-template-columns:repeat(3,1fr);" id="cards-grid">
       <div class="card accent">
         <div class="card-label">현재 체중</div>
         <div class="card-num" id="c-current">—<span>kg</span></div>
@@ -293,26 +293,24 @@
         <div class="card-num" id="c-loss">—<span>kg</span></div>
         <div class="card-sub" id="c-loss-sub"></div>
       </div>
-
       <div class="card blue">
         <div class="card-label">현재 BMI</div>
         <div class="card-num" id="c-bmi">—</div>
         <div class="card-sub" id="c-bmi-sub"></div>
       </div>
-      <div class="card dday">
-        <div class="card-label">D-day</div>
-        <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;margin:4px 0;">
-          <div style="text-align:center;">
-            <div id="c-dday" style="font-size:40px;font-weight:800;color:#185FA5;line-height:1.1;">—<span style="font-size:16px;font-weight:600;">일</span></div>
-            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">🥇 80kg (6/30)</div>
-          </div>
-          <div style="width:1px;height:32px;background:var(--border);"></div>
-          <div style="text-align:center;">
-            <div id="c-elapsed" style="font-size:40px;font-weight:800;color:#6B6B67;line-height:1.1;">—<span style="font-size:16px;font-weight:600;">일</span></div>
-            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">🥈 75kg (8/30)</div>
-          </div>
+    </div>
+
+    <!-- 이번 달 러닝 거리 -->
+    <div class="section" style="margin-bottom:0.8rem;">
+      <div style="background:var(--surface);border-radius:var(--radius-sm);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:18px;">🏃</span>
+          <span style="font-size:13px;font-weight:600;color:var(--text-2);">이번 달 러닝</span>
         </div>
-        <div class="card-sub" id="c-dday-sub"></div>
+        <div style="display:flex;align-items:baseline;gap:4px;">
+          <span style="font-size:24px;font-weight:800;color:var(--teal-dark);" id="monthly-run-km">—</span>
+          <span style="font-size:13px;color:var(--text-3);">km</span>
+        </div>
       </div>
     </div>
 
@@ -326,9 +324,13 @@
         <span class="memo-btn-icon">🥗</span>
         식단 레시피 &amp; 영양 성분표
       </button>
+      <button class="memo-btn" onclick="window.location.href='rebirth_workout.html'">
+        <span class="memo-btn-icon">💪</span>
+        운동 루틴 보기
+      </button>
       <button class="memo-btn" onclick="window.location.href='rebirth_running.html'">
         <span class="memo-btn-icon">🏃</span>
-        운동 & 러닝 기록
+        러닝 기록
       </button>
 
     </div>
@@ -350,7 +352,7 @@
 
     <!-- 오늘 식단 -->
     <div class="section">
-      <div class="section-head">🍽️ 오늘의 식단 <span id="today-dow-label" style="font-size:12px;font-weight:400;color:var(--text-3);"></span><span style="font-size:11px;font-weight:500;color:var(--teal-dark);margin-left:8px;">목표 ≤1,500kcal</span></div>
+      <div class="section-head">🍽️ 오늘의 식단 <span id="today-dow-label" style="font-size:12px;font-weight:400;color:var(--text-3);"></span></div>
       <div class="today-meal-card" id="today-meal-card"></div>
     </div>
 
@@ -388,33 +390,6 @@
       <div class="section-head">월별 감량 요약</div>
       <div class="monthly-row" id="monthly-row"></div>
     </div>
-
-    <!-- 감량 페이스 신호등 -->
-    <div class="section">
-      <div class="section-head">감량 페이스 신호등</div>
-      <div class="pace-box" id="pace-box">
-        <div class="pace-light" id="pace-light"></div>
-        <div class="pace-info">
-          <div class="pace-title" id="pace-title"></div>
-          <div class="pace-sub" id="pace-sub"></div>
-        </div>
-      </div>
-      <div class="pace-bars">
-        <div class="pace-bar-item">
-          <div class="pace-bar-label">이번 주 감량 (화~오늘)</div>
-          <div class="pace-bar-val" id="pace-recent">—</div>
-          <div class="pace-bar-sub" id="pace-recent-range" style="font-size:10px;color:var(--text-3);margin-top:2px;"></div>
-          <div class="pace-bar-bg"><div class="pace-bar-fill" id="pace-recent-bar" style="width:0%;background:#1D9E75"></div></div>
-        </div>
-        <div class="pace-bar-item">
-          <div class="pace-bar-label">지난 주 감량 (화~월)</div>
-          <div class="pace-bar-val" id="pace-avg">—</div>
-          <div class="pace-bar-sub" id="pace-avg-range" style="font-size:10px;color:var(--text-3);margin-top:2px;"></div>
-          <div class="pace-bar-bg"><div class="pace-bar-fill" id="pace-avg-bar" style="width:0%;background:#BA7517"></div></div>
-        </div>
-      </div>
-    </div>
-
 
 
 
@@ -499,35 +474,32 @@
           </table>
         </div>
 
-        <div class="popup-divider">🏃 운동</div>
-        <div style="font-size:11px;color:var(--text-3);margin-bottom:10px;" id="exercise-phase-label"></div>
-        <!-- 오전: 아침 러닝 입력 / 30/30/30 -->
-        <div class="field-group" id="ex-morning-wrap" style="display:none;">
-          <div class="field-label" id="ex-morning-label">🌅 오전</div>
-          <!-- Phase 2.5: 러닝 수기 입력 -->
-          <div id="run-inputs-wrap">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-              <div>
-                <div style="font-size:11px;color:var(--text-3);margin-bottom:4px;">거리 (km)</div>
-                <input class="field-input" type="number" step="0.01" id="f-run-km" placeholder="3.50">
-              </div>
-              <div>
-                <div style="font-size:11px;color:var(--text-3);margin-bottom:4px;">시간 (분)</div>
-                <input class="field-input" type="number" step="1" id="f-run-min" placeholder="25">
-              </div>
-              <div>
-                <div style="font-size:11px;color:var(--text-3);margin-bottom:4px;">칼로리</div>
-                <input class="field-input" type="number" step="1" id="f-run-kcal" placeholder="—">
-              </div>
+        <div class="popup-divider">🏃 오늘의 러닝</div>
+
+        <!-- 러닝 없음 체크 -->
+        <div class="field-group">
+          <label style="display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:8px;padding:10px 12px;cursor:pointer;">
+            <input type="checkbox" id="f-no-run" onchange="toggleRunInputs(this)" style="width:16px;height:16px;accent-color:var(--teal);">
+            <span style="font-size:13px;color:var(--text-2);">오늘 러닝 없음</span>
+          </label>
+        </div>
+
+        <!-- 러닝 입력 필드 -->
+        <div id="run-inputs-wrap">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <div>
+              <div style="font-size:11px;color:var(--text-3);margin-bottom:4px;">거리 (km)</div>
+              <input class="field-input" type="number" step="0.01" id="f-run-km" placeholder="3.50">
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-3);margin-bottom:4px;">시간 (분)</div>
+              <input class="field-input" type="number" step="1" id="f-run-min" placeholder="25">
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-3);margin-bottom:4px;">칼로리</div>
+              <input class="field-input" type="number" step="1" id="f-run-kcal" placeholder="—">
             </div>
           </div>
-          <!-- Phase 1/2: 30/30/30 읽기전용 -->
-          <input class="field-input" type="text" id="f-ex-morning" style="background:var(--surface);color:var(--teal-dark);font-weight:600;display:none;" readonly>
-        </div>
-        <!-- 본 운동: 체크박스 -->
-        <div class="field-group">
-          <div class="field-label">💪 본 운동</div>
-          <div id="ex-main-checks" style="display:flex;flex-direction:column;gap:6px;"></div>
         </div>
 
 
@@ -549,6 +521,7 @@ var API_URL      = 'https://script.google.com/macros/s/AKfycbzBwSGnxFWM8UbgqFvpB
 var START_WEIGHT  = 122.8;
 var GOAL_WEIGHT   = 80;   // 1차 목표
 var GOAL_WEIGHT2  = 75;   // 2차 목표
+var GOAL_WEIGHT_FINAL = 74; // 최종 목표 (달성률 기준)
 var HEIGHT_M      = 1.80; // 신장 180cm
 var MILESTONES    = [120, 115, 110, 105, 100, 95, 90, 85, 80, 75];
 
@@ -648,7 +621,7 @@ function render(rows) {
   var today     = rows[rows.length - 1];
   var totalLoss = +(START_WEIGHT - today.weight).toFixed(1);
   var remaining = +(today.weight - GOAL_WEIGHT).toFixed(1);   // 1차 기준
-  var pct       = Math.min(100, +((totalLoss / (START_WEIGHT - GOAL_WEIGHT)) * 100).toFixed(1)); // 1차 기준
+  var pct       = Math.min(100, +((totalLoss / (START_WEIGHT - GOAL_WEIGHT_FINAL)) * 100).toFixed(1)); // 최종 74kg 기준
   var days      = Math.round((today.date - rows[0].date) / 86400000) + 1;
   var avgLoss   = +(totalLoss / rows.length).toFixed(2);
   var streak    = calcStreak(rows);
@@ -668,117 +641,17 @@ function render(rows) {
   document.getElementById('c-current-sub').textContent = '시작 시 ' + START_WEIGHT + 'kg' + diffText;
   document.getElementById('c-loss').innerHTML          = '-' + totalLoss + '<span>kg</span>';
   var remaining1 = +(today.weight - GOAL_WEIGHT).toFixed(1);
-  document.getElementById('c-loss-sub').textContent    = '1차(80kg)까지 -' + remaining1 + 'kg 남음';
+  var remaining74 = +(today.weight - 74).toFixed(1);
+  document.getElementById('c-loss-sub').textContent    = '목표(74kg)까지 -' + remaining74 + 'kg 남음';
   var _cStreak = document.getElementById('c-streak'); if (_cStreak) _cStreak.innerHTML = streak + '<span>일</span>';
   var _cStreakSub = document.getElementById('c-streak-sub'); if (_cStreakSub) _cStreakSub.textContent = '연속 기록 중';
   document.getElementById('c-bmi').textContent         = bmi;
   document.getElementById('c-bmi-sub').textContent     = bmiData.label;
   document.getElementById('last-updated').textContent  = '마지막 업데이트: ' + (today.date.getMonth() + 1) + '/' + today.date.getDate();
 
-  // ── D-day 카운터 (1차 6/30, 2차 8/30) ─────────────────
-  var goal1Date = new Date(2026, 5, 30); // 1차 6월 30일
-  var goal2Date = new Date(2026, 7, 30); // 2차 8월 30일
-  var nowDate   = new Date();
-  var dday1     = Math.ceil((goal1Date - nowDate) / 86400000);
-  var dday2     = Math.ceil((goal2Date - nowDate) / 86400000);
-  document.getElementById('c-dday').innerHTML = dday1 + '<span>일</span>';
-  var elEl = document.getElementById('c-elapsed');
-  if (elEl) elEl.innerHTML = dday2 + '<span style="font-size:13px;font-weight:600;">일</span>';
-  var subEl = document.getElementById('c-dday-sub');
-  if (subEl) subEl.textContent = '시작 후 ' + (Math.floor((nowDate - new Date(2026,0,12))/86400000)+1) + '일째';
-
-  // 카드 그리드 5개 반응형
-  // 카드 그리드 항상 2×2 고정
-  var grid = document.getElementById('cards-grid');
-  if (grid) grid.style.gridTemplateColumns = 'repeat(2,1fr)';
-
-  // ── 감량 페이스 신호등 (이번 주 vs 지난 주, 화~월 기준) ──
-  // 오늘 기준으로 이번 주 화요일 날짜 계산 (화=2, JS:0=일)
-  function getWeekTue(refDate, weekOffset) {
-    // weekOffset: 0=이번주, -1=지난주
-    var d = new Date(refDate);
-    var day = d.getDay(); // 0=일,1=월,...,6=토
-    // 화요일(2) 기준: 이번 주 화요일까지의 차이
-    var diffToTue = (day >= 2) ? (day - 2) : (day + 5); // 이번주 화요일
-    var thisTue = new Date(d);
-    thisTue.setDate(d.getDate() - diffToTue + (weekOffset * 7));
-    thisTue.setHours(0,0,0,0);
-    return thisTue;
-  }
-
-  var now        = new Date(today.date);
-  var thisTue    = getWeekTue(now, 0);   // 이번 주 화요일
-  var lastTue    = getWeekTue(now, -1);  // 지난 주 화요일
-  var lastMon    = new Date(thisTue);
-  lastMon.setDate(thisTue.getDate() - 1); // 지난 주 월요일(=이번 주 화요일 전날)
-
-  function fmt(d) { return (d.getMonth()+1) + '/' + d.getDate(); }
-
-  // 이번 주 구간: 이번 주 화요일 ~ 오늘
-  var thisWeekRows = rows.filter(function(r) {
-    return r.date >= thisTue && r.date <= now;
-  });
-  // 지난 주 구간: 지난 주 화요일 ~ 지난 주 월요일
-  var lastWeekRows = rows.filter(function(r) {
-    return r.date >= lastTue && r.date <= lastMon;
-  });
-
-  // 구간 감량 계산 (시작체중 - 마지막체중)
-  function weekLoss(wrows) {
-    if (wrows.length < 2) return null;
-    return +(wrows[0].weight - wrows[wrows.length-1].weight).toFixed(2);
-  }
-
-  var thisLoss = weekLoss(thisWeekRows);
-  var lastLoss = weekLoss(lastWeekRows);
-
-  // 비교 기준: 이번 주 vs 지난 주
-  var ratio = (lastLoss && lastLoss > 0 && thisLoss !== null)
-    ? thisLoss / lastLoss : 1;
-
-  var paceLight, paceTitle, paceSub, paceLightCls;
-  if (thisLoss === null) {
-    paceLightCls = 'yellow'; paceLight = '⏳';
-    paceTitle = '이번 주 데이터 수집 중';
-    paceSub   = '이번 주(화~오늘) 기록이 2일 이상 쌓이면 비교가 시작돼요.';
-  } else if (ratio >= 0.9) {
-    paceLightCls = 'green'; paceLight = '🟢';
-    paceTitle = '순항 중이에요!';
-    paceSub   = '이번 주 감량 페이스가 지난 주와 비슷하거나 빠릅니다. 지금 이대로 유지하세요.';
-  } else if (ratio >= 0.5) {
-    paceLightCls = 'yellow'; paceLight = '🟡';
-    paceTitle = '페이스가 다소 느려졌어요';
-    paceSub   = '이번 주 감량이 지난 주보다 약간 낮아요. 식단이나 운동 패턴을 점검해보세요.';
-  } else {
-    paceLightCls = 'red'; paceLight = '🔴';
-    paceTitle = '정체기 가능성이 있어요';
-    paceSub   = '이번 주 감량이 지난 주보다 크게 줄었어요. 식단 변화나 수분 섭취를 늘려보세요. 정체기는 자연스러운 현상이에요!';
-  }
-
-  document.getElementById('pace-light').className   = 'pace-light ' + paceLightCls;
-  document.getElementById('pace-light').textContent = paceLight;
-  document.getElementById('pace-title').textContent = paceTitle;
-  document.getElementById('pace-sub').textContent   = paceSub;
-
-  var thisStr = thisLoss !== null ? '-' + thisLoss.toFixed(2) + 'kg' : '—';
-  var lastStr = lastLoss !== null ? '-' + lastLoss.toFixed(2) + 'kg' : '—';
-  document.getElementById('pace-recent').textContent = thisStr;
-  document.getElementById('pace-avg').textContent    = lastStr;
-
-  var rRange = document.getElementById('pace-recent-range');
-  var aRange = document.getElementById('pace-avg-range');
-  if (rRange) rRange.textContent = fmt(thisTue) + ' ~ 오늘';
-  if (aRange) aRange.textContent = fmt(lastTue) + ' ~ ' + fmt(lastMon);
-
-  var maxVal = Math.max(thisLoss || 0, lastLoss || 0, 0.01);
-  setTimeout(function(){
-    document.getElementById('pace-recent-bar').style.width = Math.min(100, ((thisLoss||0)/maxVal)*100) + '%';
-    document.getElementById('pace-avg-bar').style.width    = Math.min(100, ((lastLoss||0)/maxVal)*100) + '%';
-  }, 300);
-
   // ── 진행률 ────────────────────────────────────────────
   document.getElementById('prog-pct').textContent  = pct + '%';
-  document.getElementById('prog-detail').innerHTML = START_WEIGHT + 'kg → <strong>' + today.weight + 'kg</strong> → ' + GOAL_WEIGHT + 'kg 🥇';
+  document.getElementById('prog-detail').innerHTML = '감량 목표 달성률 · ' + START_WEIGHT + 'kg → <strong>' + today.weight + 'kg</strong> → ' + GOAL_WEIGHT_FINAL + 'kg 🏆';
   setTimeout(function() { document.getElementById('prog-bar').style.width = pct + '%'; }, 100);
 
   var msEl = document.getElementById('milestones');
@@ -871,6 +744,16 @@ function render(rows) {
   monthly.slice(0, 6).forEach(function(m) {
     moEl.innerHTML += '<div class="mo-card"><div class="mo-month">' + m.label + '</div><div class="mo-loss">-' + m.loss + 'kg</div><div class="mo-meta">' + m.days + '일 기록 · ' + m.start + '→' + m.end + 'kg</div></div>';
   });
+
+  // ── 이번 달 러닝 거리 ─────────────────────────────────────
+  try {
+    var runs = JSON.parse(localStorage.getItem('rebirth_runs_v1') || '[]');
+    var nowYM = new Date().getFullYear() + '-' + String(new Date().getMonth()+1).padStart(2,'0');
+    var monthlyKm = runs.filter(function(r){ return r.date && r.date.slice(0,7) === nowYM; })
+                        .reduce(function(s,r){ return s + (parseFloat(r.km)||0); }, 0);
+    var mkEl = document.getElementById('monthly-run-km');
+    if (mkEl) mkEl.textContent = monthlyKm.toFixed(1);
+  } catch(_e) {}
 
   // ── 오늘 식단 렌더 ──────────────────────────────────────────
   renderTodayMeal();
@@ -1062,81 +945,23 @@ function fillMealDropdowns() {
   onMealSelect();
 }
 
-// 운동 섹션 자동 채우기 (오전 30/30/30 + 본 운동만 표시)
-function fillExerciseDropdown() {
-  var latestWeight = allRows.length > 0 ? allRows[allRows.length-1].weight : 100;
-  var phase     = getPhase(latestWeight);
-  var phaseData = WORKOUT[phase];
-  var dow       = getSelectedDow();
-  var dayData   = phaseData.days[dow];
-  var label     = document.getElementById('exercise-phase-label');
-  if (label) label.textContent = '📌 ' + phaseData.label + ' · ' + dayData.name;
+// 운동 섹션 (러닝만 — 자동 채우기 불필요)
+function fillExerciseDropdown() { /* 러닝만 사용 */ }
 
-  // 오전 아침 러닝 / 30/30/30 표시
-  var morningWrap  = document.getElementById('ex-morning-wrap');
-  var morningInput = document.getElementById('f-ex-morning');
-  var runInputs    = document.getElementById('run-inputs-wrap');
-  var morningLbl   = document.getElementById('ex-morning-label');
-  if (morningWrap && morningInput) {
-    if (dayData.morning) {
-      morningInput.value = dayData.morning;
-      morningWrap.style.display = 'block';
-      if (phase === 'phase2_5') {
-        if (morningLbl) morningLbl.textContent = '🌅 아침 러닝';
-        if (runInputs)  runInputs.style.display = 'block';
-        if (morningInput) morningInput.style.display = 'none';
-      } else {
-        if (morningLbl) morningLbl.textContent = '🌅 오전 (30/30/30)';
-        if (runInputs)  runInputs.style.display = 'none';
-        if (morningInput) { morningInput.style.display = 'block'; morningInput.value = dayData.morning || ''; }
-      }
-    } else {
-      morningWrap.style.display = 'none';
-    }
-  }
-
-  // 본 운동 — 요일별 항목을 체크박스로 표시 (기본 전체 체크)
-  var checksEl = document.getElementById('ex-main-checks');
-  if (checksEl) {
-    checksEl.innerHTML = '';
-    dayData.main.forEach(function(item, i) {
-      var id  = 'ex-main-' + i;
-      var div = document.createElement('div');
-      div.style.cssText = 'display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:8px;padding:8px 12px;';
-      div.innerHTML =
-        '<input type="checkbox" id="'+id+'" checked style="width:16px;height:16px;accent-color:var(--teal);cursor:pointer;">'
-        + '<label for="'+id+'" style="font-size:13px;color:var(--text);cursor:pointer;flex:1;">'+item+'</label>';
-      checksEl.appendChild(div);
-    });
-  }
+// 운동 값 수집 — 러닝만
+function toggleRunInputs(cb) {
+  var wrap = document.getElementById('run-inputs-wrap');
+  if (wrap) wrap.style.display = cb.checked ? 'none' : 'block';
 }
 
-// 운동 값 수집 — 오전 30/30/30 + 체크된 본 운동 + 추가 메모
 function getExerciseValue() {
-  var dow      = getTodayDow();
-  var latestWeight = allRows.length > 0 ? allRows[allRows.length-1].weight : 100;
-  var phase    = getPhase(latestWeight);
-  var dayData  = WORKOUT[phase].days[dow];
-  var parts    = [];
-
-  // 오전 30/30/30 (표시된 경우만)
-  var morningWrap = document.getElementById('ex-morning-wrap');
-  if (morningWrap && morningWrap.style.display !== 'none') {
-    var mv = document.getElementById('f-ex-morning');
-    if (mv && mv.value) parts.push('[오전] ' + mv.value);
-  }
-
-  // 본 운동 — 체크된 항목만 수집
-  var mainParts = [];
-  dayData.main.forEach(function(item, i) {
-    var cb = document.getElementById('ex-main-' + i);
-    if (cb && cb.checked) mainParts.push(item);
-  });
-  if (mainParts.length > 0) parts.push('[본 운동] ' + mainParts.join(', '));
-
-  return parts.join('\n');
+  var noRun = document.getElementById('f-no-run');
+  if (noRun && noRun.checked) return '러닝 없음';
+  var km  = (document.getElementById('f-run-km')  || {}).value  || '';
+  var min = (document.getElementById('f-run-min') || {}).value  || '';
+  if (km && min) return '러닝 ' + km + 'km / ' + min + '분';
+  return '';
 }
-
 // 식단 선택 시 커스텀 입력 토글 + 영양 합계 계산
 function onMealSelect() {
   // 직접입력 textarea 토글
@@ -1236,6 +1061,8 @@ function openPopup() {
   document.getElementById('popup-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   ['f-run-km','f-run-min','f-run-kcal'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  var noRun = document.getElementById('f-no-run'); if(noRun){ noRun.checked=false; }
+  var riw = document.getElementById('run-inputs-wrap'); if(riw) riw.style.display='block';
   fillMealDropdowns();
   fillExerciseDropdown();
 }
@@ -1321,43 +1148,58 @@ var TODAY_MENU_P2 = {
 };
 var DOW_KO = ['일','월','화','수','목','금','토'];
 
-function renderTodayMeal() {
-  var dow     = new Date().getDay();
-  var menuIdx = (dow + 6) % 7;
-  var latestWeight = allRows.length > 0 ? allRows[allRows.length-1].weight : 100;
-  var phase   = getPhase(latestWeight);
-  var menu    = (phase === 'phase2' || phase === 'phase2_5') ? TODAY_MENU_P2[menuIdx] : TODAY_MENU_P1[menuIdx];
-  var el      = document.getElementById('today-meal-card');
-  var label   = document.getElementById('today-dow-label');
-  if (!el || !menu) return;
-  var phaseTag = phase === 'phase2_5' ? ' · Phase 2.5' : phase === 'phase2' ? ' · Phase 2' : ' · Phase 1';
-  label.textContent = DOW_KO[dow] + '요일' + phaseTag;
-  var total = menu.morning.kcal + menu.lunch.kcal + menu.dinner.kcal;
-  el.innerHTML =
-    '<div class="today-meal-row">'
-    + '<div class="today-meal-time">🌅 아침</div>'
-    + '<div class="today-meal-content">'+menu.morning.name+'</div>'
-    + '<div class="today-meal-kcal">'+menu.morning.kcal+'kcal</div>'
-    + '</div>'
-    + '<div class="today-meal-sep"></div>'
-    + '<div class="today-meal-row">'
-    + '<div class="today-meal-time">☀️ 점심</div>'
-    + '<div class="today-meal-content">'+menu.lunch.name+'</div>'
-    + '<div class="today-meal-kcal">'+menu.lunch.kcal+'kcal</div>'
-    + '</div>'
-    + '<div class="today-meal-sep"></div>'
-    + '<div class="today-meal-row">'
-    + '<div class="today-meal-time">🌙 저녁</div>'
-    + '<div class="today-meal-content">'+menu.dinner.name+'</div>'
-    + '<div class="today-meal-kcal">'+menu.dinner.kcal+'kcal</div>'
-    + '</div>'
-    + '<div class="today-meal-sep"></div>'
-    + '<div class="today-meal-row" style="justify-content:flex-end;">'
-    + '<span style="font-size:12px;color:var(--text-2);">하루 합계</span>'
-    + '<div class="today-meal-kcal" style="background:var(--amber-light);color:var(--amber);">'+total+'kcal</div>'
-    + '</div>';
+// ── 2주 로테이션 Final Phase 식단 ──────────────────────
+var FINAL_ROTATION = {
+  week1: {
+    2: ['청양마요 닭가슴살',     '미트리 청양고추'],
+    3: ['스위트갈릭 닭가슴살',   '미트리 리얼갈릭'],
+    4: ['볼케이노 닭가슴살',     '미트리 단호박'],
+    5: ['피클머스타드 닭가슴살', '미트리 리얼치즈'],
+    6: ['중화짬뽕 닭가슴살',     '미트리 매콤치즈', true]
+  },
+  week2: {
+    2: ['매콤데리야끼 닭가슴살', '미트리 청양고추'],
+    3: ['화이트머쉬룸 닭가슴살', '미트리 리얼갈릭'],
+    4: ['중화짜장 닭가슴살',     '미트리 단호박',   true],
+    5: ['핫양념치킨 닭가슴살',   '미트리 리얼치즈'],
+    6: ['떡볶이맛 닭가슴살',     '미트리 매콤치즈']
+  }
+};
+var ROTATION_BASE = new Date(2026, 3, 21); // 2026-04-21 화요일 = 1주차 기준
+
+function getRotationMenu() {
+  var now = new Date();
+  var dow = now.getDay();
+  if (dow === 0) return { lunch:'한끼통살 스파이시', dinner:'미트리 오리지널', water:false };
+  if (dow === 1) {
+    var thisMon = new Date(now); thisMon.setHours(0,0,0,0);
+    var weeksSinceMon = Math.floor((thisMon - ROTATION_BASE) / (7*86400000));
+    return { lunch: (weeksSinceMon % 2 === 0) ? '한끼통살 허니바사삭' : '한끼통살 땡초바사삭', dinner:'미트리 오리지널', water:false };
+  }
+  var thisTue = new Date(now);
+  var diff = (dow >= 2) ? (dow - 2) : (7 + dow - 2);
+  thisTue.setDate(now.getDate() - diff); thisTue.setHours(0,0,0,0);
+  var weeksDiff = Math.round((thisTue - ROTATION_BASE) / (7*86400000));
+  var isWeek1 = ((weeksDiff % 2) + 2) % 2 === 0;
+  var weekData = isWeek1 ? FINAL_ROTATION.week1 : FINAL_ROTATION.week2;
+  if (!weekData[dow]) return null;
+  return { lunch:weekData[dow][0], dinner:weekData[dow][1], water:!!weekData[dow][2] };
 }
 
+function renderTodayMeal() {
+  var dow = new Date().getDay();
+  var el  = document.getElementById('today-meal-card');
+  var lbl = document.getElementById('today-dow-label');
+  if (!el) return;
+  if (lbl) lbl.textContent = DOW_KO[dow] + '요일 · Final Phase';
+  var menu = getRotationMenu();
+  if (!menu) { el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text-3);font-size:13px;">오늘 식단 정보가 없어요.</div>'; return; }
+  var waterBadge = menu.water ? '<span style="background:#FEF9C3;color:#92400E;font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;margin-left:8px;">⚠️ 물 3L 이상</span>' : '';
+  el.innerHTML =
+    '<div class="today-meal-row"><div class="today-meal-time">☀️ 점심</div><div class="today-meal-content">' + menu.lunch + '</div></div>'
+    + '<div class="today-meal-sep"></div>'
+    + '<div class="today-meal-row"><div class="today-meal-time">🌙 저녁</div><div class="today-meal-content">' + menu.dinner + waterBadge + '</div></div>';
+}
 function closePopup() {
   document.getElementById('popup-overlay').classList.remove('open');
   document.body.style.overflow = '';
@@ -1403,19 +1245,15 @@ async function saveRecord() {
       msg.textContent = cheers[Math.floor(Math.random() * cheers.length)];
       msg.className = 'popup-msg success';
       btn.textContent = '저장됨 ✓';
-
-      // ── 러닝 값: 필드 clear 전에 먼저 수집 ───────────
-      var _rkm  = parseFloat((document.getElementById('f-run-km')  || {}).value  || 0) || 0;
-      var _rmin = parseInt(  (document.getElementById('f-run-min') || {}).value  || 0) || 0;
-      var _rkcal= parseInt(  (document.getElementById('f-run-kcal')|| {}).value  || 0) || 0;
-
-      ['f-weight','f-breakfast-custom','f-lunch-custom','f-dinner-custom','f-run-km','f-run-min','f-run-kcal','f-memo']
+      ['f-weight','f-breakfast-custom','f-lunch-custom','f-dinner-custom','f-run-km','f-run-min','f-run-kcal','f-memo','f-no-run']
         .forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       ['f-breakfast','f-lunch','f-dinner'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       var ns=document.getElementById('nutrition-summary'); if(ns) ns.style.display='none';
 
       // ── 러닝 데이터 → localStorage 연동 ──────────────
-      if (_rkm > 0 && _rmin > 0) {
+      var rkm  = parseFloat(document.getElementById('f-run-km')  ? document.getElementById('f-run-km').value  : 0) || 0;
+      var rmin = parseInt( document.getElementById('f-run-min')  ? document.getElementById('f-run-min').value  : 0) || 0;
+      if (rkm > 0 && rmin > 0) {
         try {
           var RKEY = 'rebirth_runs_v1';
           var existing = [];
@@ -1423,19 +1261,19 @@ async function saveRecord() {
           var todayStr = new Date().toISOString().slice(0,10);
           var idx = -1;
           for (var ri = 0; ri < existing.length; ri++) { if (existing[ri].date === todayStr) { idx = ri; break; } }
+          var rkcalEl = document.getElementById('f-run-kcal');
           var runEntry = {
-            id:   idx >= 0 ? existing[idx].id : Date.now(),
-            date: todayStr,
-            km:   _rkm,
-            min:  _rmin,
-            kcal: _rkcal || null,
-            memo: '',
+            id:     idx >= 0 ? existing[idx].id : Date.now(),
+            date:   todayStr,
+            km:     rkm,
+            min:    rmin,
+            kcal:   rkcalEl && rkcalEl.value ? parseInt(rkcalEl.value) : null,
+            memo:   '',
             photos: []
           };
           if (idx >= 0) existing[idx] = runEntry;
           else existing.unshift(runEntry);
           localStorage.setItem(RKEY, JSON.stringify(existing));
-          console.log('[러닝 저장]', runEntry);
         } catch(_e) { console.warn('러닝 저장 실패', _e); }
       }
 
